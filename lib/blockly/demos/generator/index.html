@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Blockly Demo: Generating JavaScript</title>
+  <script src="../../blockly_compressed.js"></script>
+  <script src="../../blocks_compressed.js"></script>
+  <script src="../../python_compressed.js"></script>
+  <script src="../../msg/js/en.js"></script>
+
+
+
+  <style>
+    body {
+      background-color: #fff;
+      font-family: sans-serif;
+    }
+    h1 {
+      font-weight: normal;
+      font-size: 140%;
+    }
+  </style>
+</head>
+<body>
+  <h1><a href="https://developers.google.com/blockly/">Blockly</a> &gt;
+    <a href="../index.html">Demos</a> &gt; Generating JavaScript</h1>
+
+  <p>This is a simple demo of generating code from blocks.</p>
+
+  <p>&rarr; More info on <a href="https://developers.google.com/blockly/installation/code-generators">Code Generators</a>...</p>
+
+  <p>
+    <button onclick="showCode()">Show Python</button>
+  </p>
+
+  <div id="blocklyDiv" style="height: 480px; width: 600px;"></div>
+
+  <xml id="toolbox" style="display: none">
+    <category name="I/O">
+      <block type=input></block>
+      <block type="background"></block>
+      <block type="output"></block>
+    </category>
+    <category name="BGR Image">
+      <block type="img_bgr_absdiff"></block>
+    </category>
+    <category name="Grayscale Image">
+      <block type="img_gray_absdiff"></block>
+      <block type="img_gray_bgrtogray"></block>
+    </category>
+    <category name="Variables" custom="VARIABLE"></category>
+  </xml>
+
+
+  <xml id="startBlocks" style="display: none">
+    <block type="background"></block>
+    <block type="input"></block>
+  </xml>
+
+  <script src="src.js"></script>
+</body>
+</html>
