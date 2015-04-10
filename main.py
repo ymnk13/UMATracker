@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/03/27 22:02:38 by ymnk>
+# Last-Updated : <2015/04/10 19:47:56 by ymnk>
 
 
 from PyQt5.QtWidgets import (QApplication, QWidget, 
@@ -94,10 +94,14 @@ class BrowserComp(QWidget):
         bytesPerLine = dim * width
         #Opencv（numpy）画像をQtのQImageに変換
         image = QImage(im_out.data, width, height, bytesPerLine,QImage.Format_Indexed8)#QImage.Format_RGB888)
+        #print im_out.shape,im_out
         #image2 = image.scaled(width*0.75, height*0.75,Qt.KeepAspectRatio)
         qimage = QPixmap.fromImage(image)
+        
         qimage = qimage.scaled(width*0.75, height*0.75,Qt.KeepAspectRatio)
         pic_Item = QGraphicsPixmapItem(qimage)
+        
+        
         #画像を描画
         self.ImgOut.scene.addItem(pic_Item)
         #cv2.imshow("",im_edges)
@@ -126,7 +130,24 @@ showCode();
         except Exception as e:
             print e
             print "Error Code"
+        """
+        print im_input.dtype,im_input.shape
+        im_gray =cv2.cvtColor(im_input,cv2.COLOR_BGR2GRAY)
+        print im_gray.dtype,im_gray.shape
+        im_masked = None
+
+        width,height,dim = im_input.shape
+        im_mask = np.ones((width,height), dtype=np.uint8)
+        im_mask *= 255
+        cv2.circle(im_mask,(190,10), radius = 100, color = 0,thickness = -1)
+        im_masked = im_mask
+        im_output = im_masked
+
+        print im_output.shape
+        """
         self.eveluate(im_output)
+
+        
 
     def on_webView_loadFinished(self):
         # Begin document inspection.
