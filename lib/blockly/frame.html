@@ -14,7 +14,7 @@
 		<script src="index.js"></script>
 	</head>
 	<body onload="init()">
-	  <a href="#" onClick="alert(getCode());">AAAA</a>
+	  <a href="#" onClick="alert(getCode());">Debug Code</a>
 
 		<div id="blocklyDiv" style="height: 100%; width: 100%;"></div>
 
@@ -47,8 +47,15 @@
 		</xml>
 
 		<xml id="startBlocks" style="display: none">
-		<block type="background"></block>
-		<block type="input"></block>
+		  <block type="output">
+		    <value name="output">
+		      <block type="img_gray_bgrtogray">
+			<value name="img">
+			  <block type="input"> </block>
+			</value>
+		      </block>
+		    </value>
+		  </block>
 		</xml>
 		
 	</body>
