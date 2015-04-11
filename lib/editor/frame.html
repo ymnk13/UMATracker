@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<script src="jquery-2.1.3.min.js"></script>
+		<script src="../blockly/blockly_compressed.js"></script>
+		<script src="../blockly/blocks_compressed.js"></script>
+		<script src="../blockly/python_compressed.js"></script>
+		<script src="../blockly/msg/js/en.js"></script>
+		<link rel="stylesheet" type="text/css" href="frame.css">
+
+		<script src="blocks.js"></script>
+		<script src="frame.js"></script>
+		<script src="index.js"></script>
+	</head>
+	<body onload="init()">
+	  <a href="#" onClick="alert(getCode());">Debug Code</a>
+
+		<div id="blocklyDiv" style="height: 100%; width: 100%;"></div>
+
+		<xml id="toolbox" style="display: none">
+		<category name="I/O">
+		<block type=input></block>
+		<block type="background"></block>
+		<block type="output"></block>
+		</category>
+		<category name="BGR Image">
+		<block type="img_bgr_absdiff"></block>
+		<block type="im_threshold"></block>
+		</category>
+		<category name="Grayscale Image">
+		<block type="img_gray_absdiff"></block>
+		<block type="img_gray_bgrtogray"></block>
+		</category>
+
+		<category name="Mask Image">
+		<block type="im_mask"></block>
+		<block type="im_circle_mask"></block>
+		</category>
+
+		<category name="Other">
+		<block type="comment"></block>
+		</category>
+
+		<category name="Morphology">
+		<block type="cv_erosion"></block>
+		</category>
+		
+
+		<category name="Variables" custom="VARIABLE"></category>
+		</xml>
+
+		<xml id="startBlocks" style="display: none">
+		  <block type="output">
+		    <value name="output">
+		      <block type="img_gray_bgrtogray">
+			<value name="img">
+			  <block type="input"> </block>
+			</value>
+		      </block>
+		    </value>
+		  </block>
+		</xml>
+		
+	</body>
+</html>
