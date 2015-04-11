@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/04/10 19:47:56 by ymnk>
+# Last-Updated : <2015/04/11 15:51:39 by ymnk>
 
 
 from PyQt5.QtWidgets import (QApplication, QWidget, 
@@ -47,8 +47,7 @@ class BrowserComp(QWidget):
 
         self.webView.setObjectName("webView")
         path = os.path.abspath(os.path.dirname(__file__) )
-        url = "file://{0}".format(os.path.join(path,"lib","blicks","index.html"))
-        url = "file://{0}".format(os.path.join(path,"lib","blockly","index2.html"))
+        url = "file://{0}".format(os.path.join(path,"lib","editor","index.html"))
         
         qurl = QUrl(url)
         self.webView.load(qurl)
