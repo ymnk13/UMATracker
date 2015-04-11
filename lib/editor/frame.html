@@ -2,19 +2,20 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <script src="jquery-2.1.3.min.js"></script>
+    <script src="./js/jquery-2.1.3.min.js"></script>
     <script src="../blockly/blockly_compressed.js"></script>
     <script src="../blockly/blocks_compressed.js"></script>
     <script src="../blockly/python_compressed.js"></script>
+    
     <script src="../blockly/msg/js/en.js"></script>
     <link rel="stylesheet" type="text/css" href="frame.css">
 
-    <script src="blocks.js"></script>
-    <script src="frame.js"></script>
-    <script src="index.js"></script>
+    <script src="./js/blocks.js"></script>
+    <script src="./js/frame.js"></script>
+    <script src="./js/index.js"></script>
   </head>
   <body onload="init()">
-    <a href="#" onClick="alert(getCode());">Debug Code</a>
+    <a href="#" onClick="console.log(getCode());">Debug Code</a>
 
     <div id="blocklyDiv" style="height: 100%; width: 100%;"></div>
 
