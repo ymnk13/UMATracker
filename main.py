@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/04/11 15:51:39 by ymnk>
+# Last-Updated : <2015/04/12 17:31:30 by ymnk>
 
 
 from PyQt5.QtWidgets import (QApplication, QWidget, 
@@ -38,6 +38,12 @@ class BrowserComp(QWidget):
         self.ImgObj = ImgComp
         self.ImgOut = ImgOut
         self.webView = QtWebKitWidgets.QWebView(self)
+        setting =  self.webView.settings()
+        print os.path.join(os.path.abspath(__file__),"user","Blocks")
+        print setting.setLocalStoragePath(os.path.join(os.path.dirname(os.path.abspath(__file__)),"user","Blocks"))
+        print setting.localStoragePath()
+        print setting.defaultTextEncoding()
+        
         #sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         #sizePolicy.setHorizontalStretch(1)
