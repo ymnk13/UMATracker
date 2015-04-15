@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/04/15 16:19:39 by ymnk>
+# Last-Updated : <2015/04/15 16:49:21 by ymnk>
 
 
 from PyQt5.QtWidgets import (QApplication, QWidget, 
@@ -69,11 +69,26 @@ class BrowserComp(QWidget):
         self.button_open = QPushButton("&Open")
         self.button_open.clicked.connect(self.openBlocks)
 
+        self.button_save = QPushButton("&Save")
+        self.button_save.clicked.connect(self.saveBlocks)
 
         self.mainLayout.addWidget(self.button)
         self.mainLayout.addWidget(self.button_open)
-        #self.mainLayout.addWidget(self.button_canny)
+        self.mainLayout.addWidget(self.button_save)
         self.setLayout(self.mainLayout)
+
+    def saveBlocks(self):
+        path = os.path.join(os.path.dirname(__file__))
+        filename,_ = QFileDialog.getSaveFileName(self, 'Open file', path)
+
+        frame = self.webView.page().mainFrame()
+        self.processSequence(frame)
+        text = frame.evaluateJavaScript("Apps.getXml()")
+        
+        fp = open(filename,"w")
+        fp.write(text)
+        fp.close()
+        
 
     def openBlocks(self):
         path = os.path.join(os.path.dirname(__file__))
@@ -81,11 +96,12 @@ class BrowserComp(QWidget):
         fp = open(filename,"r")
         text = fp.readlines()
         fp.close()
-        text = "".join(text)
+        text = map(lambda strs:"\'{0}\'".format(strs.rstrip()),text)
+        text = "+\n".join(text)
+
         frame = self.webView.page().mainFrame()
         self.processSequence(frame)
-        text = frame.evaluateJavaScript("Apps.setXml({0})".format(text))
-
+        frame.evaluateJavaScript("Apps.setXml({0})".format(text))
 
     def executeCanny(self):
         im_input = convertQImageToMat(self.ImgObj.pic_Item.pixmap().toImage())
