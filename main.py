@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/04/15 15:58:47 by ymnk>
+# Last-Updated : <2015/04/15 16:19:39 by ymnk>
 
 
 from PyQt5.QtWidgets import (QApplication, QWidget, 
@@ -66,14 +66,27 @@ class BrowserComp(QWidget):
         self.button = QPushButton("&Execute")
         self.button.clicked.connect(self.executeScript)
 
-        #self.button_canny = QPushButton("&Canny")
-        #self.button_canny.clicked.connect(self.executeCanny)
+        self.button_open = QPushButton("&Open")
+        self.button_open.clicked.connect(self.openBlocks)
 
 
         self.mainLayout.addWidget(self.button)
+        self.mainLayout.addWidget(self.button_open)
         #self.mainLayout.addWidget(self.button_canny)
         self.setLayout(self.mainLayout)
-        
+
+    def openBlocks(self):
+        path = os.path.join(os.path.dirname(__file__))
+        filename,_ = QFileDialog.getOpenFileName(self, 'Open file', path)
+        fp = open(filename,"r")
+        text = fp.readlines()
+        fp.close()
+        text = "".join(text)
+        frame = self.webView.page().mainFrame()
+        self.processSequence(frame)
+        text = frame.evaluateJavaScript("Apps.setXml({0})".format(text))
+
+
     def executeCanny(self):
         im_input = convertQImageToMat(self.ImgObj.pic_Item.pixmap().toImage())
         im_gray =cv2.cvtColor(im_input,cv2.COLOR_BGR2GRAY)
@@ -124,21 +137,6 @@ class BrowserComp(QWidget):
         except Exception as e:
             print e
             print "Error Code"
-        """
-        print im_input.dtype,im_input.shape
-        im_gray =cv2.cvtColor(im_input,cv2.COLOR_BGR2GRAY)
-        print im_gray.dtype,im_gray.shape
-        im_masked = None
-
-        width,height,dim = im_input.shape
-        im_mask = np.ones((width,height), dtype=np.uint8)
-        im_mask *= 255
-        cv2.circle(im_mask,(190,10), radius = 100, color = 0,thickness = -1)
-        im_masked = im_mask
-        im_output = im_masked
-
-        print im_output.shape
-        """
         self.eveluate(im_output)
 
         
