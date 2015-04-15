@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/04/15 16:49:21 by ymnk>
+# Last-Updated : <2015/04/15 22:54:47 by samui>
 
 
 from PyQt5.QtWidgets import (QApplication, QWidget, 
                              QGridLayout, QVBoxLayout, QHBoxLayout,
                              QLabel, QLineEdit, QPushButton,QMainWindow,QAction,QFileDialog,QGraphicsScene,QSizePolicy)
-from PyQt5.QtCore import Qt, QUrl, pyqtSlot, QTextStream, QIODevice, QFile, QSettings, QVariant,Qt
+from PyQt5.QtCore import Qt, QUrl, pyqtSlot, QTextStream, QIODevice, QFile, QSettings, QVariant,Qt,QTimer
 from PyQt5.QtWidgets import QGraphicsScene,QGraphicsView,QGraphicsPixmapItem
 from PyQt5.QtGui import QPixmap,QImage
 from PyQt5 import QtWebKitWidgets
@@ -72,10 +72,29 @@ class BrowserComp(QWidget):
         self.button_save = QPushButton("&Save")
         self.button_save.clicked.connect(self.saveBlocks)
 
+        #タイマーを設定.
+        self.timer = QTimer(parent=self)
+        self.timer.setInterval(1*1000)
+        self.timer.timeout.connect(self.selectingBlock)
+
+
         self.mainLayout.addWidget(self.button)
         self.mainLayout.addWidget(self.button_open)
         self.mainLayout.addWidget(self.button_save)
         self.setLayout(self.mainLayout)
+    def selectingBlock(self):
+        frame = self.webView.page().mainFrame()
+        self.processSequence(frame)
+        text = frame.evaluateJavaScript("Apps.getSelectingCode()")
+        im_input = convertQImageToMat(self.ImgObj.pic_Item.pixmap().toImage())
+        #text = "im_output = cv2.cvtColor((im_input),cv2.COLOR_BGR2GRAY)"
+        try:
+            exec(text)
+        except Exception as e:
+            print e
+            print "Error Code"
+        self.eveluate(im_output)
+
 
     def saveBlocks(self):
         path = os.path.join(os.path.dirname(__file__))
