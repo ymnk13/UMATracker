@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/04/12 17:31:30 by ymnk>
+# Last-Updated : <2015/04/15 15:58:47 by ymnk>
 
 
 from PyQt5.QtWidgets import (QApplication, QWidget, 
@@ -115,18 +115,7 @@ class BrowserComp(QWidget):
     def executeScript(self):
         frame = self.webView.page().mainFrame()
         self.processSequence(frame)
-        getJS = """
-function showCode() {
-	// Generate JavaScript code and display it.
-	Blockly.Python.INFINITE_LOOP_TRAP = null;
-	var code = Blockly.Python.workspaceToCode();
-    return code;
-}
-showCode();
-"""
-        text = frame.evaluateJavaScript(getJS)
-        #script = frame.findFirstElement('#SCRIPT')
-        #text = script.toPlainText()
+        text = frame.evaluateJavaScript("Apps.getCode()")
         print text
         im_input = convertQImageToMat(self.ImgObj.pic_Item.pixmap().toImage())
         #text = "im_output = cv2.cvtColor((im_input),cv2.COLOR_BGR2GRAY)"
