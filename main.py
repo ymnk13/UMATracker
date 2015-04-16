@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/04/16 15:13:11 by ymnk>
+# Last-Updated : <2015/04/16 15:24:33 by ymnk>
 
 
 from PyQt5.QtWidgets import (QApplication, QWidget, 
@@ -83,6 +83,7 @@ class BrowserComp(QWidget):
         self.mainLayout.addWidget(self.button_save)
         self.setLayout(self.mainLayout)
     def selectingBlock(self):
+        im_output = None
         frame = self.webView.page().mainFrame()
         self.processSequence(frame)
         text = frame.evaluateJavaScript("Apps.getSelectingCode()")
@@ -95,6 +96,8 @@ class BrowserComp(QWidget):
         except Exception as e:
             print e
             print "Error Code"
+        if im_output == None:
+            return
         self.eveluate(im_output)
 
 
