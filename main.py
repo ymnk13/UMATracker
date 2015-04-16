@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/04/15 22:54:47 by samui>
+# Last-Updated : <2015/04/16 15:13:11 by ymnk>
 
 
 from PyQt5.QtWidgets import (QApplication, QWidget, 
@@ -76,7 +76,7 @@ class BrowserComp(QWidget):
         self.timer = QTimer(parent=self)
         self.timer.setInterval(1*1000)
         self.timer.timeout.connect(self.selectingBlock)
-
+        self.timer.start()
 
         self.mainLayout.addWidget(self.button)
         self.mainLayout.addWidget(self.button_open)
@@ -86,8 +86,10 @@ class BrowserComp(QWidget):
         frame = self.webView.page().mainFrame()
         self.processSequence(frame)
         text = frame.evaluateJavaScript("Apps.getSelectingCode()")
+        print text
+        if text == None:
+            return False
         im_input = convertQImageToMat(self.ImgObj.pic_Item.pixmap().toImage())
-        #text = "im_output = cv2.cvtColor((im_input),cv2.COLOR_BGR2GRAY)"
         try:
             exec(text)
         except Exception as e:
