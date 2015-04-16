@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/04/16 15:24:33 by ymnk>
+# Last-Updated : <2015/04/16 15:33:18 by ymnk>
 
 
 from PyQt5.QtWidgets import (QApplication, QWidget, 
@@ -19,13 +19,11 @@ import numpy as np
 def convertQImageToMat(incomingImage):
     # http://stackoverflow.com/questions/18406149/pyqt-pyside-how-do-i-convert-qimage-into-opencvs-mat-format
     '''  Converts a QImage into an opencv MAT format  '''
-    print incomingImage
     
     incomingImage = incomingImage.convertToFormat(QImage.Format_RGB32)
     #incomingImage = incomingImage.transformed(QImage.Format_RGB888)
     width = incomingImage.width()
     height = incomingImage.height()
-    print width
     ptr = incomingImage.bits()
     ptr.setsize(incomingImage.byteCount())
     arr = np.array(ptr).reshape(height, width, 4)  #  Copies the data
@@ -87,7 +85,6 @@ class BrowserComp(QWidget):
         frame = self.webView.page().mainFrame()
         self.processSequence(frame)
         text = frame.evaluateJavaScript("Apps.getSelectingCode()")
-        print text
         if text == None:
             return False
         im_input = convertQImageToMat(self.ImgObj.pic_Item.pixmap().toImage())
@@ -162,8 +159,6 @@ class BrowserComp(QWidget):
         
         #画像を描画
         self.ImgOut.scene.addItem(pic_Item)
-        #cv2.imshow("",im_edges)
-        #cv2.waitKey(0)
 
     def executeScript(self):
         frame = self.webView.page().mainFrame()
@@ -190,7 +185,7 @@ class BrowserComp(QWidget):
         #print frame.toHtml()
         buttonExecute = frame.findFirstElement('#execute')
         script = frame.findFirstElement('#SCRIPT')
-        print buttonExecute.attribute('value')
+        #print buttonExecute.attribute('value')
 
         
 """
