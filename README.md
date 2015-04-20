@@ -4,8 +4,7 @@
 
 # 動作環境
 
-  Python2.7
-
-  OpenCV2
+* Python2.7
+* OpenCV2
 
   
