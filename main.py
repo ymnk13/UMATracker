@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/04/16 15:33:18 by ymnk>
+# Last-Updated : <2015/05/04 16:01:10 by ymnk>
 
 
 from PyQt5.QtWidgets import (QApplication, QWidget, 
@@ -15,6 +15,11 @@ import cv2
 import sys
 import os
 import numpy as np
+
+import sys,os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/lib/pycv')
+print os.path.dirname(os.path.abspath(__file__)) + 'lib/pycv'
+import filters
 
 def convertQImageToMat(incomingImage):
     # http://stackoverflow.com/questions/18406149/pyqt-pyside-how-do-i-convert-qimage-into-opencvs-mat-format
@@ -225,7 +230,7 @@ class GraphicsWidget(QWidget):
 
     def read(self,fn):
         self.graphics.read(fn)
-  
+
 
 class MainWindow(QMainWindow):
     def __init__(self,parent = None):
