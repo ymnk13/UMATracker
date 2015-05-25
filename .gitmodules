@@ -1,6 +1,6 @@
 [submodule "lib/closure-library"]
 	path = lib/closure-library
-	url = git@github.com-for-company:google/closure-library.git
+	url = git@github.com:ymnk13/closure-library.git
 [submodule "lib/blockly"]
 	path = lib/blockly
 	url = git@github.com:ymnk13/blockly.git
