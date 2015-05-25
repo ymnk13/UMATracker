@@ -56,7 +56,7 @@ class BrowserComp(QWidget):
 
         self.webView.setObjectName("webView")
         path = os.path.abspath(os.path.dirname(__file__) )
-        url = "file://{0}".format(os.path.join(path,"lib","editor","index.html"))
+        url = "file:///{0}".format(os.path.join(path,"lib","editor","index.html").replace("\\","/"))
         
         qurl = QUrl(url)
         self.webView.load(qurl)
