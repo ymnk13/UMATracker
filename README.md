@@ -4,7 +4,8 @@
 
 # 動作環境
 
-* Python2.7
-* OpenCV2
+* Python 2.7
+* OpenCV 3
+* PyQt 5.4
 
   
