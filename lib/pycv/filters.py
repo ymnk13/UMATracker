@@ -3,33 +3,39 @@
 # Last-Updated : <2015/05/04 15:36:07 by ymnk>
 
 import cv2
+import numpy as np
+
 class Filter:
     @classmethod
-    def hueFilter(self,im_in,hue,hueRange):
-        im_hsv = cv2.cvtColor(im_in,cv2.COLOR_BGR2HSV)
-        im_dst = im_in.copy()
-        im_h,im_s,im_v = cv2.split(im_hsv)
-        
-        im_hMask = im_h.copy()
-        cv2.threshold(im_hMask,hue+hueRange,hue,cv2.THRESH_TOZERO_INV,im_hMask)
-        cv2.threshold(im_hMask,hue-hueRange,hue,cv2.THRESH_BINARY, im_hMask)
+    def colorFilter(self,im_in,rgb, lab_dist):
 
-        cv2.merge((im_hMask,im_s,im_v),im_hsv)
-        cv2.cvtColor(im_hsv,cv2.COLOR_HSV2BGR,im_dst)
+        bgr_img = np.array([[np.flipud(rgb)]], dtype=np.uint8)
+        lab_arr = cv2.cvtColor(bgr_img, cv2.COLOR_BGR2Lab)[0,0].astype(np.int32)
+        # lab_mat = np.full(im_in.shape, lab_arr);
+
+        im_lab = cv2.cvtColor(im_in, cv2.COLOR_BGR2Lab).astype(np.int32)
+
+        im_mask = np.linalg.norm(im_lab-lab_arr, axis=2).astype(np.float32)
+
+        im_mask = cv2.threshold(im_mask, lab_dist, 255, cv2.THRESH_BINARY_INV)[1].astype(np.uint8)
+
+        im_dst = cv2.bitwise_and(im_in, im_in, mask=im_mask)
+
         return im_dst
 
 
-def main():
+def main(argv):
     import os
     path = os.path.abspath(os.path.dirname(__file__) )
-    img_fn = os.path.join(path,"../../data","A.png")
-    im_in = cv2.imread(img_fn,cv2.COLOR_BGR2GRAY)
-    
-    im_hsv = Filter.hueFilter(im_in,110,10)
+    img_fn = os.path.join(path,"../../data","color_filter_test.png")
+    im_in = cv2.imread(img_fn)
+    # print(im_in)
+
+    im_hsv = Filter.colorFilter(im_in,[0,255,0],100)
     cv2.imshow("AA",im_hsv)
     cv2.waitKey(0)
-    print img_fn
+    print(img_fn)
 
-if __name__  == "__main__":
-    main()
-
+if __name__ == "__main__":
+    import sys
+    main(sys.argv[1:])
