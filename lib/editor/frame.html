@@ -1,99 +1,99 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <script src="./js/jquery-2.1.3.min.js"></script>
-    <script src="../blockly/blockly_uncompressed.js"></script>
-    <script src="../blockly/blocks_compressed.js"></script>
+    <head>
+        <meta charset="utf-8">
+        <script src="./js/jquery-2.1.3.min.js"></script>
+        <script src="../blockly/blockly_uncompressed.js"></script>
+        <script src="../blockly/blocks_compressed.js"></script>
 
-    <!--<script src="../blockly/python_compressed.js"></script>-->
-    <script src="../blockly/generators/python.js"></script>
-    <script src="../blockly/generators/python/colour.js"></script>
-    <script src="../blockly/generators/python/lists.js"></script>
-    <script src="../blockly/generators/python/logic.js"></script>
-    <script src="../blockly/generators/python/loops.js"></script>
-    <script src="../blockly/generators/python/math.js"></script>
-    <script src="../blockly/generators/python/procedures.js"></script>
-    <script src="../blockly/generators/python/text.js"></script>
-    <script src="../blockly/generators/python/variables.js"></script>
-    
-
-    <script src="../blockly/msg/js/en.js"></script>
-    <link rel="stylesheet" type="text/css" href="./css/frame.css">
-    <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
-    <link rel="stylesheet" href="./css/hsvpalette.css" />
-
-    <script src="./js/apps.js"></script>
-    <script src="./js/blocks.js"></script>
-    <script src="./js/blocks/morphology.js"></script>
-    <script src="./js/blocks/io.js"></script>
-    <script src="./js/blocks/mask.js"></script>
-    <script src="./js/blocks/operator.js"></script>
-    <script src="./js/blocks/filter.js"></script>
-  </head>
-  <body onload="init()">
-    <a href="#" onClick="console.log(App.getCode());">Debug Code</a>
-    <div id="blocklyDiv" style="height: 100%; width: 100%;"></div>
-
-    <xml id="toolbox" style="display: none">
-      <category name="I/O">
-	<block type="input"></block>
-	<block type="output"></block>
-      </category>
-      <category name="BGR Image">
-	<block type="img_bgr_absdiff"></block>
-	
-      </category>
+        <!--<script src="../blockly/python_compressed.js"></script>-->
+        <script src="../blockly/generators/python.js"></script>
+        <script src="../blockly/generators/python/colour.js"></script>
+        <script src="../blockly/generators/python/lists.js"></script>
+        <script src="../blockly/generators/python/logic.js"></script>
+        <script src="../blockly/generators/python/loops.js"></script>
+        <script src="../blockly/generators/python/math.js"></script>
+        <script src="../blockly/generators/python/procedures.js"></script>
+        <script src="../blockly/generators/python/text.js"></script>
+        <script src="../blockly/generators/python/variables.js"></script>
 
 
-      <category name="Filters">
-	<block type="img_gray_bgrtogray"></block>
-	<block type="im_threshold"></block>
-	<block type="color_filter"></block>
-      </category>
+        <script src="../blockly/msg/js/en.js"></script>
+        <link rel="stylesheet" type="text/css" href="./css/frame.css">
+        <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+        <link rel="stylesheet" href="./css/hsvpalette.css" />
 
-      <category name="Mask Image">
+        <script src="./js/apps.js"></script>
+        <script src="./js/blocks.js"></script>
+        <script src="./js/blocks/morphology.js"></script>
+        <script src="./js/blocks/io.js"></script>
+        <script src="./js/blocks/mask.js"></script>
+        <script src="./js/blocks/operator.js"></script>
+        <script src="./js/blocks/filter.js"></script>
+    </head>
+    <body onload="init()">
+        <a href="#" onClick="console.log(App.getCode());">Debug Code</a>
+        <div id="blocklyDiv" style="height: 100%; width: 100%;"></div>
 
-	<block type="im_mask"></block>
-	<block type="im_circle_mask"></block>
-	<block type="im_rectangle_mask"></block>
-      </category>
+        <xml id="toolbox" style="display: none">
+        <category name="I/O">
+        <block type="input"></block>
+        <block type="output"></block>
+        </category>
+        <category name="BGR Image">
+        <block type="img_bgr_absdiff"></block>
 
-      <category name="Operator">
-	<block type="im_mask"></block>
-	<block type="img_gray_absdiff"></block>
-	<block type="operator_and"></block>
-	<block type="operator_or"></block>
-      </category>
+        </category>
 
 
-      
-      <category name="Morphology">
-	<block type="cv_erosion"></block>
-	<block type="cv_dilation"></block>
-	<block type="cv_opening"></block>
-	<block type="cv_closing"></block>
-      </category>
+        <category name="Filters">
+        <block type="img_gray_bgrtogray"></block>
+        <block type="im_threshold"></block>
+        <block type="color_filter"></block>
+        </category>
 
-      <category name="Other">
-	<block type="comment"></block>
-      </category>
-      
+        <category name="Mask Image">
 
-      <category name="Variables" custom="VARIABLE"></category>
-    </xml>
+        <block type="im_mask"></block>
+        <block type="im_circle_mask"></block>
+        <block type="im_rectangle_mask"></block>
+        </category>
 
-    <xml id="startBlocks" style="display: none">
-      <block type="output">
-	<value name="output">
-	  <block type="img_gray_bgrtogray">
-	    <value name="img">
-	      <block type="input"> </block>
-	    </value>
-	  </block>
-	</value>
-      </block>
-    </xml>
-    
-  </body>
+        <category name="Operator">
+        <block type="im_mask"></block>
+        <block type="img_gray_absdiff"></block>
+        <block type="operator_and"></block>
+        <block type="operator_or"></block>
+        </category>
+
+
+
+        <category name="Morphology">
+        <block type="cv_erosion"></block>
+        <block type="cv_dilation"></block>
+        <block type="cv_opening"></block>
+        <block type="cv_closing"></block>
+        </category>
+
+        <category name="Other">
+        <block type="comment"></block>
+        </category>
+
+
+        <category name="Variables" custom="VARIABLE"></category>
+        </xml>
+
+        <xml id="startBlocks" style="display: none">
+        <block type="output">
+        <value name="output">
+        <block type="img_gray_bgrtogray">
+        <value name="img">
+        <block type="input"> </block>
+        </value>
+        </block>
+        </value>
+        </block>
+        </xml>
+
+    </body>
 </html>
