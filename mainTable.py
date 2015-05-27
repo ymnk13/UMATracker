@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/05/27 14:25:58 by ymnk>
+# Last-Updated : <2015/05/27 15:50:48 by ymnk>
 from PyQt5.QtWidgets import (QApplication,QWidget,QMainWindow,QTableWidget,QTableWidgetItem,QLineEdit,QSlider,QLabel)
 from PyQt5.QtWidgets import (QPushButton)
 from PyQt5.QtWidgets import (QHBoxLayout,QVBoxLayout)
@@ -67,15 +67,6 @@ class MainWindow(QMainWindow):
         self.frameN = 0
         self.viewData(self.frameN)
 
-        self.previousButton = QPushButton("&<<")
-        self.previousButton.setMaximumSize(self.previousButton.minimumSizeHint())
-        self.previousButton.clicked.connect(self.frameDecrement)
-        self.frameEdit = QLineEdit("0")
-        self.frameEdit.setMaximumSize(QSize(100,21))
-        self.frameEdit.returnPressed.connect(self.frameNEdited)
-        self.nextButton = QPushButton("&>>")
-        self.nextButton.setMaximumSize(self.nextButton.minimumSizeHint())
-        self.nextButton.pressed.connect(self.frameIncrement)
 
         self.mainWidget = QWidget(self)
         self.mainLayout = QVBoxLayout(self.mainWidget)
