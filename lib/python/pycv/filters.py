@@ -19,7 +19,7 @@ class Filter:
 
         im_mask = cv2.threshold(im_mask, lab_dist, 255, cv2.THRESH_BINARY_INV)[1].astype(np.uint8)
 
-        im_dst = cv2.bitwise_or(im_in, im_in, mask=im_mask)+255
+        im_dst = cv2.bitwise_and(im_in, im_in, mask=im_mask)
 
         return im_dst
 
