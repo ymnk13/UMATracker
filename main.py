@@ -17,8 +17,8 @@ import os
 import numpy as np
 
 import sys,os
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/lib/pycv')
-print os.path.dirname(os.path.abspath(__file__)) + 'lib/pycv'
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/lib/python/pycv')
+print os.path.dirname(os.path.abspath(__file__)) + 'lib/python/pycv'
 import filters
 
 def convertQImageToMat(incomingImage):
