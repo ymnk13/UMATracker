@@ -30,7 +30,7 @@ from MainWindowBase import *
 # If handler = StreamHandler(), log will output into StandardOutput.
 from logging import getLogger, NullHandler, StreamHandler, DEBUG
 logger = getLogger(__name__)
-handler = NullHandler()
+handler = NullHandler() if True else StreamHandler()
 handler.setLevel(DEBUG)
 logger.setLevel(DEBUG)
 logger.addHandler(handler)
