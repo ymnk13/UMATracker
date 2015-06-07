@@ -5,6 +5,16 @@
 import cv2
 import numpy as np
 
+
+# Log output setting.
+# If handler = StreamHandler(), log will output into StandardOutput.
+from logging import getLogger, NullHandler, StreamHandler, DEBUG
+logger = getLogger(__name__)
+handler = NullHandler()
+handler.setLevel(DEBUG)
+logger.setLevel(DEBUG)
+logger.addHandler(handler)
+
 class Filter:
     @classmethod
     def colorFilter(self,im_in,rgb, lab_dist):

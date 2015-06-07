@@ -22,6 +22,19 @@ sys.path.append( os.path.join(filePath.pythonLibDirPath, 'ui') )
 from MainWindowBase import *
 
 
+# Log file setting.
+# import logging
+# logging.basicConfig(filename='MainWindow.log', level=logging.DEBUG)
+
+# Log output setting.
+# If handler = StreamHandler(), log will output into StandardOutput.
+from logging import getLogger, NullHandler, StreamHandler, DEBUG
+logger = getLogger(__name__)
+handler = NullHandler()
+handler.setLevel(DEBUG)
+logger.setLevel(DEBUG)
+logger.addHandler(handler)
+
 class Ui_MainWindow(Ui_MainWindowBase):
     def setupUi(self, MainWindow, path):
         super(Ui_MainWindow, self).setupUi(MainWindow)
@@ -105,6 +118,8 @@ class Ui_MainWindow(Ui_MainWindowBase):
     def openXMLFile(self):
         filename, _ = QFileDialog.getOpenFileName(None, 'Open XML File', filePath.userDir)
 
+        if len(filename) is not 0:
+            logger.debug("Opening XML file: {0}".format(filename))
 
     def saveXMLFile(self):
         filename, _ = QFileDialog.getOpenFileName(None, 'Save XML File', filePath.userDir)
@@ -131,11 +146,12 @@ class Ui_MainWindow(Ui_MainWindowBase):
         #       ので，そうしたほうがいい．
         im_input = self.cv_img
 
+
+        logger.debug("Generated Code: {0}".format(text))
         try:
             exec(text)
         except Exception as e:
-            print e
-            print "Error Code"
+            logger.debug("Block Evaluation Error: {0}".format(e))
 
 
         if im_output is None:

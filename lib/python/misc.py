@@ -4,6 +4,14 @@ import cv2
 from PyQt5.QtGui import QImage
 
 
+# Log output setting.
+# If handler = StreamHandler(), log will output into StandardOutput.
+from logging import getLogger, NullHandler, StreamHandler, DEBUG
+logger = getLogger(__name__)
+handler = NullHandler()
+handler.setLevel(DEBUG)
+logger.setLevel(DEBUG)
+logger.addHandler(handler)
 
 
 systemEncoding = sys.stdout.encoding
@@ -21,4 +29,3 @@ def cvMatToQImage(im_in):
     else:
         height, width = im_in.shape
         return QImage(im_in.data, width, height, width, QImage.Format_Indexed8)
-
