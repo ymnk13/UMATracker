@@ -1,296 +1,164 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/05/04 16:01:10 by ymnk>
 
+import os, sys
 
-from PyQt5.QtWidgets import (QApplication, QWidget, 
-                             QGridLayout, QVBoxLayout, QHBoxLayout,
-                             QLabel, QLineEdit, QPushButton,QMainWindow,QAction,QFileDialog,QGraphicsScene,QSizePolicy)
-from PyQt5.QtCore import Qt, QUrl, pyqtSlot, QTextStream, QIODevice, QFile, QSettings, QVariant,Qt,QTimer
-from PyQt5.QtWidgets import QGraphicsScene,QGraphicsView,QGraphicsPixmapItem
-from PyQt5.QtGui import QPixmap,QImage
-from PyQt5 import QtWebKitWidgets
-#import PyQt5.QtCore.Qt as Qt
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import QGraphicsScene,QGraphicsView,QGraphicsPixmapItem,QFrame, QFileDialog
+from PyQt5.QtGui import QPixmap, QImage
+
 import cv2
-import sys
-import os
 import numpy as np
 
-import sys,os
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/lib/python/pycv')
-print os.path.dirname(os.path.abspath(__file__)) + 'lib/python/pycv'
+import filePath
+
+sys.path.append( filePath.pythonLibDirPath )
+import misc
+
+sys.path.append( os.path.join(filePath.pythonLibDirPath, 'pycv') )
 import filters
 
-def convertQImageToMat(incomingImage):
-    # http://stackoverflow.com/questions/18406149/pyqt-pyside-how-do-i-convert-qimage-into-opencvs-mat-format
-    '''  Converts a QImage into an opencv MAT format  '''
-    
-    incomingImage = incomingImage.convertToFormat(QImage.Format_RGB32)
-    #incomingImage = incomingImage.transformed(QImage.Format_RGB888)
-    width = incomingImage.width()
-    height = incomingImage.height()
-    ptr = incomingImage.bits()
-    ptr.setsize(incomingImage.byteCount())
-    arr = np.array(ptr).reshape(height, width, 4)  #  Copies the data
-    return arr
+sys.path.append( os.path.join(filePath.pythonLibDirPath, 'ui') )
+from MainWindowBase import *
 
 
-class BrowserComp(QWidget):
-    def __init__(self,parent = None,ImgComp = None,ImgOut = None):
-        super(BrowserComp, self).__init__(parent)
-        self.ImgObj = ImgComp
-        self.ImgOut = ImgOut
-        self.webView = QtWebKitWidgets.QWebView(self)
-        setting =  self.webView.settings()
-        print os.path.join(os.path.abspath(__file__),"user","Blocks")
-        print setting.setLocalStoragePath(os.path.join(os.path.dirname(os.path.abspath(__file__)),"user","Blocks"))
-        print setting.localStoragePath()
-        print setting.defaultTextEncoding()
-        
-        #sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        #sizePolicy.setHorizontalStretch(1)
-        #sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(self.webView.sizePolicy().hasHeightForWidth())
-        self.webView.setSizePolicy(sizePolicy)
+class Ui_MainWindow(Ui_MainWindowBase):
+    def setupUi(self, MainWindow, path):
+        super(Ui_MainWindow, self).setupUi(MainWindow)
 
-        self.webView.setObjectName("webView")
-        path = os.path.abspath(os.path.dirname(__file__) )
-        url = "file:///{0}".format(os.path.join(path,"lib","editor","index.html").replace("\\","/"))
-        
-        qurl = QUrl(url)
-        self.webView.load(qurl)
-        # http://nullege.com/codes/search/PyQt5.QtWebKitWidgets.QWebView.loadFinished.connect
-        self.webView.loadFinished.connect(self.on_webView_loadFinished)
-        self.mainLayout = QVBoxLayout()
-        self.mainLayout.addWidget(self.webView)
+        self.blocklyInit()
+        self.imgInit()
+        self.menuInit()
 
+    def blocklyInit(self):
+        self.blocklyWebView.setUrl(QtCore.QUrl(filePath.blocklyURL))
 
-        self.button = QPushButton("&Execute")
-        self.button.clicked.connect(self.executeScript)
-
-        self.button_open = QPushButton("&Open")
-        self.button_open.clicked.connect(self.openBlocks)
-
-        self.button_save = QPushButton("&Save")
-        self.button_save.clicked.connect(self.saveBlocks)
-
-        #タイマーを設定.
-        self.timer = QTimer(parent=self)
+        self.timer = QtCore.QTimer(parent=self.blocklyWebView)
         self.timer.setInterval(1*1000)
-        self.timer.timeout.connect(self.selectingBlock)
+        self.timer.timeout.connect(self.evaluateSelectedBlock)
         self.timer.start()
 
-        self.mainLayout.addWidget(self.button)
-        self.mainLayout.addWidget(self.button_open)
-        self.mainLayout.addWidget(self.button_save)
-        self.setLayout(self.mainLayout)
-    def selectingBlock(self):
+    def imgInit(self):
+        self.cap = None
+        self.cv_img = cv2.imread(os.path.join(filePath.sampleDataPath,"color_filter_test.png"))
+
+        self.inputScene = QGraphicsScene()
+        self.inputGraphicsView.setScene(self.inputScene)
+        self.inputGraphicsView.resizeEvent = self.inputGraphicsViewResized
+
+        self.outputScene = QGraphicsScene()
+        self.outputGraphicsView.setScene(self.outputScene)
+        self.outputGraphicsView.resizeEvent = self.outputGraphicsViewResized
+
+        qimg = misc.cvMatToQImage(self.cv_img)
+        pixmap = QPixmap.fromImage(qimg)
+        self.inputScene.addPixmap(pixmap)
+
+    def menuInit(self):
+        self.actionOpenVideo.triggered.connect(self.openVideoFile)
+        self.actionOpenImage.triggered.connect(self.openImageFile)
+        self.actionOpenBlockData.triggered.connect(self.openXMLFile)
+        self.actionSaveBlockData.triggered.connect(self.saveXMLFile)
+
+    def releaseVideoCapture(self):
+        if self.cap is not None:
+            self.cap.release()
+            self.cap = None
+
+    def openVideoFile(self):
+        filename, _ = QFileDialog.getOpenFileName(None, 'Open Video File', filePath.userDir)
+
+        if len(filename) is not 0:
+            self.releaseVideoCapture()
+            self.cap = cv2.VideoCapture(misc.utfToSystemStr(filename))
+
+            if self.cap.isOpened():
+                ret, frame = self.cap.read()
+
+                self.cv_img = frame
+                self.updateInputGraphicsView()
+
+
+    def openImageFile(self):
+        filename, _ = QFileDialog.getOpenFileName(None, 'Open Image File', filePath.userDir)
+
+        if len(filename) is not 0:
+            self.cv_img = cv2.imread(misc.utfToSystemStr(filename))
+
+            self.updateInputGraphicsView()
+            self.releaseVideoCapture()
+
+    def updateInputGraphicsView(self):
+        self.inputScene.clear()
+        qimg = misc.cvMatToQImage(self.cv_img)
+        pixmap = QPixmap.fromImage(qimg)
+
+        rect = QtCore.QRectF(pixmap.rect())
+        self.inputScene.setSceneRect(rect)
+        self.outputScene.setSceneRect(rect)
+
+        self.inputScene.addPixmap(pixmap)
+
+        self.inputGraphicsView.viewport().update()
+        self.inputGraphicsViewResized()
+
+    def openXMLFile(self):
+        filename, _ = QFileDialog.getOpenFileName(None, 'Open XML File', filePath.userDir)
+
+
+    def saveXMLFile(self):
+        filename, _ = QFileDialog.getOpenFileName(None, 'Save XML File', filePath.userDir)
+
+    def inputGraphicsViewResized(self, event=None):
+        self.inputGraphicsView.fitInView(self.inputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
+
+    def outputGraphicsViewResized(self, event=None):
+        self.outputGraphicsView.fitInView(self.outputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
+
+
+    def evaluateSelectedBlock(self):
         im_output = None
-        frame = self.webView.page().mainFrame()
+
+        frame = self.blocklyWebView.page().mainFrame()
         self.processSequence(frame)
+
         text = frame.evaluateJavaScript("Apps.getSelectingCode()")
-        if text == None:
+        if text is None:
             return False
-        im_input = convertQImageToMat(self.ImgObj.pic_Item.pixmap().toImage())
+
+
+        # TODO: あまりにも大きいイメージは縮小しないと処理がなかなか終わらない
+        #       ので，そうしたほうがいい．
+        im_input = self.cv_img
+
         try:
             exec(text)
         except Exception as e:
             print e
             print "Error Code"
-        if im_output == None:
-            return
-        self.eveluate(im_output)
 
 
-    def saveBlocks(self):
-        path = os.path.join(os.path.dirname(__file__))
-        filename,_ = QFileDialog.getSaveFileName(self, 'Open file', path)
+        if im_output is None:
+            return False
 
-        frame = self.webView.page().mainFrame()
-        self.processSequence(frame)
-        text = frame.evaluateJavaScript("Apps.getXml()")
-        
-        fp = open(filename,"w")
-        fp.write(text)
-        fp.close()
-        
+        self.outputScene.clear()
+        qimg = misc.cvMatToQImage(im_output)
+        pixmap = QPixmap.fromImage(qimg)
+        self.outputScene.addPixmap(pixmap)
 
-    def openBlocks(self):
-        path = os.path.join(os.path.dirname(__file__))
-        filename,_ = QFileDialog.getOpenFileName(self, 'Open file', path)
-        fp = open(filename,"r")
-        text = fp.readlines()
-        fp.close()
-        text = map(lambda strs:"\'{0}\'".format(strs.rstrip()),text)
-        text = "+\n".join(text)
-
-        frame = self.webView.page().mainFrame()
-        self.processSequence(frame)
-        frame.evaluateJavaScript("Apps.setXml({0})".format(text))
-
-    def executeCanny(self):
-        im_input = convertQImageToMat(self.ImgObj.pic_Item.pixmap().toImage())
-        im_gray =cv2.cvtColor(im_input,cv2.COLOR_BGR2GRAY)
-        im_edges = cv2.Canny(im_gray,100,200)
-        im_out = im_edges
-        self.eveluate(im_out)
-
-    def eveluate(self,im_out):
-        if hasattr(im_out,"shape"):
-            if len(im_out.shape)<=2:
-                height, width = im_out.shape
-                dim = im_out.size/(height*width)
-            else:
-                height, width,dim = im_out.shape
-                dim = 3
-        else:
-            im_out = im_out[1]
-            height = len(im_out)
-            width = len(im_out[0])
-            dim = 1
-
-        #print im_out.dtype,
-        bytesPerLine = dim * width
-        #Opencv（numpy）画像をQtのQImageに変換
-        image = QImage(im_out.data, width, height, bytesPerLine,QImage.Format_Indexed8)#QImage.Format_RGB888)
-        #print im_out.shape,im_out
-        #image2 = image.scaled(width*0.75, height*0.75,Qt.KeepAspectRatio)
-        qimage = QPixmap.fromImage(image)
-        
-        qimage = qimage.scaled(width*0.75, height*0.75,Qt.KeepAspectRatio)
-        pic_Item = QGraphicsPixmapItem(qimage)
-        
-        
-        #画像を描画
-        self.ImgOut.scene.addItem(pic_Item)
-
-    def executeScript(self):
-        frame = self.webView.page().mainFrame()
-        self.processSequence(frame)
-        text = frame.evaluateJavaScript("Apps.getCode()")
-        print text
-        im_input = convertQImageToMat(self.ImgObj.pic_Item.pixmap().toImage())
-        #text = "im_output = cv2.cvtColor((im_input),cv2.COLOR_BGR2GRAY)"
-        try:
-            exec(text)
-        except Exception as e:
-            print e
-            print "Error Code"
-        self.eveluate(im_output)
-
-        
-
-    def on_webView_loadFinished(self):
-        # Begin document inspection.
-        frame = self.webView.page().mainFrame()
-        self.processSequence(frame)
+        self.outputGraphicsView.viewport().update()
+        self.outputGraphicsViewResized()
 
     def processSequence(self, frame):
-        #print frame.toHtml()
         buttonExecute = frame.findFirstElement('#execute')
         script = frame.findFirstElement('#SCRIPT')
-        #print buttonExecute.attribute('value')
-
-        
-"""
-class MainWindow(QWidget):
-    def __init__(self,parent = None):
-        super(MainWindow, self).__init__(parent)
-        self.calcButton = QPushButton("&Calc")
-        self.browser = BrowserComp(self)
-        #
-
-        self.mainLayout = QHBoxLayout()
-        self.mainLayout.addWidget(self.calcButton)
-        self.mainLayout.addWidget(self.browser)
-        self.setLayout(self.mainLayout)
-"""
-
-class Graphics(QGraphicsView):
-    def __init__(self):
-        super(Graphics, self).__init__()
-        self.scene = QGraphicsScene(self)
-        self.setScene(self.scene)
-        
-    def read(self,fn):
-        self.fn = fn
-        self.pic_Item = QGraphicsPixmapItem(QPixmap(fn))
-        self.scene.addItem(self.pic_Item)
 
 
-              
-class GraphicsWidget(QWidget):
-    def __init__(self):
-        super(GraphicsWidget, self).__init__()
-        self.graphics = Graphics()
-        self.mainLayout = QVBoxLayout()
-        self.mainLayout.addWidget(self.graphics)
-        self.setLayout(self.mainLayout)
-
-    def read(self,fn):
-        self.graphics.read(fn)
-
-
-class MainWindow(QMainWindow):
-    def __init__(self,parent = None):
-        super(MainWindow, self).__init__(parent)
-        self.setWindowTitle("Main Window Framework")
-        self.file_menu = self.menuBar().addMenu("&File")
-        #self.file_menu.addMenu("New...")
-        
-
-        # Open Action
-        openAction = QAction('Open', self)
-        openAction.setShortcut('Ctrl+O')
-        openAction.setStatusTip('Open a file')
-        openAction.triggered.connect(self.openFile)
-        
-        # Close Menu
-        closeAction = QAction('Close', self)
-        closeAction.setShortcut('Ctrl+Q')
-        closeAction.setStatusTip('Close Notepad')
-        closeAction.triggered.connect(self.close)
-
-        self.file_menu.addAction(openAction)
-        self.file_menu.addAction(closeAction)
-        
-        #QGraphicsScene
-        self.graphicsIn = GraphicsWidget()
-        self.graphicsOut = GraphicsWidget()
-        self.browser = BrowserComp(self,self.graphicsIn.graphics,self.graphicsOut.graphics)
-        path = os.path.abspath(os.path.dirname(__file__) )
-        img_fn = os.path.join(path,"data","frame1894.png")
-        self.graphicsIn.read(img_fn)
-        self.mainLayout = QHBoxLayout()
-        self.mainLayout.addWidget(self.browser)
-        self.mainVLayout = QVBoxLayout()
-        self.mainVLayout.addWidget(self.graphicsIn)
-        self.mainVLayout.addWidget(self.graphicsOut)
-
-        self.mainLayout.addLayout(self.mainVLayout)
-        mainWidget = QWidget()
-        mainWidget.setLayout(self.mainLayout)
-        self.setCentralWidget(mainWidget)
-        self.resize(1680,1050)
-        
-    def openFile(self):
-        #path = os.getenv('HOME')
-        path = os.path.dirname(__file__) 
-        filename, _ = QFileDialog.getOpenFileName(self, 'Open File',path)
-        self.graphics.read(filename)
-
-
-def main():
-    print Qt
-    app = QApplication(sys.argv)
-    main_window = MainWindow()
-
-    main_window.show()
-    
-    
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow,filePath.currentDirPath)
+    MainWindow.show()
     sys.exit(app.exec_())
 
-
-if __name__  == "__main__":
-    main()
