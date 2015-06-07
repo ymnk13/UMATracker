@@ -3,3 +3,4 @@ test/
 user/
 *.pyc
 Thumbs.db
+*.log
