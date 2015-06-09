@@ -4,7 +4,7 @@
 import os, sys
 
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QGraphicsScene,QGraphicsView,QGraphicsPixmapItem,QFrame, QFileDialog
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsPixmapItem, QFrame, QFileDialog
 from PyQt5.QtGui import QPixmap, QImage
 
 import cv2
@@ -39,9 +39,76 @@ class Ui_MainWindow(Ui_MainWindowBase):
     def setupUi(self, MainWindow, path):
         super(Ui_MainWindow, self).setupUi(MainWindow)
 
+        self.videoPlaybackInit()
         self.blocklyInit()
         self.imgInit()
         self.menuInit()
+
+
+    def videoPlaybackInit(self):
+        self.videoPlaybackWidget.hide()
+        self.videoPlayStopButton.clicked.connect(self.videoPlayStopButtonClicked)
+
+        self.videoPlaybackSlider.sliderPressed.connect(self.videoPlaybackSliderPressed)
+        self.videoPlaybackSlider.sliderReleased.connect(self.videoPlaybackSliderReleased)
+
+        self.videoPlaybackTimer = QtCore.QTimer(parent=self.videoPlaybackWidget)
+        self.videoPlaybackTimer.timeout.connect(self.videoPlayback)
+
+    def videoPlayStopButtonClicked(self):
+        if self.videoPlaybackTimer.isActive():
+            self.videoPlaybackTimer.stop()
+            self.blocklyEvaluationTimer.start()
+        else:
+            maxFrames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+            if self.videoPlaybackSlider.value() is not maxFrames:
+                self.fps = int(self.cap.get(cv2.CAP_PROP_FPS))
+
+                self.videoPlaybackTimer.setInterval(1000.0/self.fps)
+                self.videoPlaybackTimer.start()
+                self.blocklyEvaluationTimer.stop()
+
+    def videoPlayback(self):
+        if self.cap.isOpened():
+            nextFrame = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
+            # TODO: 行儀の悪い映像だと，末尾のあたりの取得に（ここではreadの時点で）失敗・一時フリーズする．
+            #       しかも，これといったエラーが出ずに進行．
+            #       要検証．
+            ret, frame = self.cap.read()
+
+            if nextFrame%self.fps is 0:
+                self.videoPlaybackSlider.setValue(nextFrame)
+
+            self.setFrame(frame)
+
+    def videoPlaybackSliderPressed(self):
+        self.videoPlaybackTimer.stop()
+
+        self.videoPlaybackSlider.valueChanged.connect(self.videoPlaybackSliderValueChanged)
+
+    def videoPlaybackSliderReleased(self):
+        self.videoPlaybackSlider.valueChanged.disconnect()
+
+    def videoPlaybackSliderValueChanged(self, value):
+        if self.cap.isOpened():
+            # TODO: 行儀の悪い映像だと，末尾のあたりの取得に（ここではsetの時点で）失敗・一時フリーズする．
+            #       しかも，これといったエラーが出ずに進行．
+            #       要検証．
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, value)
+            ret, frame = self.cap.read()
+
+            self.setFrame(frame)
+
+    def setFrame(self, frame):
+        if frame is not None:
+            self.cv_img = frame
+            self.updateInputGraphicsView()
+            self.evaluateSelectedBlock()
+        else:
+            self.videoPlaybackSlider.setValue(self.videoPlaybackSlider.maximum())
+            self.videoPlaybackTimer.stop()
+            self.blocklyEvaluationTimer.start()
 
     def blocklyInit(self):
         self.blocklyWebView.setUrl(QtCore.QUrl(filePath.blocklyURL))
@@ -85,6 +152,10 @@ class Ui_MainWindow(Ui_MainWindowBase):
             self.releaseVideoCapture()
             self.cap = cv2.VideoCapture(misc.utfToSystemStr(filename))
 
+            self.videoPlaybackWidget.show()
+            self.videoPlaybackSlider.setMinimum(0)
+            self.videoPlaybackSlider.setMaximum(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
             if self.cap.isOpened():
                 ret, frame = self.cap.read()
 
@@ -97,6 +168,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
         if len(filename) is not 0:
             self.cv_img = cv2.imread(misc.utfToSystemStr(filename))
+            self.videoPlaybackWidget.hide()
 
             self.updateInputGraphicsView()
             self.releaseVideoCapture()

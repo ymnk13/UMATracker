@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>846</width>
-    <height>569</height>
+    <width>735</width>
+    <height>496</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -109,6 +109,44 @@
             </widget>
            </item>
            <item>
+            <widget class="QWidget" name="videoPlaybackWidget" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <item>
+               <layout class="QHBoxLayout" name="videoPlaybackButtons">
+                <item>
+                 <widget class="QPushButton" name="videoGoHeadButton">
+                  <property name="text">
+                   <string>&lt;&lt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="videoPlayStopButton">
+                  <property name="text">
+                   <string>Play/Stop</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="videoGoLastButton">
+                  <property name="text">
+                   <string>&gt;&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QSlider" name="videoPlaybackSlider">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
             <widget class="QGraphicsView" name="outputGraphicsView">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -137,7 +175,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>846</width>
+     <width>735</width>
      <height>21</height>
     </rect>
    </property>
