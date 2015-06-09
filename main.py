@@ -47,10 +47,15 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
     def videoPlaybackInit(self):
         self.videoPlaybackWidget.hide()
-        self.videoPlayStopButton.clicked.connect(self.videoPlayStopButtonClicked)
 
-        self.videoPlaybackSlider.sliderPressed.connect(self.videoPlaybackSliderPressed)
-        self.videoPlaybackSlider.sliderReleased.connect(self.videoPlaybackSliderReleased)
+        self.videoPlayStopButton.clicked.connect(self.videoPlayStopButtonClicked)
+        self.videoGoHeadButton.clicked.connect(self.videoGoHeadButtonClicked)
+        self.videoGoLastButton.clicked.connect(self.videoGoLastButtonClicked)
+
+        self.videoPlaybackSlider.actionTriggered.connect(self.videoPlaybackSliderActionTriggered)
+        # self.videoPlaybackSlider.sliderMoved.connect(self.videoPlaybackSliderMoved)
+        # self.videoPlaybackSlider.sliderPressed.connect(self.videoPlaybackSliderPressed)
+        # self.videoPlaybackSlider.sliderReleased.connect(self.videoPlaybackSliderReleased)
 
         self.videoPlaybackTimer = QtCore.QTimer(parent=self.videoPlaybackWidget)
         self.videoPlaybackTimer.timeout.connect(self.videoPlayback)
@@ -83,22 +88,52 @@ class Ui_MainWindow(Ui_MainWindowBase):
             self.setFrame(frame)
 
     def videoPlaybackSliderPressed(self):
-        self.videoPlaybackTimer.stop()
+        logger.debug("Slider pressed")
 
-        self.videoPlaybackSlider.valueChanged.connect(self.videoPlaybackSliderValueChanged)
+    def videoGoHeadButtonClicked(self):
+        self.videoPlaybackTimer.stop()
+        if self.cap.isOpened():
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            ret, frame = self.cap.read()
+
+            self.videoPlaybackSlider.setValue(0)
+
+            self.setFrame(frame)
 
     def videoPlaybackSliderReleased(self):
-        self.videoPlaybackSlider.valueChanged.disconnect()
+        logger.debug("Slider released")
 
     def videoPlaybackSliderValueChanged(self, value):
+        logger.debug("Slider value changed: {0}".format(value))
+
+    def videoGoLastButtonClicked(self):
+        self.videoPlaybackTimer.stop()
+        if self.cap.isOpened():
+            maxFrames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            # TODO: 行儀の悪い映像だと，末尾のあたりの取得に（ここではsetの時点で）失敗・一時フリーズする．
+            #       しかも，これといったエラーが出ずに進行．
+            #       要検証．
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, maxFrames)
+            ret, frame = self.cap.read()
+
+            self.videoPlaybackSlider.setValue(maxFrames)
+
+            self.setFrame(frame)
+
+    def videoPlaybackSliderActionTriggered(self, action):
+        logger.debug("Action: {0}".format(action))
+        self.videoPlaybackTimer.stop()
         if self.cap.isOpened():
             # TODO: 行儀の悪い映像だと，末尾のあたりの取得に（ここではsetの時点で）失敗・一時フリーズする．
             #       しかも，これといったエラーが出ずに進行．
             #       要検証．
-            self.cap.set(cv2.CAP_PROP_POS_FRAMES, value)
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, self.videoPlaybackSlider.value())
             ret, frame = self.cap.read()
 
             self.setFrame(frame)
+
+    def videoPlaybackSliderMoved(self, value):
+        logger.debug("Slider moved to: {0}".format(value))
 
     def setFrame(self, frame):
         if frame is not None:
