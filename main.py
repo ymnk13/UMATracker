@@ -46,10 +46,10 @@ class Ui_MainWindow(Ui_MainWindowBase):
     def blocklyInit(self):
         self.blocklyWebView.setUrl(QtCore.QUrl(filePath.blocklyURL))
 
-        self.timer = QtCore.QTimer(parent=self.blocklyWebView)
-        self.timer.setInterval(1*1000)
-        self.timer.timeout.connect(self.evaluateSelectedBlock)
-        self.timer.start()
+        self.blocklyEvaluationTimer = QtCore.QTimer(parent=self.blocklyWebView)
+        self.blocklyEvaluationTimer.setInterval(1*1000)
+        self.blocklyEvaluationTimer.timeout.connect(self.evaluateSelectedBlock)
+        self.blocklyEvaluationTimer.start()
 
     def imgInit(self):
         self.cap = None
