@@ -44,7 +44,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.imgInit()
         self.menuInit()
 
-
     def videoPlaybackInit(self):
         self.videoPlaybackWidget.hide()
 
@@ -59,7 +58,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
         self.videoPlaybackTimer = QtCore.QTimer(parent=self.videoPlaybackWidget)
         self.videoPlaybackTimer.timeout.connect(self.videoPlayback)
-
 
     def videoPlayStopButtonClicked(self):
         if self.videoPlaybackTimer.isActive():
@@ -197,7 +195,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 self.cv_img = frame
                 self.updateInputGraphicsView()
 
-
     def openImageFile(self):
         filename, _ = QFileDialog.getOpenFileName(None, 'Open Image File', filePath.userDir)
 
@@ -236,7 +233,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
     def outputGraphicsViewResized(self, event=None):
         self.outputGraphicsView.fitInView(self.outputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
-
 
     def evaluateSelectedBlock(self):
         im_output = None
