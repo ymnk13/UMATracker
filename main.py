@@ -60,6 +60,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.videoPlaybackTimer = QtCore.QTimer(parent=self.videoPlaybackWidget)
         self.videoPlaybackTimer.timeout.connect(self.videoPlayback)
 
+
     def videoPlayStopButtonClicked(self):
         if self.videoPlaybackTimer.isActive():
             self.videoPlaybackTimer.stop()
@@ -74,22 +75,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 self.videoPlaybackTimer.start()
                 self.blocklyEvaluationTimer.stop()
 
-    def videoPlayback(self):
-        if self.cap.isOpened():
-            nextFrame = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
-            # TODO: 行儀の悪い映像だと，末尾のあたりの取得に（ここではreadの時点で）失敗・一時フリーズする．
-            #       しかも，これといったエラーが出ずに進行．
-            #       要検証．
-            ret, frame = self.cap.read()
-
-            if nextFrame%self.fps is 0:
-                self.videoPlaybackSlider.setValue(nextFrame)
-
-            self.setFrame(frame)
-
-    def videoPlaybackSliderPressed(self):
-        logger.debug("Slider pressed")
-
     def videoGoHeadButtonClicked(self):
         self.videoPlaybackTimer.stop()
         if self.cap.isOpened():
@@ -99,12 +84,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
             self.videoPlaybackSlider.setValue(0)
 
             self.setFrame(frame)
-
-    def videoPlaybackSliderReleased(self):
-        logger.debug("Slider released")
-
-    def videoPlaybackSliderValueChanged(self, value):
-        logger.debug("Slider value changed: {0}".format(value))
 
     def videoGoLastButtonClicked(self):
         self.videoPlaybackTimer.stop()
@@ -134,6 +113,28 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
     def videoPlaybackSliderMoved(self, value):
         logger.debug("Slider moved to: {0}".format(value))
+
+    def videoPlaybackSliderPressed(self):
+        logger.debug("Slider pressed")
+
+    def videoPlaybackSliderReleased(self):
+        logger.debug("Slider released")
+
+    def videoPlaybackSliderValueChanged(self, value):
+        logger.debug("Slider value changed: {0}".format(value))
+
+    def videoPlayback(self):
+        if self.cap.isOpened():
+            nextFrame = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
+            # TODO: 行儀の悪い映像だと，末尾のあたりの取得に（ここではreadの時点で）失敗・一時フリーズする．
+            #       しかも，これといったエラーが出ずに進行．
+            #       要検証．
+            ret, frame = self.cap.read()
+
+            if nextFrame%self.fps is 0:
+                self.videoPlaybackSlider.setValue(nextFrame)
+
+            self.setFrame(frame)
 
     def setFrame(self, frame):
         if frame is not None:
