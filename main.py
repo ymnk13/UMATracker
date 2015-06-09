@@ -153,8 +153,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
             self.cap = cv2.VideoCapture(misc.utfToSystemStr(filename))
 
             self.videoPlaybackWidget.show()
-            self.videoPlaybackSlider.setMinimum(0)
-            self.videoPlaybackSlider.setMaximum(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            self.videoPlaybackSlider.setRange(0, self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
             if self.cap.isOpened():
                 ret, frame = self.cap.read()
