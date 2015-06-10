@@ -1,11 +1,13 @@
 body {
-	background-color: #fff;
-	font-family: sans-serif;
+    background-color: #fff;
+    font-family: sans-serif;
 }
+
 h1 {
-	font-weight: normal;
-	font-size: 140%;
+    font-weight: normal;
+    font-size: 140%;
 }
+
 html, body {
-	height: 98%;
+    height: 98%;
 }
