@@ -149,17 +149,17 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
             self.setFrame(frame)
 
-    def videoPlaybackSliderMoved(self, value):
-        logger.debug("Slider moved to: {0}".format(value))
-
-    def videoPlaybackSliderPressed(self):
-        logger.debug("Slider pressed")
-
-    def videoPlaybackSliderReleased(self):
-        logger.debug("Slider released")
-
-    def videoPlaybackSliderValueChanged(self, value):
-        logger.debug("Slider value changed: {0}".format(value))
+    # def videoPlaybackSliderMoved(self, value):
+    #     logger.debug("Slider moved to: {0}".format(value))
+    #
+    # def videoPlaybackSliderPressed(self):
+    #     logger.debug("Slider pressed")
+    #
+    # def videoPlaybackSliderReleased(self):
+    #     logger.debug("Slider released")
+    #
+    # def videoPlaybackSliderValueChanged(self, value):
+    #     logger.debug("Slider value changed: {0}".format(value))
 
     def videoPlayback(self):
         if self.cap.isOpened():
