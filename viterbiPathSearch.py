@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/06/12 13:40:51 by ymnk>
+# Last-Updated : <2015/06/12 14:02:58 by ymnk>
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.session import sessionmaker
@@ -74,9 +74,8 @@ def main():
 
                 preDataC = session.query(Point).filter(Point.frameN == i-1,Point.DogTag == lineDatas[k][e][i-2]).first()
                 ax.plot([preDataC.y,dataC.y],[preDataC.x,dataC.x])
-    
-    #ax.plot([0,700],[0,700])
-    plt.show()
+    import os
+    plt.savefig(os.path.join(os.path.dirname(__file__),"result.png"))
 
 
     """
