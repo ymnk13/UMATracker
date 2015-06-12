@@ -51,6 +51,13 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.videoGoHeadButton.clicked.connect(self.videoGoHeadButtonClicked)
         self.videoGoLastButton.clicked.connect(self.videoGoLastButtonClicked)
 
+        self.videoGoForwardButton.clicked.connect(self.videoGoForwardButtonClicked)
+        self.videoGoBackwardButton.clicked.connect(self.videoGoBackwardButtonClicked)
+        self.videoGoForwardButton.setAutoRepeat(True)
+        self.videoGoBackwardButton.setAutoRepeat(True)
+        self.videoGoForwardButton.setAutoRepeatInterval(10)
+        self.videoGoBackwardButton.setAutoRepeatInterval(10)
+
         self.videoPlaybackSlider.actionTriggered.connect(self.videoPlaybackSliderActionTriggered)
         # self.videoPlaybackSlider.sliderMoved.connect(self.videoPlaybackSliderMoved)
         # self.videoPlaybackSlider.sliderPressed.connect(self.videoPlaybackSliderPressed)
@@ -96,6 +103,39 @@ class Ui_MainWindow(Ui_MainWindowBase):
             self.videoPlaybackSlider.setValue(maxFrames)
 
             self.setFrame(frame)
+
+    def videoGoForwardButtonClicked(self):
+        self.videoPlaybackTimer.stop()
+        if self.cap.isOpened():
+            nextFrame = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
+            maxFrames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+            if nextFrame <= maxFrames:
+                # TODO: 行儀の悪い映像だと，末尾のあたりの取得に（ここではsetの時点で）失敗・一時フリーズする．
+                #       しかも，これといったエラーが出ずに進行．
+                #       要検証．
+                self.cap.set(cv2.CAP_PROP_POS_FRAMES, nextFrame)
+                ret, frame = self.cap.read()
+
+                self.videoPlaybackSlider.setValue(nextFrame)
+
+                self.setFrame(frame)
+
+    def videoGoBackwardButtonClicked(self):
+        self.videoPlaybackTimer.stop()
+        if self.cap.isOpened():
+            nextFrame = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
+            beforeFrame = nextFrame - 2
+            if beforeFrame >= 0:
+                # TODO: 行儀の悪い映像だと，末尾のあたりの取得に（ここではsetの時点で）失敗・一時フリーズする．
+                #       しかも，これといったエラーが出ずに進行．
+                #       要検証．
+                self.cap.set(cv2.CAP_PROP_POS_FRAMES, beforeFrame)
+                ret, frame = self.cap.read()
+
+                self.videoPlaybackSlider.setValue(beforeFrame)
+
+                self.setFrame(frame)
 
     def videoPlaybackSliderActionTriggered(self, action):
         logger.debug("Action: {0}".format(action))
