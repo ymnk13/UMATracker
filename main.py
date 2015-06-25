@@ -5,7 +5,7 @@ import os, sys
 
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsPixmapItem, QFrame, QFileDialog
-from PyQt5.QtGui import QPixmap, QImage
+from PyQt5.QtGui import QPixmap, QImage, QTransform, QColor
 
 import cv2
 import numpy as np
@@ -200,6 +200,8 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.inputGraphicsView.setScene(self.inputScene)
         self.inputGraphicsView.resizeEvent = self.inputGraphicsViewResized
 
+        self.inputScene.mousePressEvent = self.inputSceneClicked
+
         self.outputScene = QGraphicsScene()
         self.outputGraphicsView.setScene(self.outputScene)
         self.outputGraphicsView.resizeEvent = self.outputGraphicsViewResized
@@ -258,6 +260,18 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
         self.inputGraphicsView.viewport().update()
         self.inputGraphicsViewResized()
+
+    def inputSceneClicked(self, event):
+        pos = event.scenePos().toPoint()
+        item = self.inputScene.itemAt(pos, QTransform())
+
+        img = item.pixmap().toImage()
+        pix = img.pixel(pos)
+        rgb = QColor(pix).name()
+        logger.debug("Selected pixel color: {0}".format(rgb))
+
+        clipboard = QtWidgets.QApplication.clipboard()
+        clipboard.setText(rgb)
 
     def openXMLFile(self):
         filename, _ = QFileDialog.getOpenFileName(None, 'Open XML File', filePath.userDir)
