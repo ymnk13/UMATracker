@@ -329,8 +329,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
         text = self.parseToClass(text)
         # TODO: あまりにも大きいイメージは縮小しないと処理がなかなか終わらない
         #       ので，そうしたほうがいい．
-        im_input = self.cv_img
-
 
         logger.debug("Generated Code: {0}".format(text))
         try:
