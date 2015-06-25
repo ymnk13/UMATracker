@@ -327,8 +327,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
             return False
 
         text = self.parseToClass(text)
-        print(text)
-
         # TODO: あまりにも大きいイメージは縮小しないと処理がなかなか終わらない
         #       ので，そうしたほうがいい．
         im_input = self.cv_img
@@ -340,7 +338,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
             filter = filterOperation(self.cv_img)
             im_output = filter.filterFunc(self.cv_img)
         except Exception as e:
-            print(e)
             logger.debug("Block Evaluation Error: {0}".format(e))
 
 
