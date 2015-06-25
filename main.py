@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, sys
+import os, sys, re
 
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsPixmapItem, QFrame, QFileDialog
@@ -288,16 +288,46 @@ class Ui_MainWindow(Ui_MainWindowBase):
     def outputGraphicsViewResized(self, event=None):
         self.outputGraphicsView.fitInView(self.outputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
 
+
+    def parseToClass(self, text):
+        lines = text.split("\n")
+        indents = "    "
+
+        classMemberPattern = r"^#"
+
+        classMembers = []
+        filterOperations = []
+        for line in lines:
+            if re.match(classMemberPattern, line):
+                classMembers.append(indents + indents + line.lstrip("#"))
+            else:
+                filterOperations.append(indents + indents + line)
+        classMembers.append(indents + indents + "return")
+        filterOperations.append(indents + indents + "return {output}")
+
+        classMenbersStr = "\n".join(classMembers)
+        filterOperationsStr = "\n".join(filterOperations)
+
+        constructorStr = "\n".join([indents + "def __init__(self, im_input):", classMenbersStr])
+        filterFuncStr  = "\n".join([indents + "def filterFunc(self, im_input):", filterOperationsStr])
+
+        filterOperationClassStr = "\n".join(["class filterOperation:", constructorStr, filterFuncStr])
+
+        return filterOperationClassStr.format(input="im_input", output="im_output")
+
+
     def evaluateSelectedBlock(self):
         im_output = None
 
         frame = self.blocklyWebView.page().mainFrame()
         self.processSequence(frame)
 
-        text = frame.evaluateJavaScript("Apps.getSelectingCode()")
+        text = frame.evaluateJavaScript("Apps.getCode()")
         if text is None:
             return False
 
+        text = self.parseToClass(text)
+        print(text)
 
         # TODO: あまりにも大きいイメージは縮小しないと処理がなかなか終わらない
         #       ので，そうしたほうがいい．
@@ -307,7 +337,10 @@ class Ui_MainWindow(Ui_MainWindowBase):
         logger.debug("Generated Code: {0}".format(text))
         try:
             exec(text)
+            filter = filterOperation(self.cv_img)
+            im_output = filter.filterFunc(self.cv_img)
         except Exception as e:
+            print(e)
             logger.debug("Block Evaluation Error: {0}".format(e))
 
 
