@@ -243,6 +243,9 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 self.cv_img = frame
                 self.updateInputGraphicsView()
 
+                # Initialize Filter when opening new file.
+                self.filterClassText = None
+
     def openImageFile(self):
         filename, _ = QFileDialog.getOpenFileName(None, 'Open Image File', filePath.userDir)
 
@@ -252,6 +255,9 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
             self.updateInputGraphicsView()
             self.releaseVideoCapture()
+
+            # Initialize Filter when opening new file.
+            self.filterClassText = None
 
     def updateInputGraphicsView(self):
         self.inputScene.clear()
