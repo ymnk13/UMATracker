@@ -216,8 +216,11 @@ class Ui_MainWindow(Ui_MainWindowBase):
     def menuInit(self):
         self.actionOpenVideo.triggered.connect(self.openVideoFile)
         self.actionOpenImage.triggered.connect(self.openImageFile)
+
         self.actionOpenBlockData.triggered.connect(self.openXMLFile)
         self.actionSaveBlockData.triggered.connect(self.saveXMLFile)
+
+        self.actionSaveFilterData.triggered.connect(self.saveFilterFile)
 
     def releaseVideoCapture(self):
         if self.cap is not None:
@@ -302,6 +305,14 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
                 f.write(text)
 
+    def saveFilterFile(self):
+        filename, _ = QFileDialog.getSaveFileName(None, 'Save Filter File', filePath.userDir, "Filter files (*.filter)")
+
+        if len(filename) is not 0:
+            logger.debug("Saving Filter file: {0}".format(filename))
+
+            with open(misc.utfToSystemStr(filename), mode="w") as f:
+                f.write(self.filterClassText)
 
     def inputGraphicsViewResized(self, event=None):
         self.inputGraphicsView.fitInView(self.inputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
