@@ -192,6 +192,9 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.blocklyEvaluationTimer.timeout.connect(self.evaluateSelectedBlock)
         self.blocklyEvaluationTimer.start()
 
+        self.filterClassText = None
+        self.filter = None
+
     def imgInit(self):
         self.cap = None
         self.cv_img = cv2.imread(os.path.join(filePath.sampleDataPath,"color_filter_test.png"))
@@ -327,17 +330,23 @@ class Ui_MainWindow(Ui_MainWindowBase):
             return False
 
         text = self.parseToClass(text)
+        logger.debug("Generated Code: {0}".format(text))
+
         # TODO: あまりにも大きいイメージは縮小しないと処理がなかなか終わらない
         #       ので，そうしたほうがいい．
 
-        logger.debug("Generated Code: {0}".format(text))
-        try:
-            exec(text)
-            filter = filterOperation(self.cv_img)
-            im_output = filter.filterFunc(self.cv_img)
-        except Exception as e:
-            logger.debug("Block Evaluation Error: {0}".format(e))
+        if self.filterClassText != text:
+            self.filterClassText = text
+            try:
+                exec(self.filterClassText)
+                self.filter = filterOperation(self.cv_img)
+            except Exception as e:
+                logger.debug("Block Evaluation Error: {0}".format(e))
 
+        try:
+            im_output = self.filter.filterFunc(self.cv_img)
+        except Exception as e:
+            logger.debug("Filter execution Error: {0}".format(e))
 
         if im_output is None:
             return False
