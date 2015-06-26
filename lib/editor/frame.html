@@ -31,68 +31,64 @@
         <script src="./js/blocks/filter.js"></script>
     </head>
     <body onload="init()">
-        <a href="#" onClick="console.log(App.getCode());">Debug Code</a>
+        <a href="#" onClick="console.log(App.getVarsList());">Debug Code</a>
         <div id="blocklyDiv" style="height: 100%; width: 100%;"></div>
 
         <xml id="toolbox" style="display: none">
-        <category name="I/O">
-        <block type="input"></block>
-        <block type="output"></block>
-        </category>
-        <category name="BGR Image">
-        <block type="img_bgr_absdiff"></block>
+            <category name="I/O">
+		<block type="input"></block>
+		<block type="output"></block>
+            </category>
 
-        </category>
+            <category name="BGR Image">
+		<block type="img_bgr_absdiff"></block>
+            </category>
 
+            <category name="Filters">
+		<block type="img_gray_bgrtogray"></block>
+		<block type="im_threshold"></block>
+		<block type="color_filter"></block>
+            </category>
+	    
+            <category name="Mask Image">
+		<block type="im_mask"></block>
+		<block type="im_circle_mask"></block>
+		<block type="im_rectangle_mask"></block>
+            </category>
+	    
+            <category name="Operator">
+		<block type="im_mask"></block>
+		<block type="img_gray_absdiff"></block>
+		<block type="operator_and"></block>
+		<block type="operator_or"></block>
+            </category>
 
-        <category name="Filters">
-        <block type="img_gray_bgrtogray"></block>
-        <block type="im_threshold"></block>
-        <block type="color_filter"></block>
-        </category>
+            <category name="Morphology">
+		<block type="cv_erosion"></block>
+		<block type="cv_dilation"></block>
+		<block type="cv_opening"></block>
+		<block type="cv_closing"></block>
+            </category>
 
-        <category name="Mask Image">
-
-        <block type="im_mask"></block>
-        <block type="im_circle_mask"></block>
-        <block type="im_rectangle_mask"></block>
-        </category>
-
-        <category name="Operator">
-        <block type="im_mask"></block>
-        <block type="img_gray_absdiff"></block>
-        <block type="operator_and"></block>
-        <block type="operator_or"></block>
-        </category>
-
-
-
-        <category name="Morphology">
-        <block type="cv_erosion"></block>
-        <block type="cv_dilation"></block>
-        <block type="cv_opening"></block>
-        <block type="cv_closing"></block>
-        </category>
-
-        <category name="Other">
-        <block type="comment"></block>
-        </category>
+            <category name="Other">
+		<block type="comment"></block>
+            </category>
 
 
-        <category name="Variables" custom="VARIABLE"></category>
+            <category name="Variables" custom="VARIABLE">
+	    </category>
         </xml>
 
         <xml id="startBlocks" style="display: none">
-        <block type="output">
-        <value name="output">
-        <block type="img_gray_bgrtogray">
-        <value name="img">
-        <block type="input"> </block>
-        </value>
-        </block>
-        </value>
-        </block>
+            <block type="output">
+		<value name="output">
+		    <block type="img_gray_bgrtogray">
+			<value name="img">
+			    <block type="input"> </block>
+			</value>
+		    </block>
+		</value>
+            </block>
         </xml>
-
     </body>
 </html>
