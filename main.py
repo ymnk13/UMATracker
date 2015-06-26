@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, sys, re
+import os, sys, re, hashlib
 
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsPixmapItem, QFrame, QFileDialog
@@ -192,7 +192,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.blocklyEvaluationTimer.timeout.connect(self.evaluateSelectedBlock)
         self.blocklyEvaluationTimer.start()
 
-        self.filterClassText = None
+        self.filterClassHash = None
         self.filter = None
 
     def imgInit(self):
@@ -244,7 +244,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 self.updateInputGraphicsView()
 
                 # Initialize Filter when opening new file.
-                self.filterClassText = None
+                self.filterClassHash = None
 
     def openImageFile(self):
         filename, _ = QFileDialog.getOpenFileName(None, 'Open Image File', filePath.userDir)
@@ -257,7 +257,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
             self.releaseVideoCapture()
 
             # Initialize Filter when opening new file.
-            self.filterClassText = None
+            self.filterClassHash = None
 
     def updateInputGraphicsView(self):
         self.inputScene.clear()
@@ -318,7 +318,15 @@ class Ui_MainWindow(Ui_MainWindowBase):
             logger.debug("Saving Filter file: {0}".format(filename))
 
             with open(misc.utfToSystemStr(filename), mode="w") as f:
-                f.write(self.filterClassText)
+                frame = self.blocklyWebView.page().mainFrame()
+                self.processSequence(frame)
+
+                text = frame.evaluateJavaScript("Apps.getSelectingCode();")
+                if text is None:
+                    return False
+
+                text = self.parseToClass(text)
+                f.write(text)
 
     def inputGraphicsViewResized(self, event=None):
         self.inputGraphicsView.fitInView(self.inputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
@@ -370,10 +378,11 @@ class Ui_MainWindow(Ui_MainWindowBase):
         # TODO: あまりにも大きいイメージは縮小しないと処理がなかなか終わらない
         #       ので，そうしたほうがいい．
 
-        if self.filterClassText != text:
-            self.filterClassText = text
+        textHash = hashlib.md5(text.encode())
+        if self.filterClassHash != textHash:
+            self.filterClassHash = textHash
             try:
-                exec(self.filterClassText)
+                exec(text)
                 self.filter = filterOperation(self.cv_img)
             except Exception as e:
                 logger.debug("Block Evaluation Error: {0}".format(e))
