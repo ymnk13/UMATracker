@@ -277,10 +277,18 @@ class Ui_MainWindow(Ui_MainWindowBase):
         clipboard.setText(rgb)
 
     def openXMLFile(self):
-        filename, _ = QFileDialog.getOpenFileName(None, 'Open XML File', filePath.userDir)
+        filename, _ = QFileDialog.getOpenFileName(None, 'Open Block File', filePath.userDir, "Block files (*.block)")
 
         if len(filename) is not 0:
-            logger.debug("Opening XML file: {0}".format(filename))
+            logger.debug("Opening Block file: {0}".format(filename))
+
+            with open(misc.utfToSystemStr(filename)) as f:
+                text = f.read()
+                text = re.sub(r"[\n\r]","",text)
+
+                frame = self.blocklyWebView.page().mainFrame()
+                script = "Apps.setXml('{0}');".format(text)
+                ret = frame.evaluateJavaScript(script)
 
     def saveXMLFile(self):
         filename, _ = QFileDialog.getSaveFileName(None, 'Save Block File', filePath.userDir, "Block files (*.block)")
