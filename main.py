@@ -283,7 +283,17 @@ class Ui_MainWindow(Ui_MainWindowBase):
             logger.debug("Opening XML file: {0}".format(filename))
 
     def saveXMLFile(self):
-        filename, _ = QFileDialog.getOpenFileName(None, 'Save XML File', filePath.userDir)
+        filename, _ = QFileDialog.getSaveFileName(None, 'Save Block File', filePath.userDir, "Block files (*.block)")
+
+        if len(filename) is not 0:
+            logger.debug("Saving Block file: {0}".format(filename))
+
+            with open(misc.utfToSystemStr(filename), mode="w") as f:
+                frame = self.blocklyWebView.page().mainFrame()
+                text = frame.evaluateJavaScript("Apps.getXml()")
+
+                f.write(text)
+
 
     def inputGraphicsViewResized(self, event=None):
         self.inputGraphicsView.fitInView(self.inputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
