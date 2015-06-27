@@ -296,7 +296,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 text = re.sub(r"[\n\r]","",text)
 
                 frame = self.blocklyWebView.page().mainFrame()
-                script = "Apps.setXml('{0}');".format(text)
+                script = "Apps.setBlockData('{0}');".format(text)
                 ret = frame.evaluateJavaScript(script)
 
     def saveBlockFile(self):
@@ -307,7 +307,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
             with open(misc.utfToSystemStr(filename), mode="w") as f:
                 frame = self.blocklyWebView.page().mainFrame()
-                text = frame.evaluateJavaScript("Apps.getXml();")
+                text = frame.evaluateJavaScript("Apps.getBlockData();")
 
                 f.write(text)
 
