@@ -282,8 +282,8 @@ class Ui_MainWindow(Ui_MainWindowBase):
         rgb = QColor(pix).name()
         logger.debug("Selected pixel color: {0}".format(rgb))
 
-        clipboard = QtWidgets.QApplication.clipboard()
-        clipboard.setText(rgb)
+        frame = self.blocklyWebView.page().mainFrame()
+        frame.evaluateJavaScript("Apps.setColorThreshold(\"{0}\");".format(rgb))
 
     def openXMLFile(self):
         filename, _ = QFileDialog.getOpenFileName(None, 'Open Block File', filePath.userDir, "Block files (*.block)")
