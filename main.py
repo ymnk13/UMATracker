@@ -283,7 +283,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         logger.debug("Selected pixel color: {0}".format(rgb))
 
         frame = self.blocklyWebView.page().mainFrame()
-        frame.evaluateJavaScript("Apps.setColorThreshold('{0}');".format(rgb))
+        frame.evaluateJavaScript("Apps.setColorFilterBlock('{0}');".format(rgb))
 
     def openBlockFile(self):
         filename, _ = QFileDialog.getOpenFileName(None, 'Open Block File', filePath.userDir, "Block files (*.block)")
