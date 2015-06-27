@@ -59,9 +59,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.videoGoBackwardButton.setAutoRepeatInterval(10)
 
         self.videoPlaybackSlider.actionTriggered.connect(self.videoPlaybackSliderActionTriggered)
-        # self.videoPlaybackSlider.sliderMoved.connect(self.videoPlaybackSliderMoved)
-        # self.videoPlaybackSlider.sliderPressed.connect(self.videoPlaybackSliderPressed)
-        # self.videoPlaybackSlider.sliderReleased.connect(self.videoPlaybackSliderReleased)
 
         self.videoPlaybackTimer = QtCore.QTimer(parent=self.videoPlaybackWidget)
         self.videoPlaybackTimer.timeout.connect(self.videoPlayback)
@@ -148,18 +145,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
             ret, frame = self.cap.read()
 
             self.setFrame(frame)
-
-    # def videoPlaybackSliderMoved(self, value):
-    #     logger.debug("Slider moved to: {0}".format(value))
-    #
-    # def videoPlaybackSliderPressed(self):
-    #     logger.debug("Slider pressed")
-    #
-    # def videoPlaybackSliderReleased(self):
-    #     logger.debug("Slider released")
-    #
-    # def videoPlaybackSliderValueChanged(self, value):
-    #     logger.debug("Slider value changed: {0}".format(value))
 
     def videoPlayback(self):
         if self.cap.isOpened():
