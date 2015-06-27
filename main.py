@@ -321,7 +321,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 frame = self.blocklyWebView.page().mainFrame()
                 self.processSequence(frame)
 
-                text = frame.evaluateJavaScript("Apps.getSelectingCode();")
+                text = frame.evaluateJavaScript("Apps.getCode();")
                 if text is None:
                     return False
 
