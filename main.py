@@ -217,8 +217,8 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.actionOpenVideo.triggered.connect(self.openVideoFile)
         self.actionOpenImage.triggered.connect(self.openImageFile)
 
-        self.actionOpenBlockData.triggered.connect(self.openXMLFile)
-        self.actionSaveBlockData.triggered.connect(self.saveXMLFile)
+        self.actionOpenBlockData.triggered.connect(self.openBlockFile)
+        self.actionSaveBlockData.triggered.connect(self.saveBlockFile)
 
         self.actionSaveFilterData.triggered.connect(self.saveFilterFile)
 
@@ -285,7 +285,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         frame = self.blocklyWebView.page().mainFrame()
         frame.evaluateJavaScript("Apps.setColorThreshold(\"{0}\");".format(rgb))
 
-    def openXMLFile(self):
+    def openBlockFile(self):
         filename, _ = QFileDialog.getOpenFileName(None, 'Open Block File', filePath.userDir, "Block files (*.block)")
 
         if len(filename) is not 0:
@@ -299,7 +299,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 script = "Apps.setXml('{0}');".format(text)
                 ret = frame.evaluateJavaScript(script)
 
-    def saveXMLFile(self):
+    def saveBlockFile(self):
         filename, _ = QFileDialog.getSaveFileName(None, 'Save Block File', filePath.userDir, "Block files (*.block)")
 
         if len(filename) is not 0:
