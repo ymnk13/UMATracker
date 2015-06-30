@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'trackingFixWindow.ui'
 #
-# Created: Tue Jun 30 19:04:32 2015
+# Created: Tue Jun 30 19:07:23 2015
 #      by: PyQt5 UI code generator 5.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -10,10 +10,10 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class trackingFixWindow(object):
-    def setupUi(self, trackingFixWindow):
-        trackingFixWindow.setObjectName("trackingFixWindow")
-        trackingFixWindow.resize(516, 399)
-        self.centralWidget = QtWidgets.QWidget(trackingFixWindow)
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(516, 399)
+        self.centralWidget = QtWidgets.QWidget(MainWindow)
         self.centralWidget.setObjectName("centralWidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralWidget)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -42,13 +42,13 @@ class trackingFixWindow(object):
         self.horizontalLayout.addWidget(self.videoStopButton)
         spacerItem = QtWidgets.QSpacerItem(5, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
-        self.horizontalSlider = QtWidgets.QSlider(self.videoController)
+        self.videoPlaybackSlider = QtWidgets.QSlider(self.videoController)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.horizontalSlider.sizePolicy().hasHeightForWidth())
-        self.horizontalSlider.setSizePolicy(sizePolicy)
-        self.horizontalSlider.setStyleSheet("QSlider::groove:horizontal {\n"
+        sizePolicy.setHeightForWidth(self.videoPlaybackSlider.sizePolicy().hasHeightForWidth())
+        self.videoPlaybackSlider.setSizePolicy(sizePolicy)
+        self.videoPlaybackSlider.setStyleSheet("QSlider::groove:horizontal {\n"
 "border: 1px solid #bbb;\n"
 "background: white;\n"
 "height: 10px;\n"
@@ -103,15 +103,15 @@ class trackingFixWindow(object):
 "border: 1px solid #aaa;\n"
 "border-radius: 4px;\n"
 "}")
-        self.horizontalSlider.setProperty("value", 20)
-        self.horizontalSlider.setSliderPosition(20)
-        self.horizontalSlider.setTracking(True)
-        self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.horizontalSlider.setInvertedAppearance(False)
-        self.horizontalSlider.setInvertedControls(False)
-        self.horizontalSlider.setTickPosition(QtWidgets.QSlider.NoTicks)
-        self.horizontalSlider.setObjectName("horizontalSlider")
-        self.horizontalLayout.addWidget(self.horizontalSlider)
+        self.videoPlaybackSlider.setProperty("value", 20)
+        self.videoPlaybackSlider.setSliderPosition(20)
+        self.videoPlaybackSlider.setTracking(True)
+        self.videoPlaybackSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.videoPlaybackSlider.setInvertedAppearance(False)
+        self.videoPlaybackSlider.setInvertedControls(False)
+        self.videoPlaybackSlider.setTickPosition(QtWidgets.QSlider.NoTicks)
+        self.videoPlaybackSlider.setObjectName("videoPlaybackSlider")
+        self.horizontalLayout.addWidget(self.videoPlaybackSlider)
         self.verticalLayout.addWidget(self.videoController)
         self.dataController = QtWidgets.QWidget(self.centralWidget)
         self.dataController.setObjectName("dataController")
@@ -146,40 +146,40 @@ class trackingFixWindow(object):
         self.debugLabel = QtWidgets.QLabel(self.centralWidget)
         self.debugLabel.setObjectName("debugLabel")
         self.verticalLayout.addWidget(self.debugLabel)
-        trackingFixWindow.setCentralWidget(self.centralWidget)
-        self.menuBar = QtWidgets.QMenuBar(trackingFixWindow)
+        MainWindow.setCentralWidget(self.centralWidget)
+        self.menuBar = QtWidgets.QMenuBar(MainWindow)
         self.menuBar.setGeometry(QtCore.QRect(0, 0, 516, 22))
         self.menuBar.setObjectName("menuBar")
-        trackingFixWindow.setMenuBar(self.menuBar)
-        self.mainToolBar = QtWidgets.QToolBar(trackingFixWindow)
+        MainWindow.setMenuBar(self.menuBar)
+        self.mainToolBar = QtWidgets.QToolBar(MainWindow)
         self.mainToolBar.setObjectName("mainToolBar")
-        trackingFixWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.mainToolBar)
-        self.statusBar = QtWidgets.QStatusBar(trackingFixWindow)
+        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.mainToolBar)
+        self.statusBar = QtWidgets.QStatusBar(MainWindow)
         self.statusBar.setObjectName("statusBar")
-        trackingFixWindow.setStatusBar(self.statusBar)
+        MainWindow.setStatusBar(self.statusBar)
 
-        self.retranslateUi(trackingFixWindow)
-        QtCore.QMetaObject.connectSlotsByName(trackingFixWindow)
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def retranslateUi(self, trackingFixWindow):
+    def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        trackingFixWindow.setWindowTitle(_translate("trackingFixWindow", "MainWindow"))
-        self.videoGoBackwardButton.setText(_translate("trackingFixWindow", "<<"))
-        self.videoPlayButton.setText(_translate("trackingFixWindow", "P"))
-        self.videoPlayButton.setShortcut(_translate("trackingFixWindow", "Meta+S"))
-        self.videoGoForwardButton.setText(_translate("trackingFixWindow", ">>"))
-        self.videoStopButton.setText(_translate("trackingFixWindow", "S"))
-        self.datatTableBox.setTitle(_translate("trackingFixWindow", "データ"))
-        self.dataGraphicsBox.setTitle(_translate("trackingFixWindow", "動画"))
-        self.debugLabel.setText(_translate("trackingFixWindow", "TextLabel"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.videoGoBackwardButton.setText(_translate("MainWindow", "<<"))
+        self.videoPlayButton.setText(_translate("MainWindow", "P"))
+        self.videoPlayButton.setShortcut(_translate("MainWindow", "Meta+S"))
+        self.videoGoForwardButton.setText(_translate("MainWindow", ">>"))
+        self.videoStopButton.setText(_translate("MainWindow", "S"))
+        self.datatTableBox.setTitle(_translate("MainWindow", "データ"))
+        self.dataGraphicsBox.setTitle(_translate("MainWindow", "動画"))
+        self.debugLabel.setText(_translate("MainWindow", "TextLabel"))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    trackingFixWindow = QtWidgets.QMainWindow()
+    MainWindow = QtWidgets.QMainWindow()
     ui = trackingFixWindow()
-    ui.setupUi(trackingFixWindow)
-    trackingFixWindow.show()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
     sys.exit(app.exec_())
 
