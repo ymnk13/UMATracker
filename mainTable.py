@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/07/01 13:06:55 by ymnk>
+# Last-Updated : <2015/07/01 13:14:55 by ymnk>
 from PyQt5.QtWidgets import (QApplication,QWidget,QMainWindow,QTableWidget,QTableWidgetItem,QLineEdit,QSlider,QLabel,QGraphicsWidget,QGraphicsScene,QGraphicsView,QGraphicsItem,QGraphicsEllipseItem)
 from PyQt5.QtWidgets import (QPushButton)
 from PyQt5.QtWidgets import (QHBoxLayout,QVBoxLayout)
@@ -48,6 +48,13 @@ class Ui_fixTrackingWindow(trackingFixWindow):
         self.videoPlaybackSlider.valueChanged.connect(self.videoPlaybackSliderValueChanged)
         self.drawDataPositionToGraphicsView()
 
+
+        self.videoPlaybackTimer = QtCore.QTimer()#parent=self.videoPlaybackWidget)
+        self.videoPlaybackTimer.timeout.connect(self.videoPlayback)
+
+
+
+
     def drawDataPositionToGraphicsView(self):
         self.scene = QGraphicsScene(self.dataGraphicsBox)
         self.graphicsView.setScene(self.scene)
@@ -57,7 +64,13 @@ class Ui_fixTrackingWindow(trackingFixWindow):
             ID,X,Y = item.value("id"),item.value("x"),item.value("Y")
             self.scene.addItem(CircleItem(X,Y,5,5,Qt.black))
             
-            
+    def videoPlayback(self):
+        pass
+    def videoPlayStopButtonClicked(self):
+        if self.videoPlaybackTimer.isActive():
+            self.videoPlaybackTimer.stop()
+        else:
+            pass
 
     def videoPlaybackSliderValueChanged(self,sliderValue):
         self.model.setFilter( "frameN='{0}'".format(sliderValue))
