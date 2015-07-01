@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/07/01 12:19:30 by ymnk>
+# Last-Updated : <2015/07/01 13:06:55 by ymnk>
 from PyQt5.QtWidgets import (QApplication,QWidget,QMainWindow,QTableWidget,QTableWidgetItem,QLineEdit,QSlider,QLabel,QGraphicsWidget,QGraphicsScene,QGraphicsView,QGraphicsItem,QGraphicsEllipseItem)
 from PyQt5.QtWidgets import (QPushButton)
 from PyQt5.QtWidgets import (QHBoxLayout,QVBoxLayout)
@@ -20,6 +20,25 @@ import misc
 sys.path.append( os.path.join(filePath.pythonLibDirPath, 'ui') )
 from trackingFixWindow import *
 
+class CircleItem(QGraphicsEllipseItem):
+    def __init__(self,x,y,width,height,pen,parent = None):
+        super(QGraphicsEllipseItem, self).__init__(x,y,width,height)
+        #self.setFlag(QGraphicsItem.ItemIsMovable)
+        self.setFlags(  self.flags()                            |
+                        QGraphicsItem.ItemIsSelectable          |
+                        QGraphicsItem.ItemIsMovable             |
+                        QGraphicsItem.ItemIsFocusable           |
+                        QGraphicsItem.ItemSendsScenePositionChanges )
+        
+    def paint(self,painter,option = None,widget = None):
+        painter.setBrush(Qt.red)
+        painter.drawEllipse(self.rect())
+    def itemChange(self, change, variant):
+        super(CircleItem, self).itemChange(change, variant)
+        if change == QGraphicsItem.ItemPositionChange:
+            #self.setParentItem(None)
+            None
+        return QGraphicsItem.itemChange(self, change, variant)
 
 class Ui_fixTrackingWindow(trackingFixWindow):
     def setupUi(self,MainWindow, path):
@@ -27,15 +46,30 @@ class Ui_fixTrackingWindow(trackingFixWindow):
         self.databaseInit()
         self.setSliderMaximum()
         self.videoPlaybackSlider.valueChanged.connect(self.videoPlaybackSliderValueChanged)
+        self.drawDataPositionToGraphicsView()
+
+    def drawDataPositionToGraphicsView(self):
+        self.scene = QGraphicsScene(self.dataGraphicsBox)
+        self.graphicsView.setScene(self.scene)
+        blackpen = Qt.black
+        for i in xrange(self.model.rowCount()):
+            item = self.model.record(i)
+            ID,X,Y = item.value("id"),item.value("x"),item.value("Y")
+            self.scene.addItem(CircleItem(X,Y,5,5,Qt.black))
+            
+            
 
     def videoPlaybackSliderValueChanged(self,sliderValue):
         self.model.setFilter( "frameN='{0}'".format(sliderValue))
+        self.drawDataPositionToGraphicsView()
     def setSliderMaximum(self):
         query = QSqlQuery()
         query.exec_("select max(frameN) from dates")
         query.next()
         maxFrameN = int(query.value(0))
         self.videoPlaybackSlider.setMaximum(maxFrameN)
+        self.model.setFilter("frameN='{0}'".format(self.videoPlaybackSlider.value()));
+
 
     def databaseInit(self):
         self.db = QSqlDatabase.addDatabase("QSQLITE");
@@ -61,9 +95,9 @@ class Ui_fixTrackingWindow(trackingFixWindow):
 
         
         self.model = QSqlTableModel(None,self.db)
-        self.model.setTable('dates') #<= すごくたいせつ
+        self.model.setTable('dates')
         self.model.setEditStrategy(QSqlTableModel.OnManualSubmit)
-        self.model.setFilter( "frameN='105'" );
+        
         self.model.select()
   
         self.model.setHeaderData(0, Qt.Horizontal, "ID")
