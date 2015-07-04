@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/07/05 00:51:02 by ymnk>
+# Last-Updated : <2015/07/05 01:17:24 by ymnk>
 from PyQt5.QtWidgets import (QApplication,QWidget,QMainWindow,QTableWidget,QTableWidgetItem,QLineEdit,QSlider,QLabel,QGraphicsWidget,QGraphicsScene,QGraphicsView,QGraphicsItem,QGraphicsEllipseItem)
 from PyQt5.QtWidgets import (QPushButton)
 from PyQt5.QtWidgets import (QHBoxLayout,QVBoxLayout)
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import Qt,QVariant
 from PyQt5.QtSql import QSqlTableModel,QSqlDatabase,QSqlQuery
+from PyQt5.QtGui import QColor
 import sys,os
 import numpy as np
 import sqlite3
@@ -23,16 +24,17 @@ from trackingFixWindow import *
 class CircleItem(QGraphicsEllipseItem):
     def __init__(self,x,y,width,height,pen,parent = None):
         super(QGraphicsEllipseItem, self).__init__(x,y,width,height)
-        #self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlags(  self.flags()                            |
                         QGraphicsItem.ItemIsSelectable          |
                         QGraphicsItem.ItemIsMovable             |
                         QGraphicsItem.ItemIsFocusable           |
                         QGraphicsItem.ItemSendsScenePositionChanges )
-        
+    def mouseDoubleClickEvent(self,event):
+        print "A"
     def paint(self,painter,option = None,widget = None):
-        painter.setBrush(Qt.red)
+        painter.setBrush(QColor(0,255,0))
         painter.drawEllipse(self.rect())
+
     def itemChange(self, change, variant):
         super(CircleItem, self).itemChange(change, variant)
         if change == QGraphicsItem.ItemPositionChange:
@@ -46,13 +48,11 @@ class Ui_fixTrackingWindow(trackingFixWindow):
 
         self.databaseInit()
         self.setSliderMaximum()
-        self.videoPlaybackSlider.valueChanged.connect(self.videoPlaybackSliderValueChanged)
-        
         self.drawDataPositionToGraphicsView()
-        
+
+        self.videoPlaybackSlider.valueChanged.connect(self.videoPlaybackSliderValueChanged)
         self.videoPlayButton.clicked.connect(self.videoPlayStopButtonClicked)
-        self.videoPlaybackTimer = QtCore.QTimer()#parent=self.videoPlaybackWidget)
-        
+        self.videoPlaybackTimer = QtCore.QTimer()        
         self.videoPlaybackTimer.setInterval(1000/30)
         self.videoPlaybackTimer.timeout.connect(self.videoPlayback)
         self.videoStopButton.clicked.connect(self.videoStopButtonClicked)
@@ -60,7 +60,17 @@ class Ui_fixTrackingWindow(trackingFixWindow):
     def drawDataPositionToGraphicsView(self):
         self.scene = QGraphicsScene(self.dataGraphicsBox) #ここ
         self.graphicsView.setScene(self.scene)
-        blackpen = Qt.black
+        query = QSqlQuery()
+        sliderValue = self.videoPlaybackSlider.value()
+        query.exec_("SELECT id,frameN,x,y,DogTag FROM dates where frameN >= {0} and frameN <={1}".format(sliderValue-30 if sliderValue-30 > 0 else 0,sliderValue))
+        
+        while query.next():
+            frameN = query.value("frameN")
+            X = query.value("x")
+            Y = query.value("y")
+            dogtag = query.value("DogTag")
+            self.scene.addItem(CircleItem(X,Y,5,5,Qt.black))
+
         for i in xrange(self.model.rowCount()):
             item = self.model.record(i)
             ID,X,Y = item.value("id"),item.value("x"),item.value("Y")
