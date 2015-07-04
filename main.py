@@ -351,7 +351,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
         im_output = None
 
         frame = self.blocklyWebView.page().mainFrame()
-        self.processSequence(frame)
 
         text = frame.evaluateJavaScript("Apps.getCodeFromSelectedBlock();")
         if text is None:
@@ -387,10 +386,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
         self.outputGraphicsView.viewport().update()
         self.outputGraphicsViewResized()
-
-    def processSequence(self, frame):
-        buttonExecute = frame.findFirstElement('#execute')
-        script = frame.findFirstElement('#SCRIPT')
 
 
 if __name__ == "__main__":
