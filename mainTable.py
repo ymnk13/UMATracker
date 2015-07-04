@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/07/01 13:14:55 by ymnk>
+# Last-Updated : <2015/07/05 00:51:02 by ymnk>
 from PyQt5.QtWidgets import (QApplication,QWidget,QMainWindow,QTableWidget,QTableWidgetItem,QLineEdit,QSlider,QLabel,QGraphicsWidget,QGraphicsScene,QGraphicsView,QGraphicsItem,QGraphicsEllipseItem)
 from PyQt5.QtWidgets import (QPushButton)
 from PyQt5.QtWidgets import (QHBoxLayout,QVBoxLayout)
@@ -43,38 +43,49 @@ class CircleItem(QGraphicsEllipseItem):
 class Ui_fixTrackingWindow(trackingFixWindow):
     def setupUi(self,MainWindow, path):
         super(Ui_fixTrackingWindow, self).setupUi(MainWindow)
+
         self.databaseInit()
         self.setSliderMaximum()
         self.videoPlaybackSlider.valueChanged.connect(self.videoPlaybackSliderValueChanged)
+        
         self.drawDataPositionToGraphicsView()
-
-
+        
+        self.videoPlayButton.clicked.connect(self.videoPlayStopButtonClicked)
         self.videoPlaybackTimer = QtCore.QTimer()#parent=self.videoPlaybackWidget)
+        
+        self.videoPlaybackTimer.setInterval(1000/30)
         self.videoPlaybackTimer.timeout.connect(self.videoPlayback)
-
-
-
+        self.videoStopButton.clicked.connect(self.videoStopButtonClicked)
 
     def drawDataPositionToGraphicsView(self):
-        self.scene = QGraphicsScene(self.dataGraphicsBox)
+        self.scene = QGraphicsScene(self.dataGraphicsBox) #ここ
         self.graphicsView.setScene(self.scene)
         blackpen = Qt.black
         for i in xrange(self.model.rowCount()):
             item = self.model.record(i)
             ID,X,Y = item.value("id"),item.value("x"),item.value("Y")
             self.scene.addItem(CircleItem(X,Y,5,5,Qt.black))
-            
+
+    def videoStopButtonClicked(self):
+        if self.videoPlaybackTimer.isActive():
+            self.videoPlaybackTimer.stop()
+        self.videoPlaybackSlider.setValue(0)
+
     def videoPlayback(self):
-        pass
+        self.videoPlaybackSlider.setValue(1+self.videoPlaybackSlider.value())
+    
     def videoPlayStopButtonClicked(self):
         if self.videoPlaybackTimer.isActive():
             self.videoPlaybackTimer.stop()
         else:
-            pass
+            self.videoPlaybackTimer.start()
+            
+
 
     def videoPlaybackSliderValueChanged(self,sliderValue):
         self.model.setFilter( "frameN='{0}'".format(sliderValue))
         self.drawDataPositionToGraphicsView()
+
     def setSliderMaximum(self):
         query = QSqlQuery()
         query.exec_("select max(frameN) from dates")
