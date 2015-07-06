@@ -304,7 +304,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
             with open(misc.utfToSystemStr(filename), mode="w") as f:
                 frame = self.blocklyWebView.page().mainFrame()
-                self.processSequence(frame)
 
                 text = frame.evaluateJavaScript("Apps.getCodeFromWorkspace();")
                 if text is None:
