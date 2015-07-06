@@ -336,10 +336,10 @@ class Ui_MainWindow(Ui_MainWindowBase):
         classMembers.append(indents + indents + "return")
         filterOperations.append(indents + indents + "return {output}")
 
-        classMenbersStr = "\n".join(classMembers)
+        classMembersStr = "\n".join(classMembers)
         filterOperationsStr = "\n".join(filterOperations)
 
-        constructorStr = "\n".join([indents + "def __init__(self, im_input):", classMenbersStr])
+        constructorStr = "\n".join([indents + "def __init__(self, im_input):", classMembersStr])
         filterFuncStr  = "\n".join([indents + "def filterFunc(self, im_input):", filterOperationsStr])
 
         filterOperationClassStr = "\n".join(["class filterOperation:", constructorStr, filterFuncStr])
