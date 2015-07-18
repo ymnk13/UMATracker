@@ -182,6 +182,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
     def imgInit(self):
         self.cap = None
+        self.filename = os.path.join(filePath.sampleDataPath,"color_filter_test.png")
         self.cv_img = cv2.imread(os.path.join(filePath.sampleDataPath,"color_filter_test.png"))
 
         self.inputScene = QGraphicsScene()
@@ -213,10 +214,12 @@ class Ui_MainWindow(Ui_MainWindowBase):
             self.cap.release()
             self.cap = None
 
-    def openVideoFile(self):
-        filename, _ = QFileDialog.getOpenFileName(None, 'Open Video File', filePath.userDir)
+    def openVideoFile(self,filename = None):
+        if not filename:
+            filename, _ = QFileDialog.getOpenFileName(None, 'Open Video File', filePath.userDir)
 
         if len(filename) is not 0:
+            self.filename = filename
             self.releaseVideoCapture()
             self.cap = cv2.VideoCapture(misc.utfToSystemStr(filename))
 
@@ -231,11 +234,14 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
                 # Initialize Filter when opening new file.
                 self.filterClassHash = None
+                
 
-    def openImageFile(self):
-        filename, _ = QFileDialog.getOpenFileName(None, 'Open Image File', filePath.userDir)
-
+    def openImageFile(self,filename = None):
+        if filename == None or filename == False:
+            filename, _ = QFileDialog.getOpenFileName(None, 'Open Image File', filePath.userDir)
+            
         if len(filename) is not 0:
+            self.filename = filename
             self.cv_img = cv2.imread(misc.utfToSystemStr(filename))
             self.videoPlaybackWidget.hide()
 
@@ -284,6 +290,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 frame = self.blocklyWebView.page().mainFrame()
                 script = "Apps.setBlockData('{0}');".format(text)
                 ret = frame.evaluateJavaScript(script)
+                
     def openFilterFile(self):
         filename, _ = QFileDialog.getOpenFileName(None, 'Open Block File', filePath.userDir, "Block files (*.filter)")
         if len(filename) is 0:
@@ -292,14 +299,24 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
         with open(filename) as f:
             text = f.read()
-
             exec(text)
             xmlText = filterOperation.xmlText
+            if filterOperation.imageFile:
+                imageFileName = filterOperation.imageFile
+                self.filename = imageFileName
+            else:
+                self.filename = None
             text = re.sub(r"[\n\r]","",xmlText)
             script = "Apps.setBlockData('{0}');".format(text)
             frame = self.blocklyWebView.page().mainFrame()
             frame.evaluateJavaScript(script)
-            
+
+            if self.filename:
+                root,ext = os.path.splitext(self.filename)
+                if ext in [".png",".jpg",".bmp"]:
+                    self.openImageFile(self.filename)
+                else:
+                    self.openVideoFile(self.filename)
         
         
     def saveBlockFile(self):
@@ -313,7 +330,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 text = frame.evaluateJavaScript("Apps.getBlockData();")
 
                 f.write(text)
-
+                
     def saveFilterFile(self):
         filename, _ = QFileDialog.getSaveFileName(None, 'Save Filter File', filePath.userDir, "Filter files (*.filter)")
 
@@ -328,7 +345,8 @@ class Ui_MainWindow(Ui_MainWindowBase):
                     return False
                 xmlText = frame.evaluateJavaScript("Apps.getBlockData();")
 
-                text = self.parseToClass(text,{"xmlText":xmlText})
+                text = self.parseToClass(text,{"xmlText":xmlText,
+                                               "imageFile":self.filename})
                 
                 f.write(text)
 
