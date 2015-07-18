@@ -206,7 +206,8 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.actionSaveBlockData.triggered.connect(self.saveBlockFile)
 
         self.actionSaveFilterData.triggered.connect(self.saveFilterFile)
-
+        self.actionOpenFilterData.triggered.connect(self.openFilterFile)
+        
     def releaseVideoCapture(self):
         if self.cap is not None:
             self.cap.release()
@@ -279,11 +280,28 @@ class Ui_MainWindow(Ui_MainWindowBase):
             with open(misc.utfToSystemStr(filename)) as f:
                 text = f.read()
                 text = re.sub(r"[\n\r]","",text)
-
+                print text
                 frame = self.blocklyWebView.page().mainFrame()
                 script = "Apps.setBlockData('{0}');".format(text)
                 ret = frame.evaluateJavaScript(script)
+    def openFilterFile(self):
+        filename, _ = QFileDialog.getOpenFileName(None, 'Open Block File', filePath.userDir, "Block files (*.filter)")
+        if len(filename) is 0:
+            return
+        logger.debug("Open Filter file: {0}".format(filename))
 
+        with open(filename) as f:
+            text = f.read()
+
+            exec(text)
+            xmlText = filterOperation.xmlText
+            text = re.sub(r"[\n\r]","",xmlText)
+            script = "Apps.setBlockData('{0}');".format(text)
+            frame = self.blocklyWebView.page().mainFrame()
+            frame.evaluateJavaScript(script)
+            
+        
+        
     def saveBlockFile(self):
         filename, _ = QFileDialog.getSaveFileName(None, 'Save Block File', filePath.userDir, "Block files (*.block)")
 
@@ -308,8 +326,10 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 text = frame.evaluateJavaScript("Apps.getCodeFromWorkspace();")
                 if text is None:
                     return False
+                xmlText = frame.evaluateJavaScript("Apps.getBlockData();")
 
-                text = self.parseToClass(text)
+                text = self.parseToClass(text,{"xmlText":xmlText})
+                
                 f.write(text)
 
     def inputGraphicsViewResized(self, event=None):
@@ -319,7 +339,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.outputGraphicsView.fitInView(self.outputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
 
 
-    def parseToClass(self, text):
+    def parseToClass(self, text,metaInfo = {}):
         lines = text.split("\n")
         indents = "    "
 
@@ -338,11 +358,16 @@ class Ui_MainWindow(Ui_MainWindowBase):
         classMembersStr = "\n".join(classMembers)
         filterOperationsStr = "\n".join(filterOperations)
 
+        metaInfoStr = ""
+        metaInfoLists = []
+        for i,elem in metaInfo.items():
+            metaInfoLists.append("\n".join([indents + "{0} = \"\"\"\n{1}\n\"\"\"".format(i,elem)]))
+        metaInfoStr = "\n".join(metaInfoLists)
+            
         constructorStr = "\n".join([indents + "def __init__(self, im_input):", classMembersStr])
         filterFuncStr  = "\n".join([indents + "def filterFunc(self, im_input):", filterOperationsStr])
-
-        filterOperationClassStr = "\n".join(["class filterOperation:", constructorStr, filterFuncStr])
-
+        filterOperationClassStr = "\n".join(["class filterOperation:", metaInfoStr , constructorStr, filterFuncStr])
+        
         return filterOperationClassStr.format(input="im_input", output="im_output")
 
 
@@ -354,8 +379,10 @@ class Ui_MainWindow(Ui_MainWindowBase):
         text = frame.evaluateJavaScript("Apps.getCodeFromSelectedBlock();")
         if text is None:
             return False
-
+        
+        xmlText = frame.evaluateJavaScript("Apps.getBlockData();")
         text = self.parseToClass(text)
+
         logger.debug("Generated Code: {0}".format(text))
 
         # TODO: あまりにも大きいイメージは縮小しないと処理がなかなか終わらない
