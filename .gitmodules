@@ -1,6 +1,7 @@
 [submodule "lib/closure-library"]
 	path = lib/closure-library
 	url = git@github.com:ymnk13/closure-library.git
+	ignore = dirty
 [submodule "lib/blockly"]
 	path = lib/blockly
 	url = git@github.com:ymnk13/blockly.git

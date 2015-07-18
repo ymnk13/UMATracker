@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '.\MainWindowBase.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.1
+# Created by: PyQt5 UI code generator 5.4.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindowBase(object):
     def setupUi(self, MainWindowBase):
         MainWindowBase.setObjectName("MainWindowBase")
-        MainWindowBase.resize(731, 493)
+        MainWindowBase.resize(886, 493)
         self.centralwidget = QtWidgets.QWidget(MainWindowBase)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -69,7 +69,6 @@ class Ui_MainWindowBase(object):
         self.videoPlaybackWidget = QtWidgets.QWidget(self.graphicsBox)
         self.videoPlaybackWidget.setObjectName("videoPlaybackWidget")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.videoPlaybackWidget)
-        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.videoPlaybackButtons = QtWidgets.QHBoxLayout()
         self.videoPlaybackButtons.setObjectName("videoPlaybackButtons")
@@ -110,7 +109,7 @@ class Ui_MainWindowBase(object):
         self.gridLayout.addWidget(self.tabWidget, 0, 0, 1, 1)
         MainWindowBase.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindowBase)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 731, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 886, 29))
         self.menubar.setObjectName("menubar")
         self.menuFiles = QtWidgets.QMenu(self.menubar)
         self.menuFiles.setObjectName("menuFiles")
@@ -128,11 +127,15 @@ class Ui_MainWindowBase(object):
         self.actionSaveBlockData.setObjectName("actionSaveBlockData")
         self.actionQuit = QtWidgets.QAction(MainWindowBase)
         self.actionQuit.setObjectName("actionQuit")
+        self.actionSaveFilterData = QtWidgets.QAction(MainWindowBase)
+        self.actionSaveFilterData.setObjectName("actionSaveFilterData")
         self.menuFiles.addAction(self.actionOpenVideo)
         self.menuFiles.addAction(self.actionOpenImage)
         self.menuFiles.addSeparator()
         self.menuFiles.addAction(self.actionOpenBlockData)
         self.menuFiles.addAction(self.actionSaveBlockData)
+        self.menuFiles.addSeparator()
+        self.menuFiles.addAction(self.actionSaveFilterData)
         self.menuFiles.addSeparator()
         self.menuFiles.addAction(self.actionQuit)
         self.menubar.addAction(self.menuFiles.menuAction())
@@ -162,6 +165,7 @@ class Ui_MainWindowBase(object):
         self.actionSaveBlockData.setText(_translate("MainWindowBase", "Save Block Data"))
         self.actionQuit.setText(_translate("MainWindowBase", "Quit"))
         self.actionQuit.setShortcut(_translate("MainWindowBase", "Ctrl+Q"))
+        self.actionSaveFilterData.setText(_translate("MainWindowBase", "Save Filter Data"))
 
 from PyQt5 import QtWebKitWidgets
 

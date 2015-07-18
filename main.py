@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, sys
+import os, sys, re, hashlib
 
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsPixmapItem, QFrame, QFileDialog
@@ -59,9 +59,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.videoGoBackwardButton.setAutoRepeatInterval(10)
 
         self.videoPlaybackSlider.actionTriggered.connect(self.videoPlaybackSliderActionTriggered)
-        # self.videoPlaybackSlider.sliderMoved.connect(self.videoPlaybackSliderMoved)
-        # self.videoPlaybackSlider.sliderPressed.connect(self.videoPlaybackSliderPressed)
-        # self.videoPlaybackSlider.sliderReleased.connect(self.videoPlaybackSliderReleased)
 
         self.videoPlaybackTimer = QtCore.QTimer(parent=self.videoPlaybackWidget)
         self.videoPlaybackTimer.timeout.connect(self.videoPlayback)
@@ -149,18 +146,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
             self.setFrame(frame)
 
-    # def videoPlaybackSliderMoved(self, value):
-    #     logger.debug("Slider moved to: {0}".format(value))
-    #
-    # def videoPlaybackSliderPressed(self):
-    #     logger.debug("Slider pressed")
-    #
-    # def videoPlaybackSliderReleased(self):
-    #     logger.debug("Slider released")
-    #
-    # def videoPlaybackSliderValueChanged(self, value):
-    #     logger.debug("Slider value changed: {0}".format(value))
-
     def videoPlayback(self):
         if self.cap.isOpened():
             nextFrame = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
@@ -192,6 +177,9 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.blocklyEvaluationTimer.timeout.connect(self.evaluateSelectedBlock)
         self.blocklyEvaluationTimer.start()
 
+        self.filterClassHash = None
+        self.filter = None
+
     def imgInit(self):
         self.cap = None
         self.cv_img = cv2.imread(os.path.join(filePath.sampleDataPath,"color_filter_test.png"))
@@ -213,8 +201,11 @@ class Ui_MainWindow(Ui_MainWindowBase):
     def menuInit(self):
         self.actionOpenVideo.triggered.connect(self.openVideoFile)
         self.actionOpenImage.triggered.connect(self.openImageFile)
-        self.actionOpenBlockData.triggered.connect(self.openXMLFile)
-        self.actionSaveBlockData.triggered.connect(self.saveXMLFile)
+
+        self.actionOpenBlockData.triggered.connect(self.openBlockFile)
+        self.actionSaveBlockData.triggered.connect(self.saveBlockFile)
+
+        self.actionSaveFilterData.triggered.connect(self.saveFilterFile)
 
     def releaseVideoCapture(self):
         if self.cap is not None:
@@ -237,6 +228,9 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 self.cv_img = frame
                 self.updateInputGraphicsView()
 
+                # Initialize Filter when opening new file.
+                self.filterClassHash = None
+
     def openImageFile(self):
         filename, _ = QFileDialog.getOpenFileName(None, 'Open Image File', filePath.userDir)
 
@@ -246,6 +240,9 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
             self.updateInputGraphicsView()
             self.releaseVideoCapture()
+
+            # Initialize Filter when opening new file.
+            self.filterClassHash = None
 
     def updateInputGraphicsView(self):
         self.inputScene.clear()
@@ -270,17 +267,50 @@ class Ui_MainWindow(Ui_MainWindowBase):
         rgb = QColor(pix).name()
         logger.debug("Selected pixel color: {0}".format(rgb))
 
-        clipboard = QtWidgets.QApplication.clipboard()
-        clipboard.setText(rgb)
+        frame = self.blocklyWebView.page().mainFrame()
+        frame.evaluateJavaScript("Apps.setColorFilterBlock('{0}');".format(rgb))
 
-    def openXMLFile(self):
-        filename, _ = QFileDialog.getOpenFileName(None, 'Open XML File', filePath.userDir)
+    def openBlockFile(self):
+        filename, _ = QFileDialog.getOpenFileName(None, 'Open Block File', filePath.userDir, "Block files (*.block)")
 
         if len(filename) is not 0:
-            logger.debug("Opening XML file: {0}".format(filename))
+            logger.debug("Opening Block file: {0}".format(filename))
 
-    def saveXMLFile(self):
-        filename, _ = QFileDialog.getOpenFileName(None, 'Save XML File', filePath.userDir)
+            with open(misc.utfToSystemStr(filename)) as f:
+                text = f.read()
+                text = re.sub(r"[\n\r]","",text)
+
+                frame = self.blocklyWebView.page().mainFrame()
+                script = "Apps.setBlockData('{0}');".format(text)
+                ret = frame.evaluateJavaScript(script)
+
+    def saveBlockFile(self):
+        filename, _ = QFileDialog.getSaveFileName(None, 'Save Block File', filePath.userDir, "Block files (*.block)")
+
+        if len(filename) is not 0:
+            logger.debug("Saving Block file: {0}".format(filename))
+
+            with open(misc.utfToSystemStr(filename), mode="w") as f:
+                frame = self.blocklyWebView.page().mainFrame()
+                text = frame.evaluateJavaScript("Apps.getBlockData();")
+
+                f.write(text)
+
+    def saveFilterFile(self):
+        filename, _ = QFileDialog.getSaveFileName(None, 'Save Filter File', filePath.userDir, "Filter files (*.filter)")
+
+        if len(filename) is not 0:
+            logger.debug("Saving Filter file: {0}".format(filename))
+
+            with open(misc.utfToSystemStr(filename), mode="w") as f:
+                frame = self.blocklyWebView.page().mainFrame()
+
+                text = frame.evaluateJavaScript("Apps.getCodeFromWorkspace();")
+                if text is None:
+                    return False
+
+                text = self.parseToClass(text)
+                f.write(text)
 
     def inputGraphicsViewResized(self, event=None):
         self.inputGraphicsView.fitInView(self.inputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
@@ -288,28 +318,62 @@ class Ui_MainWindow(Ui_MainWindowBase):
     def outputGraphicsViewResized(self, event=None):
         self.outputGraphicsView.fitInView(self.outputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
 
+
+    def parseToClass(self, text):
+        lines = text.split("\n")
+        indents = "    "
+
+        classMemberPattern = r"^#"
+
+        classMembers = []
+        filterOperations = []
+        for line in lines:
+            if re.match(classMemberPattern, line):
+                classMembers.append(indents + indents + line.lstrip("#"))
+            else:
+                filterOperations.append(indents + indents + line)
+        classMembers.append(indents + indents + "return")
+        filterOperations.append(indents + indents + "return {output}")
+
+        classMembersStr = "\n".join(classMembers)
+        filterOperationsStr = "\n".join(filterOperations)
+
+        constructorStr = "\n".join([indents + "def __init__(self, im_input):", classMembersStr])
+        filterFuncStr  = "\n".join([indents + "def filterFunc(self, im_input):", filterOperationsStr])
+
+        filterOperationClassStr = "\n".join(["class filterOperation:", constructorStr, filterFuncStr])
+
+        return filterOperationClassStr.format(input="im_input", output="im_output")
+
+
     def evaluateSelectedBlock(self):
         im_output = None
 
         frame = self.blocklyWebView.page().mainFrame()
-        self.processSequence(frame)
 
-        text = frame.evaluateJavaScript("Apps.getSelectingCode()")
+        text = frame.evaluateJavaScript("Apps.getCodeFromSelectedBlock();")
         if text is None:
             return False
 
+        text = self.parseToClass(text)
+        logger.debug("Generated Code: {0}".format(text))
 
         # TODO: あまりにも大きいイメージは縮小しないと処理がなかなか終わらない
         #       ので，そうしたほうがいい．
-        im_input = self.cv_img
 
+        textHash = hashlib.md5(text.encode())
+        if self.filterClassHash != textHash:
+            self.filterClassHash = textHash
+            try:
+                exec(text)
+                self.filter = filterOperation(self.cv_img)
+            except Exception as e:
+                logger.debug("Block Evaluation Error: {0}".format(e))
 
-        logger.debug("Generated Code: {0}".format(text))
         try:
-            exec(text)
+            im_output = self.filter.filterFunc(self.cv_img)
         except Exception as e:
-            logger.debug("Block Evaluation Error: {0}".format(e))
-
+            logger.debug("Filter execution Error: {0}".format(e))
 
         if im_output is None:
             return False
@@ -321,10 +385,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
         self.outputGraphicsView.viewport().update()
         self.outputGraphicsViewResized()
-
-    def processSequence(self, frame):
-        buttonExecute = frame.findFirstElement('#execute')
-        script = frame.findFirstElement('#SCRIPT')
 
 
 if __name__ == "__main__":

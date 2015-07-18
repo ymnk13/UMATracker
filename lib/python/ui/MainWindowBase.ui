@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>731</width>
+    <width>886</width>
     <height>493</height>
    </rect>
   </property>
@@ -189,8 +189,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>731</width>
-     <height>21</height>
+     <width>886</width>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">
@@ -202,6 +202,8 @@
     <addaction name="separator"/>
     <addaction name="actionOpenBlockData"/>
     <addaction name="actionSaveBlockData"/>
+    <addaction name="separator"/>
+    <addaction name="actionSaveFilterData"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -234,6 +236,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionSaveFilterData">
+   <property name="text">
+    <string>Save Filter Data</string>
    </property>
   </action>
  </widget>
