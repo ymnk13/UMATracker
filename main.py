@@ -45,6 +45,10 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.menuInit()
         self.menubar.setNativeMenuBar(False)
         MainWindow.dragFile.connect(self.draganddrop)
+        MainWindow.closeUi.connect(self.closeUi)
+    def closeUi(self):
+        self.releaseVideoCapture()
+
     def draganddrop(self,filename):
         filename = re.split(r"file://(.*)",filename)[1]
         root,ext = os.path.splitext(filename)
@@ -458,6 +462,7 @@ from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
     
 class QMainWindow(QtWidgets.QMainWindow):
     dragFile = pyqtSignal(str)
+    closeUi = pyqtSignal()
     def __init__(self):
         super(QtWidgets.QMainWindow, self).__init__()
     def dragEnterEvent(self, e):
@@ -473,6 +478,8 @@ class QMainWindow(QtWidgets.QMainWindow):
             e.accept()
         else:
             e.ignore()
+    def closeEvent(self, event):
+        self.closeUi.emit()
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
