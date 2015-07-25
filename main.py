@@ -44,13 +44,16 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.imgInit()
         self.menuInit()
         self.menubar.setNativeMenuBar(False)
-        MainWindow.dragFile.connect(self.test)
-    def test(self,v):
-        root,ext = os.path.splitext(v)
+        MainWindow.dragFile.connect(self.draganddrop)
+    def draganddrop(self,filename):
+        filename = re.split(r"file://(.*)",filename)[1]
+        root,ext = os.path.splitext(filename)
         if ext == ".filter":
-            print "filter"
+            # Read Filter
+            self.openFilterFile(filename)
         elif ext.lower() in [".avi",".mpg"]:
-            print "Movie"
+            # Read Video
+            self.openVideoFile(filename)
         
     def videoPlaybackInit(self):
         self.videoPlaybackWidget.hide()
@@ -299,8 +302,9 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 script = "Apps.setBlockData('{0}');".format(text)
                 ret = frame.evaluateJavaScript(script)
                 
-    def openFilterFile(self):
-        filename, _ = QFileDialog.getOpenFileName(None, 'Open Block File', filePath.userDir, "Block files (*.filter)")
+    def openFilterFile(self,filename = None):
+        if filename == None:
+            filename, _ = QFileDialog.getOpenFileName(None, 'Open Block File', filePath.userDir, "Block files (*.filter)")
         if len(filename) is 0:
             return
         logger.debug("Open Filter file: {0}".format(filename))
