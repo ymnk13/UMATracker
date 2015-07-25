@@ -44,6 +44,13 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.imgInit()
         self.menuInit()
         self.menubar.setNativeMenuBar(False)
+        MainWindow.dragFile.connect(self.test)
+    def test(self,v):
+        root,ext = os.path.splitext(v)
+        if ext == ".filter":
+            print "filter"
+        elif ext.lower() in [".avi",".mpg"]:
+            print "Movie"
         
     def videoPlaybackInit(self):
         self.videoPlaybackWidget.hide()
@@ -439,9 +446,31 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.outputGraphicsViewResized()
 
 
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
+    
+class QMainWindow(QtWidgets.QMainWindow):
+    dragFile = pyqtSignal(str)
+    def __init__(self):
+        super(QtWidgets.QMainWindow, self).__init__()
+    def dragEnterEvent(self, e):
+        e.accept()
+    def dropEvent(self, e):
+        e.setDropAction(QtCore.Qt.MoveAction)
+        
+        mime = e.mimeData()
+        if mime.hasUrls():
+            urls = mime.urls()
+            if len(urls) > 0:
+                self.dragFile.emit(urls[0].toString())
+            e.accept()
+        else:
+            e.ignore()
+        
+
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
+    #MainWindow = QtWidgets.QMainWindow()
+    MainWindow = QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow,filePath.currentDirPath)
     MainWindow.show()
