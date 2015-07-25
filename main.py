@@ -43,7 +43,8 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.blocklyInit()
         self.imgInit()
         self.menuInit()
-
+        self.menubar.setNativeMenuBar(False)
+        
     def videoPlaybackInit(self):
         self.videoPlaybackWidget.hide()
 
@@ -379,7 +380,10 @@ class Ui_MainWindow(Ui_MainWindowBase):
         metaInfoStr = ""
         metaInfoLists = []
         for i,elem in metaInfo.items():
-            metaInfoLists.append("\n".join([indents + "{0} = \"\"\"\n{1}\n\"\"\"".format(i,elem)]))
+            if len(elem.split("\n")) > 1:
+                metaInfoLists.append("\n".join([indents + "{0} = \"\"\"\n{1}\n\"\"\"".format(i,elem)]))
+            else:
+                metaInfoLists.append("\n".join([indents + "{0} = \"{1}\"".format(i,elem)]))
         metaInfoStr = "\n".join(metaInfoLists)
             
         constructorStr = "\n".join([indents + "def __init__(self, im_input):", classMembersStr])
