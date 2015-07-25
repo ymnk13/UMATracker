@@ -399,6 +399,9 @@ class Ui_MainWindow(Ui_MainWindowBase):
         frame = self.blocklyWebView.page().mainFrame()
 
         text = frame.evaluateJavaScript("Apps.getCodeFromSelectedBlock();")
+        if text == "" or text is None:
+            text = frame.evaluateJavaScript("Apps.getCodeFromWorkspace();")
+
         if text is None:
             return False
         
