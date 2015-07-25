@@ -307,32 +307,32 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 ret = frame.evaluateJavaScript(script)
                 
     def openFilterFile(self,filename = None):
-        if filename == None:
+        if not filename:
             filename, _ = QFileDialog.getOpenFileName(None, 'Open Block File', filePath.userDir, "Block files (*.filter)")
-        if len(filename) is 0:
-            return
-        logger.debug("Open Filter file: {0}".format(filename))
+        
+        if len(filename) is not 0:
+            logger.debug("Open Filter file: {0}".format(filename))
 
-        with open(filename) as f:
-            text = f.read()
-            exec(text)
-            xmlText = filterOperation.xmlText
-            if filterOperation.imageFile:
-                imageFileName = filterOperation.imageFile
-                self.filename = imageFileName
-            else:
-                self.filename = None
-            text = re.sub(r"[\n\r]","",xmlText)
-            script = "Apps.setBlockData('{0}');".format(text)
-            frame = self.blocklyWebView.page().mainFrame()
-            frame.evaluateJavaScript(script)
-
-            if self.filename:
-                root,ext = os.path.splitext(self.filename)
-                if ext in [".png",".jpg",".bmp"]:
-                    self.openImageFile(self.filename)
+            with open(filename) as f:
+                text = f.read()
+                exec(text)
+                xmlText = filterOperation.xmlText
+                if filterOperation.imageFile:
+                    imageFileName = filterOperation.imageFile
+                    self.filename = imageFileName
                 else:
-                    self.openVideoFile(self.filename)
+                    self.filename = None
+                text = re.sub(r"[\n\r]","",xmlText)
+                script = "Apps.setBlockData('{0}');".format(text)
+                frame = self.blocklyWebView.page().mainFrame()
+                frame.evaluateJavaScript(script)
+
+                if self.filename:
+                    root,ext = os.path.splitext(self.filename)
+                    if ext in [".png",".jpg",".bmp"]:
+                        self.openImageFile(self.filename)
+                    else:
+                        self.openVideoFile(self.filename)
         
         
     def saveBlockFile(self):
@@ -473,7 +473,6 @@ class QMainWindow(QtWidgets.QMainWindow):
             e.accept()
         else:
             e.ignore()
-        
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
