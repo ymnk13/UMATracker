@@ -230,7 +230,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
             self.cap = None
 
     def openVideoFile(self,filename = None):
-        if not os.path.exists(filename):
+        if not os.path.exists(str(filename)):
             filename = None
         if not filename:
             filename, _ = QFileDialog.getOpenFileName(None, 'Open Video File', filePath.userDir)
