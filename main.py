@@ -20,7 +20,7 @@ import filters
 
 sys.path.append( os.path.join(filePath.pythonLibDirPath, 'ui') )
 from MainWindowBase import *
-
+from resizableRect import RectForAreaSelection
 
 # Log file setting.
 # import logging
