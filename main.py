@@ -6,6 +6,7 @@ import os, sys, re, hashlib
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsPixmapItem, QFrame, QFileDialog
 from PyQt5.QtGui import QPixmap, QImage, QTransform, QColor
+from PyQt5.QtCore import QRectF,QPointF
 
 import cv2
 import numpy as np
@@ -21,7 +22,7 @@ import filters
 sys.path.append( os.path.join(filePath.pythonLibDirPath, 'ui') )
 from MainWindowBase import *
 from resizableRect import RectForAreaSelection
-
+from resizableEllipse import EllipseForAreaSelection
 # Log file setting.
 # import logging
 # logging.basicConfig(filename='MainWindow.log', level=logging.DEBUG)
@@ -46,6 +47,9 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.menubar.setNativeMenuBar(False)
         MainWindow.dragFile.connect(self.draganddrop)
         MainWindow.closeUi.connect(self.closeUi)
+
+        b = RectForAreaSelection(QRectF(250, 250, 350.0, 350.0),None,self.inputGraphicsView)
+        self.inputScene.addItem(b)
     def closeUi(self):
         self.releaseVideoCapture()
 
@@ -204,7 +208,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.inputGraphicsView.setScene(self.inputScene)
         self.inputGraphicsView.resizeEvent = self.inputGraphicsViewResized
 
-        self.inputScene.mousePressEvent = self.inputSceneClicked
+        #self.inputScene.mousePressEvent = self.inputSceneClicked
 
         self.outputScene = QGraphicsScene()
         self.outputGraphicsView.setScene(self.outputScene)
