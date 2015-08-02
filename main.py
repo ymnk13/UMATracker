@@ -47,9 +47,9 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.menubar.setNativeMenuBar(False)
         MainWindow.dragFile.connect(self.draganddrop)
         MainWindow.closeUi.connect(self.closeUi)
-
-        b = RectForAreaSelection(QRectF(250, 250, 350.0, 350.0),None,self.inputGraphicsView)
-        self.inputScene.addItem(b)
+        self.selectRegionUI = None
+        #b = RectForAreaSelection(QRectF(250, 250, 350.0, 350.0),None,self.inputGraphicsView)
+        #self.inputScene.addItem(b)
     def closeUi(self):
         self.releaseVideoCapture()
 
@@ -208,8 +208,9 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.inputGraphicsView.setScene(self.inputScene)
         self.inputGraphicsView.resizeEvent = self.inputGraphicsViewResized
 
-        #self.inputScene.mousePressEvent = self.inputSceneClicked
-
+        self.inputScene.mousePressEvent = self.inputSceneClicked
+        #self.inputScene.mousePressEvent = None
+        
         self.outputScene = QGraphicsScene()
         self.outputGraphicsView.setScene(self.outputScene)
         self.outputGraphicsView.resizeEvent = self.outputGraphicsViewResized
@@ -227,7 +228,18 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
         self.actionSaveFilterData.triggered.connect(self.saveFilterFile)
         self.actionOpenFilterData.triggered.connect(self.openFilterFile)
+        #test
+        #self.actionTest00.triggered.connect(self.test00)
         
+    def setRectangleParameterToBlock(self,topLeft,bottomRight):
+        string = "{{'topX':'{0}','topY':'{1}','bottomX':'{2}','bottomY':'{3}' }}".format(
+            int(topLeft.x()),
+            int(topLeft.y()),
+            int(bottomRight.x()),
+            int(bottomRight.y()))
+        webFrame = self.blocklyWebView.page().mainFrame()
+        webFrame.evaluateJavaScript("Apps.setValueToSelectedBlock({0});".format(string))
+                
     def releaseVideoCapture(self):
         if self.cap is not None:
             self.cap.release()
@@ -415,13 +427,47 @@ class Ui_MainWindow(Ui_MainWindowBase):
         
         return filterOperationClassStr.format(input="im_input", output="im_output")
 
+    def startUIBySelectedBlock(self):
+        webFrame = self.blocklyWebView.page().mainFrame()
 
+        text = webFrame.evaluateJavaScript("Apps.getBlockTypeFromSelectedBlock();")
+        data = text.rstrip().split(" ")
+        if len(data) <= 1:
+            ## will be Bug!!!
+            self.resetSceneAction()
+            return
+        blockType,blockID = data
+        
+        #
+        if blockType == "im_RectForAreaSelect":
+            if not self.selectRegionUI:
+                parameter = webFrame.evaluateJavaScript("Apps.getValueFromSelectedBlock();")
+                parameter = parameter.rstrip().split(" ")
+                parameter = dict([(parameter[i],int(parameter[i+1])) for i in xrange(0,len(parameter),2)])
+                self.selectRegionUI = RectForAreaSelection(
+                    QRectF(
+                        parameter['topX'],
+                        parameter['topY'],
+                        parameter['bottomX'],
+                        parameter['bottomY']),
+                    None,
+                    self.inputGraphicsView)
+                self.selectRegionUI.geometryChange.connect(self.setRectangleParameterToBlock)
+                self.inputScene.addItem(self.selectRegionUI)
+        
+    def resetSceneAction(self):
+        self.inputScene.mousePressEvent = None
+        if self.selectRegionUI:
+            self.inputScene.removeItem(self.selectRegionUI)
+            self.selectRegionUI = None
+            
     def evaluateSelectedBlock(self):
         im_output = None
 
         frame = self.blocklyWebView.page().mainFrame()
 
         text = frame.evaluateJavaScript("Apps.getCodeFromSelectedBlock();")
+        self.startUIBySelectedBlock()
         if text == "" or text is None:
             text = frame.evaluateJavaScript("Apps.getCodeFromWorkspace();")
 
