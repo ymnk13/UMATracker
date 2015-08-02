@@ -48,6 +48,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         MainWindow.dragFile.connect(self.draganddrop)
         MainWindow.closeUi.connect(self.closeUi)
         self.selectRegionUI = None
+        self.selectColorUI = None
         #b = RectForAreaSelection(QRectF(250, 250, 350.0, 350.0),None,self.inputGraphicsView)
         #self.inputScene.addItem(b)
     def closeUi(self):
@@ -208,7 +209,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.inputGraphicsView.setScene(self.inputScene)
         self.inputGraphicsView.resizeEvent = self.inputGraphicsViewResized
 
-        self.inputScene.mousePressEvent = self.inputSceneClicked
         #self.inputScene.mousePressEvent = None
         
         self.outputScene = QGraphicsScene()
@@ -228,7 +228,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
         self.actionSaveFilterData.triggered.connect(self.saveFilterFile)
         self.actionOpenFilterData.triggered.connect(self.openFilterFile)
-        #test
         #self.actionTest00.triggered.connect(self.test00)
         
     def setRectangleParameterToBlock(self,topLeft,bottomRight):
@@ -308,9 +307,9 @@ class Ui_MainWindow(Ui_MainWindowBase):
         pix = img.pixel(pos)
         rgb = QColor(pix).name()
         logger.debug("Selected pixel color: {0}".format(rgb))
-
-        frame = self.blocklyWebView.page().mainFrame()
-        frame.evaluateJavaScript("Apps.setColorFilterBlock('{0}');".format(rgb))
+        string = "{{'Color':'{0}','Distance':'100' }}".format(rgb)
+        webFrame = self.blocklyWebView.page().mainFrame()
+        webFrame.evaluateJavaScript("Apps.setValueToSelectedBlock({0});".format(string))
 
     def openBlockFile(self):
         filename, _ = QFileDialog.getOpenFileName(None, 'Open Block File', filePath.userDir, "Block files (*.block)")
@@ -454,12 +453,20 @@ class Ui_MainWindow(Ui_MainWindowBase):
                     self.inputGraphicsView)
                 self.selectRegionUI.geometryChange.connect(self.setRectangleParameterToBlock)
                 self.inputScene.addItem(self.selectRegionUI)
-        
+        elif blockType == "color_filter":
+            if not self.selectColorUI:
+                self.selectColorUI = True
+                self.inputScene.mousePressEvent = self.inputSceneClicked
+
+
     def resetSceneAction(self):
-        self.inputScene.mousePressEvent = None
+        
         if self.selectRegionUI:
             self.inputScene.removeItem(self.selectRegionUI)
             self.selectRegionUI = None
+        if self.selectColorUI:
+            self.inputScene.mousePressEvent = None
+            self.selectColorUI = None
             
     def evaluateSelectedBlock(self):
         im_output = None
