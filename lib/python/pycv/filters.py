@@ -61,6 +61,18 @@ def main(argv):
     cv2.waitKey(0)
     print(img_fn)
 
+    
+    img = scipy.misc.lena()
+    rows, cols = img.shape
+    crow, ccol = rows/2 , cols/2
+    mask = np.zeros((rows, cols, 1), np.uint8)
+    cv2.circle(mask,(crow,ccol),radius = 50,color = 255,thickness = -1)
+    
+    mask = 255-mask
+    im = Filter.HPF(img,mask)
+    cv2.imshow("A",im)
+    cv2.waitKey(0)
+
 if __name__ == "__main__":
     import sys
     main(sys.argv[1:])
