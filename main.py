@@ -418,8 +418,17 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 metaInfoLists.append("\n".join([indents + "{0} = \"\"\"\n{1}\n\"\"\"".format(i,elem)]))
             else:
                 metaInfoLists.append("\n".join([indents + "{0} = \"{1}\"".format(i,elem)]))
+        shapeFunction = """
+{0}@classmethod
+{0}def shape(self,im):
+{0}{0}if len(im.shape) == 3:
+{0}{0}{0}return im.shape
+{0}{0}else:
+{0}{0}{0}width,height = im.shape
+{0}{0}{0}return width,height,1
+"""
+        metaInfoLists.append(shapeFunction.format(indents))
         metaInfoStr = "\n".join(metaInfoLists)
-            
         constructorStr = "\n".join([indents + "def __init__(self, im_input):", classMembersStr])
         filterFuncStr  = "\n".join([indents + "def filterFunc(self, im_input):", filterOperationsStr])
         filterOperationClassStr = "\n".join(["class filterOperation:", metaInfoStr , constructorStr, filterFuncStr])
