@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/05/04 15:36:07 by ymnk>
+# Last-Updated : <2015/08/09 02:48:08 by ymnk>
 
 import cv2
 import numpy as np
@@ -16,6 +16,22 @@ logger.setLevel(DEBUG)
 logger.addHandler(handler)
 
 class Filter:
+    # High-pass filter
+    @classmethod
+    def HPF(self,im_source,im_mask):
+        if len(im_source.shape) == 3:
+            return None
+        im_float32 = np.float32(im_source)
+        dft = cv2.dft(im_float32, flags = cv2.DFT_COMPLEX_OUTPUT)
+        dft_shift = np.fft.fftshift(dft)
+        fshift = dft_shift*im_mask
+        f_ishift = np.fft.ifftshift(fshift)
+        im_back = cv2.idft(f_ishift)
+        im_back = cv2.magnitude(im_back[:,:,0],im_back[:,:,1])
+        Pmax = np.max(im_back)
+        im_pow = im_back/Pmax*255
+        return np.uint8(im_pow)
+
     @classmethod
     def colorFilter(self,im_in,rgb, lab_dist):
 
