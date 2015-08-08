@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Last-Updated : <2015/08/09 02:48:08 by ymnk>
 
 import cv2
 import numpy as np
