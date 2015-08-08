@@ -464,6 +464,23 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 self.selectRegionUI.geometryChange.connect(self.setRectangleParameterToBlock)
                 self.inputScene.addItem(self.selectRegionUI)
                 return
+        elif blockType == "im_CircleForAreaSelect":
+            if not self.selectRegionUI:
+                self.resetSceneAction()
+                parameter = webFrame.evaluateJavaScript("Apps.getValueFromSelectedBlock();")
+                parameter = parameter.rstrip().split(" ")
+                parameter = dict([(parameter[i],int(parameter[i+1])) for i in xrange(0,len(parameter),2)])
+                self.selectRegionUI = EllipseForAreaSelection(
+                    QRectF(
+                        parameter['topX'],
+                        parameter['topY'],
+                        parameter['bottomX'],
+                        parameter['bottomY']),
+                    None,
+                    self.inputGraphicsView)
+                self.selectRegionUI.geometryChange.connect(self.setRectangleParameterToBlock)
+                self.inputScene.addItem(self.selectRegionUI)
+                return
         elif blockType == "color_filter":
             if not self.selectColorUI:
                 self.resetSceneAction()
