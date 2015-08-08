@@ -440,6 +440,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         #
         if blockType == "im_RectForAreaSelect":
             if not self.selectRegionUI:
+                self.resetSceneAction()
                 parameter = webFrame.evaluateJavaScript("Apps.getValueFromSelectedBlock();")
                 parameter = parameter.rstrip().split(" ")
                 parameter = dict([(parameter[i],int(parameter[i+1])) for i in xrange(0,len(parameter),2)])
@@ -455,6 +456,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 self.inputScene.addItem(self.selectRegionUI)
         elif blockType == "color_filter":
             if not self.selectColorUI:
+                self.resetSceneAction()
                 self.selectColorUI = True
                 self.inputScene.mousePressEvent = self.inputSceneClicked
 
@@ -463,6 +465,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         
         if self.selectRegionUI:
             self.inputScene.removeItem(self.selectRegionUI)
+            del self.selectRegionUI
             self.selectRegionUI = None
         if self.selectColorUI:
             self.inputScene.mousePressEvent = None
