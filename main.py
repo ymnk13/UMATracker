@@ -463,11 +463,15 @@ class Ui_MainWindow(Ui_MainWindowBase):
                     self.inputGraphicsView)
                 self.selectRegionUI.geometryChange.connect(self.setRectangleParameterToBlock)
                 self.inputScene.addItem(self.selectRegionUI)
+                return
         elif blockType == "color_filter":
             if not self.selectColorUI:
                 self.resetSceneAction()
                 self.selectColorUI = True
                 self.inputScene.mousePressEvent = self.inputSceneClicked
+                return
+        else:
+            self.resetSceneAction()
 
 
     def resetSceneAction(self):
