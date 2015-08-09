@@ -473,7 +473,10 @@ class Ui_MainWindow(Ui_MainWindowBase):
         webFrame = self.blocklyWebView.page().mainFrame()
 
         text = webFrame.evaluateJavaScript("Apps.getBlockTypeFromSelectedBlock();")
-        data = text.rstrip().split(" ")
+
+        data = ''
+        if text is not None:
+            data = text.rstrip().split(" ")
         if len(data) <= 1:
             ## will be Bug!!!
             self.resetSceneAction()
