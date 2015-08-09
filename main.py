@@ -63,6 +63,8 @@ class Ui_MainWindow(Ui_MainWindowBase):
         elif ext.lower() in [".avi",".mpg",".mts"]:
             # Read Video
             self.openVideoFile(filename)
+        elif ext.lower() in [".png",".bmp",".jpg",".jpeg"]:
+            self.openImageFile(filename)
         
     def videoPlaybackInit(self):
         self.videoPlaybackWidget.hide()
