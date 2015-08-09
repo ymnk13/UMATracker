@@ -45,14 +45,30 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.imgInit()
         self.menuInit()
         self.menubar.setNativeMenuBar(False)
-        MainWindow.dragFile.connect(self.draganddrop)
-        MainWindow.closeUi.connect(self.closeUi)
+        MainWindow.closeEvent = self.closeEvent
+        MainWindow.dragEnterEvent = self.dragEnterEvent
+        MainWindow.dropEvent = self.dropEvent
         self.selectRegionUI = None
         self.selectColorUI = None
         self.selectedBlockID = None
         #b = RectForAreaSelection(QRectF(250, 250, 350.0, 350.0),None,self.inputGraphicsView)
         #self.inputScene.addItem(b)
-    def closeUi(self):
+    def dragEnterEvent(self,event):
+        event.accept()
+    def dropEvent(self,event):
+        event.setDropAction(QtCore.Qt.MoveAction)
+        
+        mime = event.mimeData()
+        if mime.hasUrls():
+            urls = mime.urls()
+            if len(urls) > 0:
+                #self.dragFile.emit()
+                self.draganddrop(urls[0].toString())
+            event.accept()
+        else:
+            event.ignore()
+
+    def closeEvent(self,event):
         self.releaseVideoCapture()
 
     def draganddrop(self,filename):
@@ -569,32 +585,10 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
 
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
-    
-class QMainWindow(QtWidgets.QMainWindow):
-    dragFile = pyqtSignal(str)
-    closeUi = pyqtSignal()
-    def __init__(self):
-        super(QtWidgets.QMainWindow, self).__init__()
-    def dragEnterEvent(self, e):
-        e.accept()
-    def dropEvent(self, e):
-        e.setDropAction(QtCore.Qt.MoveAction)
-        
-        mime = e.mimeData()
-        if mime.hasUrls():
-            urls = mime.urls()
-            if len(urls) > 0:
-                self.dragFile.emit(urls[0].toString())
-            e.accept()
-        else:
-            e.ignore()
-    def closeEvent(self, event):
-        self.closeUi.emit()
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    #MainWindow = QtWidgets.QMainWindow()
-    MainWindow = QMainWindow()
+    MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow,filePath.currentDirPath)
     MainWindow.show()
