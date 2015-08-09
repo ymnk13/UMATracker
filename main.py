@@ -49,6 +49,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         MainWindow.closeUi.connect(self.closeUi)
         self.selectRegionUI = None
         self.selectColorUI = None
+        self.selectedBlockID = None
         #b = RectForAreaSelection(QRectF(250, 250, 350.0, 350.0),None,self.inputGraphicsView)
         #self.inputScene.addItem(b)
     def closeUi(self):
@@ -462,7 +463,9 @@ class Ui_MainWindow(Ui_MainWindowBase):
             self.resetSceneAction()
             return
         blockType,blockID = data
-        
+        if not self.selectedBlockID == blockID:
+            self.selectedBlockID = blockID
+            self.resetSceneAction()
         #
         if blockType == "im_RectForAreaSelect":
             if not self.selectRegionUI:
