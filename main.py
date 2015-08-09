@@ -402,12 +402,27 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
         classMembers = []
         filterOperations = []
+
         for line in lines:
             if re.match(classMemberPattern, line):
                 classMembers.append(indents + indents + line.lstrip("#"))
             else:
+                if len(classMembers)>0 and not classMembers[-1] == "\n":
+                    classMembers.append("\n")
                 filterOperations.append(indents + indents + line)
+        
+        
+        classMemberLists = [[]]
+        for line in classMembers:
+            classMemberLists[-1].append(line)
+            if line == "\n":
+                classMemberLists.append([])
+        classMemberLists.reverse()
+        classMembers = []
+        for block in classMemberLists:
+            classMembers.append("\n".join(block))
         classMembers.append(indents + indents + "return")
+        
         filterOperations.append(indents + indents + "return {output}")
 
         classMembersStr = "\n".join(classMembers)
