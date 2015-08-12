@@ -4,12 +4,11 @@
 import os, sys, re, hashlib
 
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsPixmapItem, QFrame, QFileDialog
-from PyQt5.QtGui import QPixmap, QImage, QTransform, QColor
-from PyQt5.QtCore import QRectF,QPointF
+from PyQt5.QtWidgets import QGraphicsScene, QFileDialog
+from PyQt5.QtGui import QPixmap, QTransform, QColor
+from PyQt5.QtCore import QRectF
 
 import cv2
-import numpy as np
 
 import filePath
 
@@ -17,7 +16,6 @@ sys.path.append( filePath.pythonLibDirPath )
 import misc
 
 sys.path.append( os.path.join(filePath.pythonLibDirPath, 'pycv') )
-import filters
 
 sys.path.append( os.path.join(filePath.pythonLibDirPath, 'ui') )
 from MainWindowBase import *
@@ -36,6 +34,7 @@ handler.setLevel(DEBUG)
 logger.setLevel(DEBUG)
 logger.addHandler(handler)
 
+
 class Ui_MainWindow(Ui_MainWindowBase):
     def setupUi(self, MainWindow, path):
         super(Ui_MainWindow, self).setupUi(MainWindow)
@@ -53,11 +52,12 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.selectedBlockID = None
         #b = RectForAreaSelection(QRectF(250, 250, 350.0, 350.0),None,self.inputGraphicsView)
         #self.inputScene.addItem(b)
+
     def dragEnterEvent(self,event):
         event.accept()
+
     def dropEvent(self,event):
         event.setDropAction(QtCore.Qt.MoveAction)
-        
         mime = event.mimeData()
         if mime.hasUrls():
             urls = mime.urls()
@@ -82,7 +82,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
             self.openVideoFile(filename)
         elif ext.lower() in [".png",".bmp",".jpg",".jpeg"]:
             self.openImageFile(filename)
-        
+
     def videoPlaybackInit(self):
         self.videoPlaybackWidget.hide()
 
@@ -229,7 +229,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.inputGraphicsView.resizeEvent = self.inputGraphicsViewResized
 
         #self.inputScene.mousePressEvent = None
-        
+
         self.outputScene = QGraphicsScene()
         self.outputGraphicsView.setScene(self.outputScene)
         self.outputGraphicsView.resizeEvent = self.outputGraphicsViewResized
@@ -248,7 +248,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.actionSaveFilterData.triggered.connect(self.saveFilterFile)
         self.actionOpenFilterData.triggered.connect(self.openFilterFile)
         #self.actionTest00.triggered.connect(self.test00)
-        
+
     def setRectangleParameterToBlock(self,topLeft,bottomRight):
         string = "{{'topX':'{0}','topY':'{1}','bottomX':'{2}','bottomY':'{3}' }}".format(
             int(topLeft.x()),
@@ -257,7 +257,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
             int(bottomRight.y()))
         webFrame = self.blocklyWebView.page().mainFrame()
         webFrame.evaluateJavaScript("Apps.setValueToSelectedBlock({0});".format(string))
-                
+
     def releaseVideoCapture(self):
         if self.cap is not None:
             self.cap.release()
@@ -285,14 +285,14 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
                 # Initialize Filter when opening new file.
                 self.filterClassHash = None
-                
+
 
     def openImageFile(self,filename = None):
         if not os.path.exists(filename):
             filename = None
         if filename == None or filename == False:
             filename, _ = QFileDialog.getOpenFileName(None, 'Open Image File', filePath.userDir)
-            
+
         if len(filename) is not 0:
             self.filename = filename
             self.cv_img = cv2.imread(misc.utfToSystemStr(filename))
@@ -339,15 +339,15 @@ class Ui_MainWindow(Ui_MainWindowBase):
             with open(misc.utfToSystemStr(filename)) as f:
                 text = f.read()
                 text = re.sub(r"[\n\r]","",text)
-                print text
+                print(text)
                 frame = self.blocklyWebView.page().mainFrame()
                 script = "Apps.setBlockData('{0}');".format(text)
                 ret = frame.evaluateJavaScript(script)
-                
+
     def openFilterFile(self,filename = None):
         if not filename:
             filename, _ = QFileDialog.getOpenFileName(None, 'Open Block File', filePath.userDir, "Block files (*.filter)")
-        
+
         if len(filename) is not 0:
             logger.debug("Open Filter file: {0}".format(filename))
 
@@ -371,8 +371,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
                         self.openImageFile(self.filename)
                     else:
                         self.openVideoFile(self.filename)
-        
-        
+
     def saveBlockFile(self):
         filename, _ = QFileDialog.getSaveFileName(None, 'Save Block File', filePath.userDir, "Block files (*.block)")
 
@@ -384,7 +383,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 text = frame.evaluateJavaScript("Apps.getBlockData();")
 
                 f.write(text)
-                
+
     def saveFilterFile(self):
         filename, _ = QFileDialog.getSaveFileName(None, 'Save Filter File', filePath.userDir, "Filter files (*.filter)")
 
@@ -401,7 +400,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
                 text = self.parseToClass(text,{"xmlText":xmlText,
                                                "imageFile":self.filename})
-                
+
                 f.write(text)
 
     def inputGraphicsViewResized(self, event=None):
@@ -409,7 +408,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
     def outputGraphicsViewResized(self, event=None):
         self.outputGraphicsView.fitInView(self.outputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
-
 
     def parseToClass(self, text,metaInfo = {}):
         lines = text.split("\n")
@@ -427,8 +425,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 if len(classMembers)>0 and not classMembers[-1] == "\n":
                     classMembers.append("\n")
                 filterOperations.append(indents + indents + line)
-        
-        
+
         classMemberLists = [[]]
         for line in classMembers:
             classMemberLists[-1].append(line)
@@ -439,7 +436,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         for block in classMemberLists:
             classMembers.append("\n".join(block))
         classMembers.append(indents + indents + "return")
-        
+
         filterOperations.append(indents + indents + "return {output}")
 
         classMembersStr = "\n".join(classMembers)
@@ -466,7 +463,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         constructorStr = "\n".join([indents + "def __init__(self, im_input):", classMembersStr])
         filterFuncStr  = "\n".join([indents + "def filterFunc(self, im_input):", filterOperationsStr])
         filterOperationClassStr = "\n".join(["class filterOperation:", metaInfoStr , constructorStr, filterFuncStr])
-        
+
         return filterOperationClassStr.format(input="im_input", output="im_output")
 
     def startUIBySelectedBlock(self):
@@ -531,7 +528,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
 
     def resetSceneAction(self):
-        
         if self.selectRegionUI:
             self.inputScene.removeItem(self.selectRegionUI)
             del self.selectRegionUI
@@ -539,7 +535,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         if self.selectColorUI:
             self.inputScene.mousePressEvent = None
             self.selectColorUI = None
-            
+
     def evaluateSelectedBlock(self):
         im_output = None
 
@@ -552,7 +548,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
         if text is None:
             return False
-        
+
         xmlText = frame.evaluateJavaScript("Apps.getBlockData();")
         text = self.parseToClass(text)
 
@@ -585,9 +581,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
         self.outputGraphicsView.viewport().update()
         self.outputGraphicsViewResized()
-
-
-from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
