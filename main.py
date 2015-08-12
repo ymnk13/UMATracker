@@ -63,7 +63,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
             urls = mime.urls()
             if len(urls) > 0:
                 #self.dragFile.emit()
-                self.draganddrop(urls[0].toLocalFile())
+                self.processDropedFile(urls[0].toLocalFile())
             event.accept()
         else:
             event.ignore()
@@ -71,7 +71,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
     def closeEvent(self,event):
         self.releaseVideoCapture()
 
-    def draganddrop(self,filename):
+    def processDropedFile(self,filename):
         root,ext = os.path.splitext(filename)
         if ext == ".filter":
             # Read Filter
