@@ -10,3 +10,7 @@
 	path = lib/python/FilterIO
 	url = git@github.com:Licht-T/FilterIO.git
 	ignore = dirty
+[submodule "lib/python/PythonClassGenerator"]
+	path = lib/python/PythonClassGenerator
+	url = git@github.com:Licht-T/PythonClassGenerator.git
+	ignore = dirty
