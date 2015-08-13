@@ -345,7 +345,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
             exec(filterIO.getFilterCode())
 
-            blockXML = re.sub(r"[\n\r]", filterIO.getBlockXMLData())
+            blockXML = re.sub(r"[\n\r]",'', filterIO.getBlockXMLData())
             frame = self.blocklyWebView.page().mainFrame()
             frame.evaluateJavaScript("Apps.setBlockData('{0}');".format(blockXML))
 
