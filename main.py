@@ -21,6 +21,12 @@ sys.path.append( os.path.join(filePath.pythonLibDirPath, 'ui') )
 from MainWindowBase import *
 from resizableRect import RectForAreaSelection
 from resizableEllipse import EllipseForAreaSelection
+
+#For block evaluation, DO NOT REMOVE!#
+import numpy as np
+import filters
+######################################
+
 # Log file setting.
 # import logging
 # logging.basicConfig(filename='MainWindow.log', level=logging.DEBUG)
