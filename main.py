@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, sys, re, hashlib, urllib
+import os, sys, re, hashlib, urllib, json
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QGraphicsScene, QFileDialog
@@ -254,11 +254,13 @@ class Ui_MainWindow(Ui_MainWindowBase):
         #self.actionTest00.triggered.connect(self.test00)
 
     def setRectangleParameterToBlock(self,topLeft,bottomRight):
-        string = "{{'topX':'{0}','topY':'{1}','bottomX':'{2}','bottomY':'{3}' }}".format(
-            int(topLeft.x()),
-            int(topLeft.y()),
-            int(bottomRight.x()),
-            int(bottomRight.y()))
+        parameters = {
+                    'topX': topLeft.x(),
+                    'topY': topLeft.y(),
+                    'bottomX': bottomRight.x(),
+                    'bottomY': bottomRight.y()
+                    }
+        string = json.dumps({k: str(int(v)) for k, v in parameters.items()})
         webFrame = self.blocklyWebView.page().mainFrame()
         webFrame.evaluateJavaScript("Apps.setValueToSelectedBlock({0});".format(string))
 
@@ -330,7 +332,12 @@ class Ui_MainWindow(Ui_MainWindowBase):
         pix = img.pixel(pos)
         rgb = QColor(pix).name()
         logger.debug("Selected pixel color: {0}".format(rgb))
-        string = "{{'Color':'{0}','Distance':'100' }}".format(rgb)
+
+        parameters = {
+                'Color': rgb,
+                'Distance': 100
+                }
+        string = json.dumps({k: str(int(v)) for k, v in parameters.items()})
         webFrame = self.blocklyWebView.page().mainFrame()
         webFrame.evaluateJavaScript("Apps.setValueToSelectedBlock({0});".format(string))
 
