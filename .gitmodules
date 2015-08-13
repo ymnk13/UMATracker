@@ -8,3 +8,4 @@
 [submodule "lib/python/FilterIO"]
 	path = lib/python/FilterIO
 	url = git@github.com:Licht-T/FilterIO.git
+	ignore = dirty
