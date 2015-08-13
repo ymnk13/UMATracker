@@ -335,9 +335,9 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
         parameters = {
                 'Color': rgb,
-                'Distance': 100
+                'Distance': '100'
                 }
-        string = json.dumps({k: str(int(v)) for k, v in parameters.items()})
+        string = json.dumps(parameters)
         webFrame = self.blocklyWebView.page().mainFrame()
         webFrame.evaluateJavaScript("Apps.setValueToSelectedBlock({0});".format(string))
 
