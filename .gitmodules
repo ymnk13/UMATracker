@@ -5,6 +5,7 @@
 [submodule "lib/blockly"]
 	path = lib/blockly
 	url = git@github.com:ymnk13/blockly.git
+	ignore = dirty
 [submodule "lib/python/FilterIO"]
 	path = lib/python/FilterIO
 	url = git@github.com:Licht-T/FilterIO.git
