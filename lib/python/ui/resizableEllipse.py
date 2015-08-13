@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QGraphicsRectItem, QGraphicsObject
+from PyQt5.QtWidgets import QGraphicsObject
 
 from PyQt5.QtWidgets import QGraphicsItem
 from PyQt5.QtCore import QRectF
@@ -35,7 +35,7 @@ class EllipseForAreaSelection(QGraphicsObject):
     def prepareGeometryChange(self):
         self.geometryChange.emit(self._rect.topLeft(),
                                  self._rect.bottomRight())
-        QGraphicsRectItem.prepareGeometryChange(self)
+        QGraphicsObject.prepareGeometryChange(self)
 
     def hoverMoveEvent(self, event):
         hoverMovePos = event.scenePos()
@@ -48,15 +48,15 @@ class EllipseForAreaSelection(QGraphicsObject):
             self.setCursor(QtCore.Qt.PointingHandCursor)
             return
         self.setCursor(QtCore.Qt.SizeAllCursor)
-        QGraphicsRectItem.hoverMoveEvent(self, event)
+        QGraphicsObject.hoverMoveEvent(self, event)
 
     def hoverEnterEvent(self, event):
         self.setCursor(QtCore.Qt.SizeAllCursor)
-        QGraphicsRectItem.hoverEnterEvent(self, event)
+        QGraphicsObject.hoverEnterEvent(self, event)
 
     def hoverLeaveEvent(self, event):
         self.setCursor(QtCore.Qt.ArrowCursor)
-        QGraphicsRectItem.hoverLeaveEvent(self, event)
+        QGraphicsObject.hoverLeaveEvent(self, event)
 
     def mousePressEvent(self, event):
         self.mouseIsPressed = True
@@ -67,14 +67,14 @@ class EllipseForAreaSelection(QGraphicsObject):
             if self._buttonList[item].contains(self.mousePressPos):
                 self.mousePressArea = item
                 break
-        QGraphicsRectItem.mousePressEvent(self, event)
+        QGraphicsObject.mousePressEvent(self, event)
 
     def mouseReleaseEvent(self, event):
         self.mouseIsPressed = False
         # self.setRect(self._rect)
         self.updateResizeHandles()
         self.prepareGeometryChange()
-        QGraphicsRectItem.mouseReleaseEvent(self, event)
+        QGraphicsObject.mouseReleaseEvent(self, event)
 
     def paint(self, painter, option, widget):
         painter.setPen(QtGui.QPen(QtCore.Qt.red, 0, QtCore.Qt.DashLine))
