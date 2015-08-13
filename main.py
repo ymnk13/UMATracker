@@ -3,24 +3,26 @@
 
 import os, sys, re, hashlib
 
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QGraphicsScene, QFileDialog
 from PyQt5.QtGui import QPixmap, QTransform, QColor
 from PyQt5.QtCore import QRectF
 
-import cv2
+from lib.python.ui.MainWindowBase import Ui_MainWindowBase
+from lib.python.ui.resizableRect import RectForAreaSelection
+from lib.python.ui.resizableEllipse import EllipseForAreaSelection
 
 import filePath
+from lib.python import misc
 
-sys.path.append( filePath.pythonLibDirPath )
-import misc
+import cv2
+from lib.python.FilterIO.FilterIO import FilterIO
 
-sys.path.append( os.path.join(filePath.pythonLibDirPath, 'pycv') )
+#For block evaluation, DO NOT REMOVE!#
+import numpy as np
+from lib.python.pycv import filters
+######################################
 
-sys.path.append( os.path.join(filePath.pythonLibDirPath, 'ui') )
-from MainWindowBase import *
-from resizableRect import RectForAreaSelection
-from resizableEllipse import EllipseForAreaSelection
 # Log file setting.
 # import logging
 # logging.basicConfig(filename='MainWindow.log', level=logging.DEBUG)
