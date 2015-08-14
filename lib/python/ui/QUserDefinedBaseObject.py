@@ -10,11 +10,11 @@ import copy
 from PyQt5.QtCore import pyqtSignal
 
 
-class RectForAreaSelection(QGraphicsObject):
+class QResizableGraphicsObject(QGraphicsObject):
     geometryChange = pyqtSignal('QPointF', 'QPointF')
 
     def __init__(self, rect, parent=None, view=None):
-        super(QGraphicsObject, self).__init__()
+        super(QResizableGraphicsObject, self).__init__()
         self._view = view
         self._rect = rect
         self._boundingRect = rect
@@ -75,12 +75,12 @@ class RectForAreaSelection(QGraphicsObject):
         QGraphicsObject.mouseReleaseEvent(self, event)
 
     def paint(self, painter, option, widget):
-        painter.setPen(QtGui.QPen(QtCore.Qt.red, 0, QtCore.Qt.DashLine))
-        painter.drawRect(self._rect)
-        painter.setPen(QtGui.QPen(QtCore.Qt.black, 0, QtCore.Qt.SolidLine))
-        painter.setBrush(QtGui.QBrush(QtGui.QColor(255, 255, 255)))
+        self.draw(painter, option, widget, self._rect)
         for item in self._buttonList:
             painter.drawRect(self._buttonList[item])
+
+    def draw(self, painter, option, widget, rect):
+        return
 
     def boundingRect(self):
         return self._boundingRect

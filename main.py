@@ -9,8 +9,7 @@ from PyQt5.QtGui import QPixmap, QTransform, QColor
 from PyQt5.QtCore import QRectF
 
 from lib.python.ui.MainWindowBase import Ui_MainWindowBase
-from lib.python.ui.resizableRect import RectForAreaSelection
-from lib.python.ui.resizableEllipse import EllipseForAreaSelection
+from lib.python.ui.QResizableObject import QResizableRect, QResizableEllipse
 
 from lib.python import misc
 
@@ -421,7 +420,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 self.resetSceneAction()
                 parameters = webFrame.evaluateJavaScript("Apps.getValueFromSelectedBlock();")
                 parameters = {misc.utfToSystemStr(k): int(v) for k, v in parameters.items()}
-                self.selectRegionUI = RectForAreaSelection(
+                self.selectRegionUI = QResizableRect(
                     QRectF(
                         parameters['topX'],
                         parameters['topY'],
@@ -437,7 +436,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 self.resetSceneAction()
                 parameters = webFrame.evaluateJavaScript("Apps.getValueFromSelectedBlock();")
                 parameters = {misc.utfToSystemStr(k): int(v) for k, v in parameters.items()}
-                self.selectRegionUI = EllipseForAreaSelection(
+                self.selectRegionUI = QResizableEllipse(
                     QRectF(
                         parameters['topX'],
                         parameters['topY'],
