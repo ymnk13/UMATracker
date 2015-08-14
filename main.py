@@ -419,15 +419,14 @@ class Ui_MainWindow(Ui_MainWindowBase):
         if blockType == "im_RectForAreaSelect":
             if not self.selectRegionUI:
                 self.resetSceneAction()
-                parameter = webFrame.evaluateJavaScript("Apps.getValueFromSelectedBlock();")
-                parameter = parameter.rstrip().split(" ")
-                parameter = dict([(parameter[i],int(parameter[i+1])) for i in xrange(0,len(parameter),2)])
+                parameters = webFrame.evaluateJavaScript("Apps.getValueFromSelectedBlock();")
+                parameters = {misc.utfToSystemStr(k): int(v) for k, v in parameters.items()}
                 self.selectRegionUI = RectForAreaSelection(
                     QRectF(
-                        parameter['topX'],
-                        parameter['topY'],
-                        parameter['bottomX'],
-                        parameter['bottomY']),
+                        parameters['topX'],
+                        parameters['topY'],
+                        parameters['bottomX'],
+                        parameters['bottomY']),
                     None,
                     self.inputGraphicsView)
                 self.selectRegionUI.geometryChange.connect(self.setRectangleParameterToBlock)
@@ -436,15 +435,14 @@ class Ui_MainWindow(Ui_MainWindowBase):
         elif blockType == "im_CircleForAreaSelect":
             if not self.selectRegionUI:
                 self.resetSceneAction()
-                parameter = webFrame.evaluateJavaScript("Apps.getValueFromSelectedBlock();")
-                parameter = parameter.rstrip().split(" ")
-                parameter = dict([(parameter[i],int(parameter[i+1])) for i in xrange(0,len(parameter),2)])
+                parameters = webFrame.evaluateJavaScript("Apps.getValueFromSelectedBlock();")
+                parameters = {misc.utfToSystemStr(k): int(v) for k, v in parameters.items()}
                 self.selectRegionUI = EllipseForAreaSelection(
                     QRectF(
-                        parameter['topX'],
-                        parameter['topY'],
-                        parameter['bottomX'],
-                        parameter['bottomY']),
+                        parameters['topX'],
+                        parameters['topY'],
+                        parameters['bottomX'],
+                        parameters['bottomY']),
                     None,
                     self.inputGraphicsView)
                 self.selectRegionUI.geometryChange.connect(self.setRectangleParameterToBlock)
