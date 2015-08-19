@@ -401,16 +401,16 @@ class Ui_MainWindow(Ui_MainWindowBase):
     def startUIBySelectedBlock(self):
         webFrame = self.blocklyWebView.page().mainFrame()
 
-        text = webFrame.evaluateJavaScript("Apps.getBlockTypeFromSelectedBlock();")
+        data = webFrame.evaluateJavaScript("Apps.getBlockTypeFromSelectedBlock();")
+        if data is None:
+            return
 
-        data = ''
-        if text is not None:
-            data = text.rstrip().split(" ")
-        if len(data) <= 1:
-            ## will be Bug!!!
+        blockType = data['type']
+        blockID = data['id']
+        if blockID=='' or blockType=='':
             self.resetSceneAction()
             return
-        blockType,blockID = data
+
         if not self.selectedBlockID == blockID:
             self.selectedBlockID = blockID
             self.resetSceneAction()
