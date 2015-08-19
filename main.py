@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, sys, re, hashlib, urllib, json
+import sys, six
+
+if six.PY2:
+    reload(sys)
+    sys.setdefaultencoding('UTF8')
+
+import os, re, hashlib, json
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QGraphicsScene, QFileDialog
@@ -26,7 +32,13 @@ from lib.python.pycv import filters
 currentDirPath = os.path.abspath(os.path.dirname(__file__) )
 sampleDataPath = os.path.join(currentDirPath,"data")
 userDir        = os.path.expanduser('~')
-blocklyURL = "file:" + urllib.pathname2url(os.path.join(currentDirPath,"lib","editor","index.html"))
+
+if six.PY2:
+    import urllib
+    blocklyURL = "file:" + urllib.pathname2url(os.path.join(currentDirPath,"lib","editor","index.html"))
+elif six.PY3:
+    import urllib.request
+    blocklyURL = "file:" + urllib.request.pathname2url(os.path.join(currentDirPath,"lib","editor","index.html"))
 
 # Log file setting.
 # import logging
