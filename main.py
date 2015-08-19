@@ -90,16 +90,16 @@ class Ui_MainWindow(Ui_MainWindowBase):
     def closeEvent(self,event):
         self.releaseVideoCapture()
 
-    def processDropedFile(self,filename):
-        root,ext = os.path.splitext(filename)
+    def processDropedFile(self,filePath):
+        root,ext = os.path.splitext(filePath)
         if ext == ".filter":
             # Read Filter
-            self.openFilterFile(filename)
+            self.openFilterFile(filePath=filePath)
         elif ext.lower() in [".avi",".mpg",".mts"]:
             # Read Video
-            self.openVideoFile(filename)
+            self.openVideoFile(filePath=filePath)
         elif ext.lower() in [".png",".bmp",".jpg",".jpeg"]:
-            self.openImageFile(filename)
+            self.openImageFile(filePath=filePath)
 
     def videoPlaybackInit(self):
         self.videoPlaybackWidget.hide()
@@ -239,7 +239,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
     def imgInit(self):
         self.cap = None
-        self.filename = os.path.join(sampleDataPath,"color_filter_test.png")
+        self.filePath = os.path.join(sampleDataPath,"color_filter_test.png")
         self.cv_img = cv2.imread(os.path.join(sampleDataPath,"color_filter_test.png"))
 
         self.inputScene = QGraphicsScene()
@@ -280,16 +280,14 @@ class Ui_MainWindow(Ui_MainWindowBase):
             self.cap.release()
             self.cap = None
 
-    def openVideoFile(self,filename = None):
-        if not os.path.exists(str(filename)):
-            filename = None
-        if not filename:
-            filename, _ = QFileDialog.getOpenFileName(None, 'Open Video File', userDir)
+    def openVideoFile(self, activated=False, filePath = None):
+        if filePath is None:
+            filePath, _ = QFileDialog.getOpenFileName(None, 'Open Video File', userDir)
 
-        if len(filename) is not 0:
-            self.filename = filename
+        if len(filePath) is not 0:
+            self.filePath = filePath
             self.releaseVideoCapture()
-            self.cap = cv2.VideoCapture(misc.utfToSystemStr(filename))
+            self.cap = cv2.VideoCapture(self.filePath)
 
             self.videoPlaybackWidget.show()
             self.videoPlaybackSlider.setRange(0, self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -304,15 +302,13 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 self.filterClassHash = None
 
 
-    def openImageFile(self,filename = None):
-        if not os.path.exists(filename):
-            filename = None
-        if filename == None or filename == False:
-            filename, _ = QFileDialog.getOpenFileName(None, 'Open Image File', userDir)
+    def openImageFile(self, activated=False, filePath = None):
+        if filePath == None:
+            filePath, _ = QFileDialog.getOpenFileName(None, 'Open Image File', userDir)
 
-        if len(filename) is not 0:
-            self.filename = filename
-            self.cv_img = cv2.imread(misc.utfToSystemStr(filename))
+        if len(filePath) is not 0:
+            self.filePath = filePath
+            self.cv_img = cv2.imread(filePath)
             self.videoPlaybackWidget.hide()
 
             self.updateInputGraphicsView()
@@ -352,8 +348,8 @@ class Ui_MainWindow(Ui_MainWindowBase):
         webFrame = self.blocklyWebView.page().mainFrame()
         webFrame.evaluateJavaScript("Apps.setValueToSelectedBlock({0});".format(string))
 
-    def openFilterFile(self,filePath = None):
-        if not filePath:
+    def openFilterFile(self, activated=False, filePath = None):
+        if filePath is None:
             filePath, _ = QFileDialog.getOpenFileName(None, 'Open Block File', userDir, "Block files (*.filter)")
 
         if len(filePath) is not 0:
@@ -380,7 +376,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
             filterClassText = self.parseToClass(frame.evaluateJavaScript("Apps.getCodeFromWorkspace();"))
             filterIO.setFilterCode(filterClassText)
-            filterIO.save(misc.utfToSystemStr(filePath))
+            filterIO.save(filePath)
 
     def inputGraphicsViewResized(self, event=None):
         self.inputGraphicsView.fitInView(self.inputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
