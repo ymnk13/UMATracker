@@ -29,7 +29,6 @@ class QResizableGraphicsObject(QGraphicsObject):
 
         self._buttonList = {}
         self.setFocus(Qt.ActiveWindowFocusReason)
-        self.updateResizeHandles()
 
     def prepareGeometryChange(self):
         self.geometryChange.emit(self._rect.topLeft(),
@@ -75,6 +74,7 @@ class QResizableGraphicsObject(QGraphicsObject):
         super(QResizableGraphicsObject, self).mouseReleaseEvent(event)
 
     def paint(self, painter, option, widget):
+        self.updateResizeHandles()
         self.draw(painter, option, widget, self._rect)
         for item in self._buttonList:
             painter.drawRect(self._buttonList[item])
