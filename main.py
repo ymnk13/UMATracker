@@ -218,7 +218,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.blocklyWebView.setUrl(QtCore.QUrl(blocklyURL))
 
         self.blocklyEvaluationTimer = QtCore.QTimer(parent=self.blocklyWebView)
-        self.blocklyEvaluationTimer.setInterval(1*1000)
+        self.blocklyEvaluationTimer.setInterval(1*100)
         self.blocklyEvaluationTimer.timeout.connect(self.evaluateSelectedBlock)
         self.blocklyEvaluationTimer.start()
 
