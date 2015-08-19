@@ -357,7 +357,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
             filterIO = FilterIO(filePath)
 
-            exec(filterIO.getFilterCode())
+            exec(filterIO.getFilterCode(), globals())
 
             blockXML = re.sub(r"[\n\r]",'', filterIO.getBlockXMLData())
             frame = self.blocklyWebView.page().mainFrame()
@@ -499,7 +499,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         if self.filterClassHash != textHash:
             self.filterClassHash = textHash
             try:
-                exec(text)
+                exec(text, globals())
                 self.filter = filterOperation(self.cv_img)
             except Exception as e:
                 logger.debug("Block Evaluation Error: {0}".format(e))
