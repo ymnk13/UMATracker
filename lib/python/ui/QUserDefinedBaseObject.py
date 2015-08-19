@@ -26,7 +26,7 @@ class QResizableGraphicsObject(QGraphicsObject):
                       QGraphicsItem.ItemIsMovable |
                       QGraphicsItem.ItemSendsGeometryChanges)
         self.setAcceptHoverEvents(True)
-        #
+
         self._buttonList = {}
         self.setFocus(Qt.ActiveWindowFocusReason)
         self.updateResizeHandles()
