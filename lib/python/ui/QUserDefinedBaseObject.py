@@ -34,7 +34,7 @@ class QResizableGraphicsObject(QGraphicsObject):
     def prepareGeometryChange(self):
         self.geometryChange.emit(self._rect.topLeft(),
                                  self._rect.bottomRight())
-        QGraphicsObject.prepareGeometryChange(self)
+        super(QResizableGraphicsObject, self).prepareGeometryChange()
 
     def hoverMoveEvent(self, event):
         hoverMovePos = event.scenePos()
@@ -47,15 +47,15 @@ class QResizableGraphicsObject(QGraphicsObject):
             self.setCursor(QtCore.Qt.PointingHandCursor)
             return
         self.setCursor(QtCore.Qt.SizeAllCursor)
-        QGraphicsObject.hoverMoveEvent(self, event)
+        super(QResizableGraphicsObject, self).hoverMoveEvent(event)
 
     def hoverEnterEvent(self, event):
         self.setCursor(QtCore.Qt.SizeAllCursor)
-        QGraphicsObject.hoverEnterEvent(self, event)
+        super(QResizableGraphicsObject, self).hoverEnterEvent(event)
 
     def hoverLeaveEvent(self, event):
         self.setCursor(QtCore.Qt.ArrowCursor)
-        QGraphicsObject.hoverLeaveEvent(self, event)
+        super(QResizableGraphicsObject, self).hoverLeaveEvent(event)
 
     def mousePressEvent(self, event):
         self.mouseIsPressed = True
@@ -66,13 +66,13 @@ class QResizableGraphicsObject(QGraphicsObject):
             if self._buttonList[item].contains(self.mousePressPos):
                 self.mousePressArea = item
                 break
-        QGraphicsObject.mousePressEvent(self, event)
+        super(QResizableGraphicsObject, self).mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
         self.mouseIsPressed = False
         self.updateResizeHandles()
         self.prepareGeometryChange()
-        QGraphicsObject.mouseReleaseEvent(self, event)
+        super(QResizableGraphicsObject, self).mouseReleaseEvent(event)
 
     def paint(self, painter, option, widget):
         self.draw(painter, option, widget, self._rect)
