@@ -10,8 +10,8 @@ if six.PY2:
 import os, re, hashlib, json
 
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QGraphicsScene, QFileDialog
-from PyQt5.QtGui import QPixmap, QTransform, QColor
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QFileDialog
+from PyQt5.QtGui import QPixmap, QColor
 from PyQt5.QtCore import QRectF
 
 from lib.python.ui.MainWindowBase import Ui_MainWindowBase
@@ -66,8 +66,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
         MainWindow.closeEvent = self.closeEvent
         MainWindow.dragEnterEvent = self.dragEnterEvent
         MainWindow.dropEvent = self.dropEvent
-        self.selectRegionUI = None
-        self.selectColorUI = None
         self.selectedBlockID = None
         #b = RectForAreaSelection(QRectF(250, 250, 350.0, 350.0),None,self.inputGraphicsView)
         #self.inputScene.addItem(b)
@@ -253,8 +251,9 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.outputGraphicsView.resizeEvent = self.outputGraphicsViewResized
 
         qimg = misc.cvMatToQImage(self.cv_img)
-        pixmap = QPixmap.fromImage(qimg)
-        self.inputScene.addPixmap(pixmap)
+        self.inputPixMap = QPixmap.fromImage(qimg)
+        self.inputPixMapItem = QGraphicsPixmapItem(self.inputPixMap)
+        self.inputScene.addItem(self.inputPixMapItem)
 
     def menuInit(self):
         self.actionOpenVideo.triggered.connect(self.openVideoFile)
@@ -320,22 +319,22 @@ class Ui_MainWindow(Ui_MainWindowBase):
     def updateInputGraphicsView(self):
         self.inputScene.clear()
         qimg = misc.cvMatToQImage(self.cv_img)
-        pixmap = QPixmap.fromImage(qimg)
+        self.inputPixMap = QPixmap.fromImage(qimg)
 
-        rect = QtCore.QRectF(pixmap.rect())
+        rect = QtCore.QRectF(self.inputPixMap.rect())
         self.inputScene.setSceneRect(rect)
         self.outputScene.setSceneRect(rect)
 
-        self.inputScene.addPixmap(pixmap)
+        self.inputPixMapItem = QGraphicsPixmapItem(self.inputPixMap)
+        self.inputScene.addItem(self.inputPixMapItem)
 
         self.inputGraphicsView.viewport().update()
         self.inputGraphicsViewResized()
 
-    def inputSceneClicked(self, event):
+    def inputPixMapItemClicked(self, event):
         pos = event.scenePos().toPoint()
-        item = self.inputScene.itemAt(pos, QTransform())
 
-        img = item.pixmap().toImage()
+        img = self.inputPixMap.toImage()
         pix = img.pixel(pos)
         rgb = QColor(pix).name()
         logger.debug("Selected pixel color: {0}".format(rgb))
@@ -415,64 +414,59 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
         blockType = data['type']
         blockID = data['id']
-        if blockID=='' or blockType=='':
-            self.resetSceneAction()
-            return
-
-        if not self.selectedBlockID == blockID:
+        blockAttributes = data['attributes']
+        if self.selectedBlockID != blockID:
+            self.resetSceneAction(self.selectedBlockID)
             self.selectedBlockID = blockID
-            self.resetSceneAction()
-        #
-        if blockType == "im_RectForAreaSelect":
-            if not self.selectRegionUI:
-                self.resetSceneAction()
-                parameters = webFrame.evaluateJavaScript("Apps.getValueFromSelectedBlock();")
-                parameters = {misc.utfToSystemStr(k): int(v) for k, v in parameters.items()}
-                self.selectRegionUI = QResizableRect(
-                    QRectF(
-                        parameters['topX'],
-                        parameters['topY'],
-                        parameters['bottomX'],
-                        parameters['bottomY']),
-                    None,
-                    self.inputGraphicsView)
-                self.selectRegionUI.geometryChange.connect(self.setRectangleParameterToBlock)
-                self.inputScene.addItem(self.selectRegionUI)
-                return
-        elif blockType == "im_CircleForAreaSelect":
-            if not self.selectRegionUI:
-                self.resetSceneAction()
-                parameters = webFrame.evaluateJavaScript("Apps.getValueFromSelectedBlock();")
-                parameters = {misc.utfToSystemStr(k): int(v) for k, v in parameters.items()}
-                self.selectRegionUI = QResizableEllipse(
-                    QRectF(
-                        parameters['topX'],
-                        parameters['topY'],
-                        parameters['bottomX'],
-                        parameters['bottomY']),
-                    None,
-                    self.inputGraphicsView)
-                self.selectRegionUI.geometryChange.connect(self.setRectangleParameterToBlock)
-                self.inputScene.addItem(self.selectRegionUI)
-                return
-        elif blockType == "color_filter":
-            if not self.selectColorUI:
-                self.resetSceneAction()
-                self.selectColorUI = True
-                self.inputScene.mousePressEvent = self.inputSceneClicked
-                return
-        else:
-            self.resetSceneAction()
 
+        if 'regionSelector' in blockAttributes:
+            parameters = webFrame.evaluateJavaScript("Apps.getValueFromSelectedBlock();")
 
-    def resetSceneAction(self):
-        if self.selectRegionUI:
-            self.inputScene.removeItem(self.selectRegionUI)
-            del self.selectRegionUI
-            self.selectRegionUI = None
-        if self.selectColorUI:
-            self.inputScene.mousePressEvent = None
-            self.selectColorUI = None
+            graphicsItem = self.getGrphicsItemFromInputScene(blockID)
+
+            if graphicsItem is not None:
+                graphicsItem.show()
+            else:
+                rect = QRectF(
+                        int(parameters['topX']),
+                        int(parameters['topY']),
+                        int(parameters['bottomX']),
+                        int(parameters['bottomY']))
+
+                if blockType == "rectRegionSelector":
+                    graphicsItem = QResizableRect(rect, None, self.inputGraphicsView)
+                elif blockType == "ellipseRegionSelector":
+                    graphicsItem = QResizableEllipse(rect, None, self.inputGraphicsView)
+
+                graphicsItem.setObjectName(blockID)
+                graphicsItem.geometryChange.connect(self.setRectangleParameterToBlock)
+                self.inputScene.addItem(graphicsItem)
+
+        elif 'colorSelector' in blockAttributes:
+            self.inputPixMapItem.mousePressEvent = self.inputPixMapItemClicked
+
+    def resetSceneAction(self, blockID):
+        graphicsItem = self.getGrphicsItemFromInputScene(blockID)
+        if graphicsItem is not None:
+            graphicsItem.hide()
+        self.inputPixMapItem.mousePressEvent = QGraphicsPixmapItem(self.inputPixMapItem).mousePressEvent
+
+    def getGrphicsItemFromInputScene(self, blockID):
+        try:
+            int(blockID)
+        except:
+            return None
+
+        for item in self.inputScene.items():
+            #QGraphicsObjectをSceneから取り出そうとすると，
+            #親クラスであるQGraphicsItem(QPixmapGraphicsItem)にダウンキャスト
+            #されて返ってくるためtryが必要．
+            try:
+                if blockID==item.objectName():
+                    return item
+            except:
+                pass
+        return None
 
     def evaluateSelectedBlock(self):
         im_output = None
