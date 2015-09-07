@@ -432,6 +432,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
                         int(parameters['topY']),
                         int(parameters['bottomX']),
                         int(parameters['bottomY']))
+                print(rect)
 
                 if blockType == "rectRegionSelector":
                     graphicsItem = QResizableRect(rect, None, self.inputGraphicsView)
@@ -477,6 +478,8 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.startUIBySelectedBlock()
         if text == "" or text is None:
             text = frame.evaluateJavaScript("Apps.getCodeFromWorkspace();")
+
+        print(text)
 
         if text is None:
             return False
