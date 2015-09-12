@@ -12,7 +12,7 @@ import os, re, hashlib, json
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QFileDialog
 from PyQt5.QtGui import QPixmap, QColor
-from PyQt5.QtCore import QRectF
+from PyQt5.QtCore import QRectF, QPointF
 
 from lib.python.ui.MainWindowBase import Ui_MainWindowBase
 from lib.python.ui.QResizableObject import QResizableRect, QResizableEllipse
