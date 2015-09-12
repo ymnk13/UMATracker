@@ -450,7 +450,8 @@ class Ui_MainWindow(Ui_MainWindowBase):
             graphicsItem = self.getGrphicsItemFromInputScene(blockID)
 
             if graphicsItem is not None:
-                graphicsItem.show()
+                if graphicsItem.isVisible() is False:
+                    graphicsItem.show()
             else:
                 rect = QRectF(
                         int(parameters['topX']),
