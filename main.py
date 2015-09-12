@@ -216,9 +216,34 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
     def setFrame(self, frame):
         if frame is not None:
+            sceneObjects = {}
+            for item in self.inputScene.items():
+                if isinstance(item,QGraphicsPixmapItem):
+                    continue
+                if isinstance(item,QResizableRect):
+                    try:
+                        sceneObjects[int(item.objectName())] = {}
+                        sceneObjects[int(item.objectName())]["topLeftX"] = item._rect.topLeft().x()
+                        sceneObjects[int(item.objectName())]["topLeftY"] = item._rect.topLeft().y()
+                        sceneObjects[int(item.objectName())]["bottomRightX"] = item._rect.bottomRight().x()
+                        sceneObjects[int(item.objectName())]["bottomRightY"] = item._rect.bottomRight().y()
+
+                    except:
+                        pass
             self.cv_img = frame
             self.updateInputGraphicsView()
+
             self.evaluateSelectedBlock()
+            for item in self.inputScene.items():
+                if isinstance(item,QGraphicsPixmapItem):
+                    continue
+                if isinstance(item,QResizableRect):
+                    try:
+                        pos = sceneObjects[int(item.objectName())]
+                        item._rect.setTopLeft(QPointF(pos["topLeftX"],pos["topLeftY"]))
+                        item._rect.setBottomRight(QPointF(pos["bottomRightX"],pos["bottomRightY"]))
+                    except:
+                        pass
         else:
             self.videoPlaybackSlider.setValue(self.videoPlaybackSlider.maximum())
             self.videoPlaybackTimer.stop()
