@@ -496,7 +496,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
             #親クラスであるQGraphicsItem(QPixmapGraphicsItem)にダウンキャスト
             #されて返ってくるためtryが必要．
             try:
-                if blockID==item.objectName():
+                if blockID == item.objectName():
                     return item
             except:
                 pass
