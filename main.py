@@ -371,7 +371,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
         parameters = {
                 'Color': rgb,
-                'Distance': '100'
                 }
         string = json.dumps(parameters)
         webFrame = self.blocklyWebView.page().mainFrame()
