@@ -28,7 +28,6 @@ from PyQt5.QtCore import QRectF, QPointF
 
 from lib.python.ui.MainWindowBase import Ui_MainWindowBase
 from lib.python.ui.QResizableObject import QResizableRect, QResizableEllipse
-from lib.python.ui.QOverlaidGraphicsView import QOverlaidGraphicsView
 
 from lib.python import misc
 
