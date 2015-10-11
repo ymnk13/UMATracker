@@ -1,26 +1,56 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, sys, re, hashlib
+import sys, six
 
-from PyQt5 import QtCore
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsPixmapItem, QFrame, QFileDialog
-from PyQt5.QtGui import QPixmap, QImage, QTransform, QColor
+if six.PY2:
+    reload(sys)
+    sys.setdefaultencoding('UTF8')
+
+# def tracefunc(frame, event, arg, indent=[0]):
+#     if event == "call":
+#         indent[0] += 2
+#         if indent[0] < 10:
+#             print("-" * indent[0] + "> call function", frame.f_code.co_name)
+#     elif event == "return":
+#         if indent[0] < 10:
+#             print("<" + "-" * indent[0], "exit function", frame.f_code.co_name)
+#         indent[0] -= 2
+#     return tracefunc
+# sys.settrace(tracefunc)
+
+import os, re, hashlib, json
+
+from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QFileDialog
+from PyQt5.QtGui import QPixmap, QColor, QBrush
+from PyQt5.QtCore import QRectF, QPointF
+
+from lib.python.ui.MainWindowBase import Ui_MainWindowBase
+from lib.python.ui.QResizableObject import QResizableRect, QResizableEllipse
+
+from lib.python import misc
 
 import cv2
+from lib.python.FilterIO.FilterIO import FilterIO
+from lib.python.PythonClassGenerator.ClassTextGenerator import ClassTextGenerator
+
+#For block evaluation, DO NOT REMOVE!#
 import numpy as np
+from lib.python.pycv import filters
+######################################
 
-import filePath
 
-sys.path.append( filePath.pythonLibDirPath )
-import misc
+currentDirPath = os.path.abspath(os.path.dirname(__file__) )
+sampleDataPath = os.path.join(currentDirPath,"data")
+userDir        = os.path.expanduser('~')
 
-sys.path.append( os.path.join(filePath.pythonLibDirPath, 'pycv') )
-import filters
-
-sys.path.append( os.path.join(filePath.pythonLibDirPath, 'ui') )
-from MainWindowBase import *
-
+if six.PY2:
+    import urllib
+    blocklyURL = "file:" + urllib.pathname2url(os.path.join(currentDirPath,"lib","editor","index.html"))
+elif six.PY3:
+    import urllib.request
+    blocklyURL = "file:" + urllib.request.pathname2url(os.path.join(currentDirPath,"lib","editor","index.html"))
 
 # Log file setting.
 # import logging
@@ -35,6 +65,7 @@ handler.setLevel(DEBUG)
 logger.setLevel(DEBUG)
 logger.addHandler(handler)
 
+
 class Ui_MainWindow(Ui_MainWindowBase):
     def setupUi(self, MainWindow, path):
         super(Ui_MainWindow, self).setupUi(MainWindow)
@@ -44,21 +75,43 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.imgInit()
         self.menuInit()
         self.menubar.setNativeMenuBar(False)
-        MainWindow.dragFile.connect(self.draganddrop)
-        MainWindow.closeUi.connect(self.closeUi)
-    def closeUi(self):
+        MainWindow.closeEvent = self.closeEvent
+        MainWindow.dragEnterEvent = self.dragEnterEvent
+        MainWindow.dropEvent = self.dropEvent
+        self.selectedBlockID = None
+        #b = RectForAreaSelection(QRectF(250, 250, 350.0, 350.0),None,self.inputGraphicsView)
+        #self.inputScene.addItem(b)
+        self.sceneObjectInfo = {}
+
+    def dragEnterEvent(self,event):
+        event.accept()
+
+    def dropEvent(self,event):
+        event.setDropAction(QtCore.Qt.MoveAction)
+        mime = event.mimeData()
+        if mime.hasUrls():
+            urls = mime.urls()
+            if len(urls) > 0:
+                #self.dragFile.emit()
+                self.processDropedFile(urls[0].toLocalFile())
+            event.accept()
+        else:
+            event.ignore()
+
+    def closeEvent(self,event):
         self.releaseVideoCapture()
 
-    def draganddrop(self,filename):
-        filename = re.split(r"file://(.*)",filename)[1]
-        root,ext = os.path.splitext(filename)
+    def processDropedFile(self,filePath):
+        root,ext = os.path.splitext(filePath)
         if ext == ".filter":
             # Read Filter
-            self.openFilterFile(filename)
-        elif ext.lower() in [".avi",".mpg",".mts"]:
+            self.openFilterFile(filePath=filePath)
+        elif ext.lower() in [".avi",".mpg",".mts",".mp4"]:
             # Read Video
-            self.openVideoFile(filename)
-        
+            self.openVideoFile(filePath=filePath)
+        elif ext.lower() in [".png",".bmp",".jpg",".jpeg"]:
+            self.openImageFile(filePath=filePath)
+
     def videoPlaybackInit(self):
         self.videoPlaybackWidget.hide()
 
@@ -174,21 +227,50 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
             self.setFrame(frame)
 
+    def getSceneObjectInfo(self):
+        for item in self.inputScene.items():
+            if isinstance(item,QGraphicsPixmapItem):
+                continue
+            try:
+                blockID = item.objectName()
+
+                self.sceneObjectInfo[blockID]["topLeftX"] = item._rect.topLeft().x()
+                self.sceneObjectInfo[blockID]["topLeftY"] = item._rect.topLeft().y()
+                self.sceneObjectInfo[blockID]["bottomRightX"] = item._rect.bottomRight().x()
+                self.sceneObjectInfo[blockID]["bottomRightY"] = item._rect.bottomRight().y()
+            except:
+                pass
+
+    def setSceneObjectInfo(self):
+        for item in self.inputScene.items():
+            if isinstance(item,QGraphicsPixmapItem):
+                continue
+            try:
+                pos = self.sceneObjectInfo[item.objectName()]
+                item._rect.setTopLeft(QPointF(pos["topLeftX"],pos["topLeftY"]))
+                item._rect.setBottomRight(QPointF(pos["bottomRightX"],pos["bottomRightY"]))
+            except:
+                pass
+
     def setFrame(self, frame):
         if frame is not None:
+
+            self.getSceneObjectInfo()
             self.cv_img = frame
             self.updateInputGraphicsView()
+
             self.evaluateSelectedBlock()
+            self.setSceneObjectInfo()
         else:
             self.videoPlaybackSlider.setValue(self.videoPlaybackSlider.maximum())
             self.videoPlaybackTimer.stop()
             self.blocklyEvaluationTimer.start()
 
     def blocklyInit(self):
-        self.blocklyWebView.setUrl(QtCore.QUrl(filePath.blocklyURL))
+        self.blocklyWebView.setUrl(QtCore.QUrl(blocklyURL))
 
         self.blocklyEvaluationTimer = QtCore.QTimer(parent=self.blocklyWebView)
-        self.blocklyEvaluationTimer.setInterval(1*1000)
+        self.blocklyEvaluationTimer.setInterval(1*100)
         self.blocklyEvaluationTimer.timeout.connect(self.evaluateSelectedBlock)
         self.blocklyEvaluationTimer.start()
 
@@ -197,48 +279,57 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
     def imgInit(self):
         self.cap = None
-        self.filename = os.path.join(filePath.sampleDataPath,"color_filter_test.png")
-        self.cv_img = cv2.imread(os.path.join(filePath.sampleDataPath,"color_filter_test.png"))
+        self.filePath = os.path.join(sampleDataPath,"color_filter_test.png")
+        self.cv_img = cv2.imread(os.path.join(sampleDataPath,"color_filter_test.png"))
 
         self.inputScene = QGraphicsScene()
         self.inputGraphicsView.setScene(self.inputScene)
         self.inputGraphicsView.resizeEvent = self.inputGraphicsViewResized
 
-        self.inputScene.mousePressEvent = self.inputSceneClicked
+        #self.inputScene.mousePressEvent = None
 
         self.outputScene = QGraphicsScene()
         self.outputGraphicsView.setScene(self.outputScene)
         self.outputGraphicsView.resizeEvent = self.outputGraphicsViewResized
 
+
         qimg = misc.cvMatToQImage(self.cv_img)
-        pixmap = QPixmap.fromImage(qimg)
-        self.inputScene.addPixmap(pixmap)
+        self.inputPixMap = QPixmap.fromImage(qimg)
+        self.inputPixMapItem = QGraphicsPixmapItem(self.inputPixMap)
+        self.inputScene.addItem(self.inputPixMapItem)
 
     def menuInit(self):
         self.actionOpenVideo.triggered.connect(self.openVideoFile)
         self.actionOpenImage.triggered.connect(self.openImageFile)
 
-        self.actionOpenBlockData.triggered.connect(self.openBlockFile)
-        self.actionSaveBlockData.triggered.connect(self.saveBlockFile)
-
         self.actionSaveFilterData.triggered.connect(self.saveFilterFile)
         self.actionOpenFilterData.triggered.connect(self.openFilterFile)
-        
+        #self.actionTest00.triggered.connect(self.test00)
+
+    def setRectangleParameterToBlock(self,topLeft,bottomRight):
+        parameters = {
+                    'topX': topLeft.x(),
+                    'topY': topLeft.y(),
+                    'bottomX': bottomRight.x(),
+                    'bottomY': bottomRight.y()
+                    }
+        string = json.dumps({k: str(int(v)) for k, v in parameters.items()})
+        webFrame = self.blocklyWebView.page().mainFrame()
+        webFrame.evaluateJavaScript("Apps.setValueToSelectedBlock({0});".format(string))
+
     def releaseVideoCapture(self):
         if self.cap is not None:
             self.cap.release()
             self.cap = None
 
-    def openVideoFile(self,filename = None):
-        if not os.path.exists(str(filename)):
-            filename = None
-        if not filename:
-            filename, _ = QFileDialog.getOpenFileName(None, 'Open Video File', filePath.userDir)
+    def openVideoFile(self, activated=False, filePath = None):
+        if filePath is None:
+            filePath, _ = QFileDialog.getOpenFileName(None, 'Open Video File', userDir)
 
-        if len(filename) is not 0:
-            self.filename = filename
+        if len(filePath) is not 0:
+            self.filePath = filePath
             self.releaseVideoCapture()
-            self.cap = cv2.VideoCapture(misc.utfToSystemStr(filename))
+            self.cap = cv2.VideoCapture(self.filePath)
 
             self.videoPlaybackWidget.show()
             self.videoPlaybackSlider.setRange(0, self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -251,17 +342,15 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
                 # Initialize Filter when opening new file.
                 self.filterClassHash = None
-                
 
-    def openImageFile(self,filename = None):
-        if not os.path.exists(filename):
-            filename = None
-        if filename == None or filename == False:
-            filename, _ = QFileDialog.getOpenFileName(None, 'Open Image File', filePath.userDir)
-            
-        if len(filename) is not 0:
-            self.filename = filename
-            self.cv_img = cv2.imread(misc.utfToSystemStr(filename))
+
+    def openImageFile(self, activated=False, filePath = None):
+        if filePath == None:
+            filePath, _ = QFileDialog.getOpenFileName(None, 'Open Image File', userDir)
+
+        if len(filePath) is not 0:
+            self.filePath = filePath
+            self.cv_img = cv2.imread(filePath)
             self.videoPlaybackWidget.hide()
 
             self.updateInputGraphicsView()
@@ -271,146 +360,167 @@ class Ui_MainWindow(Ui_MainWindowBase):
             self.filterClassHash = None
 
     def updateInputGraphicsView(self):
-        self.inputScene.clear()
+        # self.inputScene.clear()
+        self.inputScene.removeItem(self.inputPixMapItem)
         qimg = misc.cvMatToQImage(self.cv_img)
-        pixmap = QPixmap.fromImage(qimg)
+        self.inputPixMap = QPixmap.fromImage(qimg)
 
-        rect = QtCore.QRectF(pixmap.rect())
+        rect = QtCore.QRectF(self.inputPixMap.rect())
         self.inputScene.setSceneRect(rect)
         self.outputScene.setSceneRect(rect)
 
-        self.inputScene.addPixmap(pixmap)
+        self.inputPixMapItem = QGraphicsPixmapItem(self.inputPixMap)
+        # self.inputScene.setBackgroundBrush(QBrush(self.inputPixMap))
+        self.inputScene.addItem(self.inputPixMapItem)
 
         self.inputGraphicsView.viewport().update()
         self.inputGraphicsViewResized()
 
-    def inputSceneClicked(self, event):
+    def inputPixMapItemClicked(self, event):
         pos = event.scenePos().toPoint()
-        item = self.inputScene.itemAt(pos, QTransform())
 
-        img = item.pixmap().toImage()
+        img = self.inputPixMap.toImage()
         pix = img.pixel(pos)
         rgb = QColor(pix).name()
         logger.debug("Selected pixel color: {0}".format(rgb))
 
-        frame = self.blocklyWebView.page().mainFrame()
-        frame.evaluateJavaScript("Apps.setColorFilterBlock('{0}');".format(rgb))
+        parameters = {
+                'Color': rgb,
+                }
+        string = json.dumps(parameters)
+        webFrame = self.blocklyWebView.page().mainFrame()
+        webFrame.evaluateJavaScript("Apps.setValueToSelectedBlock({0});".format(string))
 
-    def openBlockFile(self):
-        filename, _ = QFileDialog.getOpenFileName(None, 'Open Block File', filePath.userDir, "Block files (*.block)")
+    def openFilterFile(self, activated=False, filePath = None):
+        if filePath is None:
+            filePath, _ = QFileDialog.getOpenFileName(None, 'Open Block File', userDir, "Block files (*.filter)")
 
-        if len(filename) is not 0:
-            logger.debug("Opening Block file: {0}".format(filename))
+        if len(filePath) is not 0:
+            logger.debug("Open Filter file: {0}".format(filePath))
 
-            with open(misc.utfToSystemStr(filename)) as f:
-                text = f.read()
-                text = re.sub(r"[\n\r]","",text)
-                print text
-                frame = self.blocklyWebView.page().mainFrame()
-                script = "Apps.setBlockData('{0}');".format(text)
-                ret = frame.evaluateJavaScript(script)
-                
-    def openFilterFile(self,filename = None):
-        if not filename:
-            filename, _ = QFileDialog.getOpenFileName(None, 'Open Block File', filePath.userDir, "Block files (*.filter)")
-        
-        if len(filename) is not 0:
-            logger.debug("Open Filter file: {0}".format(filename))
+            filterIO = FilterIO(filePath)
 
-            with open(filename) as f:
-                text = f.read()
-                exec(text)
-                xmlText = filterOperation.xmlText
-                if filterOperation.imageFile:
-                    imageFileName = filterOperation.imageFile
-                    self.filename = imageFileName
-                else:
-                    self.filename = None
-                text = re.sub(r"[\n\r]","",xmlText)
-                script = "Apps.setBlockData('{0}');".format(text)
-                frame = self.blocklyWebView.page().mainFrame()
-                frame.evaluateJavaScript(script)
+            exec(filterIO.getFilterCode(), globals())
 
-                if self.filename:
-                    root,ext = os.path.splitext(self.filename)
-                    if ext in [".png",".jpg",".bmp"]:
-                        self.openImageFile(self.filename)
-                    else:
-                        self.openVideoFile(self.filename)
-        
-        
-    def saveBlockFile(self):
-        filename, _ = QFileDialog.getSaveFileName(None, 'Save Block File', filePath.userDir, "Block files (*.block)")
+            blockXML = re.sub(r"[\n\r]",'', filterIO.getBlockXMLData())
+            frame = self.blocklyWebView.page().mainFrame()
+            frame.evaluateJavaScript("Apps.setBlockData('{0}');".format(blockXML))
 
-        if len(filename) is not 0:
-            logger.debug("Saving Block file: {0}".format(filename))
-
-            with open(misc.utfToSystemStr(filename), mode="w") as f:
-                frame = self.blocklyWebView.page().mainFrame()
-                text = frame.evaluateJavaScript("Apps.getBlockData();")
-
-                f.write(text)
-                
     def saveFilterFile(self):
-        filename, _ = QFileDialog.getSaveFileName(None, 'Save Filter File', filePath.userDir, "Filter files (*.filter)")
+        filePath, _ = QFileDialog.getSaveFileName(None, 'Save Filter File', userDir, "Filter files (*.filter)")
 
-        if len(filename) is not 0:
-            logger.debug("Saving Filter file: {0}".format(filename))
+        if len(filePath) is not 0:
+            logger.debug("Saving Filter file: {0}".format(filePath))
 
-            with open(misc.utfToSystemStr(filename), mode="w") as f:
-                frame = self.blocklyWebView.page().mainFrame()
+            frame = self.blocklyWebView.page().mainFrame()
 
-                text = frame.evaluateJavaScript("Apps.getCodeFromWorkspace();")
-                if text is None:
-                    return False
-                xmlText = frame.evaluateJavaScript("Apps.getBlockData();")
+            filterIO = FilterIO()
+            filterIO.setBlockXMLData(frame.evaluateJavaScript("Apps.getBlockData();"))
 
-                text = self.parseToClass(text,{"xmlText":xmlText,
-                                               "imageFile":self.filename})
-                
-                f.write(text)
+            filterClassText = self.parseToClass(frame.evaluateJavaScript("Apps.getCodeFromWorkspace();"))
+            filterIO.setFilterCode(filterClassText)
+            filterIO.save(filePath)
 
     def inputGraphicsViewResized(self, event=None):
-        self.inputGraphicsView.fitInView(self.inputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
+        # return
+        self.inputGraphicsView.fitInView(QtCore.QRectF(self.inputPixMap.rect()), QtCore.Qt.KeepAspectRatio)
+        # p = QPainter(self.inputGraphicsView.viewport())
+        # p.setRenderHints(self.inputGraphicsView.renderHints())
+        # self.m_overlayScene.render(p, self.inputGraphicsView.viewport().rect())
 
     def outputGraphicsViewResized(self, event=None):
         self.outputGraphicsView.fitInView(self.outputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
 
-
-    def parseToClass(self, text,metaInfo = {}):
+    def parseToClass(self, text):
         lines = text.split("\n")
-        indents = "    "
-
         classMemberPattern = r"^#"
 
         classMembers = []
         filterOperations = []
+
         for line in lines:
             if re.match(classMemberPattern, line):
-                classMembers.append(indents + indents + line.lstrip("#"))
+                classMembers.append(line.lstrip("#"))
             else:
-                filterOperations.append(indents + indents + line)
-        classMembers.append(indents + indents + "return")
-        filterOperations.append(indents + indents + "return {output}")
+                filterOperations.append(line)
 
-        classMembersStr = "\n".join(classMembers)
-        filterOperationsStr = "\n".join(filterOperations)
+        generator = ClassTextGenerator('filterOperation')
+        generator.functions['__init__']['lines'] = classMembers
+        generator.functions['__init__']['args'] = ['im_input']
 
-        metaInfoStr = ""
-        metaInfoLists = []
-        for i,elem in metaInfo.items():
-            if len(elem.split("\n")) > 1:
-                metaInfoLists.append("\n".join([indents + "{0} = \"\"\"\n{1}\n\"\"\"".format(i,elem)]))
+        filterOperations.append('return {output}')
+        generator.addFunction('filterFunc', filterOperations, args=['im_input'], returnVal=True)
+
+        return generator.generate().format(input="im_input", output="im_output")
+
+    def startUIBySelectedBlock(self):
+        webFrame = self.blocklyWebView.page().mainFrame()
+
+        data = webFrame.evaluateJavaScript("Apps.getBlockTypeFromSelectedBlock();")
+        if data is None:
+            return
+
+        blockType = data['type']
+        blockID = data['id']
+        blockAttributes = data['attributes']
+        if self.selectedBlockID != blockID:
+            self.resetSceneAction(self.selectedBlockID)
+            self.selectedBlockID = blockID
+
+        if 'regionSelector' in blockAttributes:
+            parameters = webFrame.evaluateJavaScript("Apps.getValueFromSelectedBlock();")
+
+            graphicsItem = self.getGrphicsItemFromInputScene(blockID)
+
+            if graphicsItem is not None:
+                if graphicsItem.isVisible() is False:
+                    graphicsItem.show()
             else:
-                metaInfoLists.append("\n".join([indents + "{0} = \"{1}\"".format(i,elem)]))
-        metaInfoStr = "\n".join(metaInfoLists)
-            
-        constructorStr = "\n".join([indents + "def __init__(self, im_input):", classMembersStr])
-        filterFuncStr  = "\n".join([indents + "def filterFunc(self, im_input):", filterOperationsStr])
-        filterOperationClassStr = "\n".join(["class filterOperation:", metaInfoStr , constructorStr, filterFuncStr])
-        
-        return filterOperationClassStr.format(input="im_input", output="im_output")
+                if blockID not in self.sceneObjectInfo:
+                    self.sceneObjectInfo[blockID] = {}
+                rect = QRectF(
+                        int(parameters['topX']),
+                        int(parameters['topY']),
+                        int(parameters['bottomX']),
+                        int(parameters['bottomY']))
+                # print(rect)
 
+                if blockType == "rectRegionSelector":
+                    graphicsItem = QResizableRect(rect, None, self.inputGraphicsView)
+                elif blockType == "ellipseRegionSelector":
+                    graphicsItem = QResizableEllipse(rect, None, self.inputGraphicsView)
+
+                graphicsItem.setObjectName(blockID)
+                graphicsItem.geometryChange.connect(self.setRectangleParameterToBlock)
+                self.inputScene.addItem(graphicsItem)
+
+            self.updateInputGraphicsView()
+
+        elif 'colorSelector' in blockAttributes:
+            self.inputPixMapItem.mousePressEvent = self.inputPixMapItemClicked
+
+    def resetSceneAction(self, blockID):
+        graphicsItem = self.getGrphicsItemFromInputScene(blockID)
+        if graphicsItem is not None:
+            graphicsItem.hide()
+        self.inputPixMapItem.mousePressEvent = QGraphicsPixmapItem(self.inputPixMapItem).mousePressEvent
+
+    def getGrphicsItemFromInputScene(self, blockID):
+        try:
+            int(blockID)
+        except:
+            return None
+
+        for item in self.inputScene.items():
+            #QGraphicsObjectをSceneから取り出そうとすると，
+            #親クラスであるQGraphicsItem(QPixmapGraphicsItem)にダウンキャスト
+            #されて返ってくるためtryが必要．
+            try:
+                if blockID == item.objectName():
+                    return item
+            except:
+                pass
+        return None
 
     def evaluateSelectedBlock(self):
         im_output = None
@@ -418,12 +528,15 @@ class Ui_MainWindow(Ui_MainWindowBase):
         frame = self.blocklyWebView.page().mainFrame()
 
         text = frame.evaluateJavaScript("Apps.getCodeFromSelectedBlock();")
+        self.startUIBySelectedBlock()
         if text == "" or text is None:
             text = frame.evaluateJavaScript("Apps.getCodeFromWorkspace();")
 
+        # print(text)
+
         if text is None:
             return False
-        
+
         xmlText = frame.evaluateJavaScript("Apps.getBlockData();")
         text = self.parseToClass(text)
 
@@ -436,7 +549,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         if self.filterClassHash != textHash:
             self.filterClassHash = textHash
             try:
-                exec(text)
+                exec(text, globals())
                 self.filter = filterOperation(self.cv_img)
             except Exception as e:
                 logger.debug("Block Evaluation Error: {0}".format(e))
@@ -457,36 +570,11 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.outputGraphicsView.viewport().update()
         self.outputGraphicsViewResized()
 
-
-from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
-    
-class QMainWindow(QtWidgets.QMainWindow):
-    dragFile = pyqtSignal(str)
-    closeUi = pyqtSignal()
-    def __init__(self):
-        super(QtWidgets.QMainWindow, self).__init__()
-    def dragEnterEvent(self, e):
-        e.accept()
-    def dropEvent(self, e):
-        e.setDropAction(QtCore.Qt.MoveAction)
-        
-        mime = e.mimeData()
-        if mime.hasUrls():
-            urls = mime.urls()
-            if len(urls) > 0:
-                self.dragFile.emit(urls[0].toString())
-            e.accept()
-        else:
-            e.ignore()
-    def closeEvent(self, event):
-        self.closeUi.emit()
-
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    #MainWindow = QtWidgets.QMainWindow()
-    MainWindow = QMainWindow()
+    MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
-    ui.setupUi(MainWindow,filePath.currentDirPath)
+    ui.setupUi(MainWindow,currentDirPath)
     MainWindow.show()
     sys.exit(app.exec_())
 

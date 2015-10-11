@@ -29,6 +29,7 @@
         <script src="./js/blocks/mask.js"></script>
         <script src="./js/blocks/operator.js"></script>
         <script src="./js/blocks/filter.js"></script>
+	<script src="./js/blocks/custom.js"></script>
     </head>
     <body onload="init()">
       <a href="#" onClick="console.log(App.getCodeFromWorkspace());">Debug Code</a>
@@ -47,8 +48,10 @@
             <category name="Filters">
 		<block type="img_gray_bgrtogray"></block>
 		<block type="im_threshold"></block>
-		<block type="color_filter"></block>
+		<block type="colorFilter_colorSelector"></block>
 		<block type="img_inverse"></block>
+		<block type="rectRegionSelector_regionSelector"></block>
+		<block type="ellipseRegionSelector_regionSelector"></block>
             </category>
 	    
             <category name="Mask Image">
@@ -83,11 +86,7 @@
         <xml id="startBlocks" style="display: none">
             <block type="output">
 		<value name="output">
-		    <block type="img_gray_bgrtogray">
-			<value name="img">
-			    <block type="input"> </block>
-			</value>
-		    </block>
+		  <block type="input"> </block>
 		</value>
             </block>
         </xml>
