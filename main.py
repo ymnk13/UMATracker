@@ -7,6 +7,18 @@ if six.PY2:
     reload(sys)
     sys.setdefaultencoding('UTF8')
 
+# def tracefunc(frame, event, arg, indent=[0]):
+#     if event == "call":
+#         indent[0] += 2
+#         if indent[0] < 10:
+#             print("-" * indent[0] + "> call function", frame.f_code.co_name)
+#     elif event == "return":
+#         if indent[0] < 10:
+#             print("<" + "-" * indent[0], "exit function", frame.f_code.co_name)
+#         indent[0] -= 2
+#     return tracefunc
+# sys.settrace(tracefunc)
+
 import os, re, hashlib, json
 
 from PyQt5 import QtCore, QtWidgets
