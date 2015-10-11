@@ -24,7 +24,7 @@ import os, re, hashlib, json
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QFileDialog
 from PyQt5.QtGui import QPixmap, QColor, QBrush
-from PyQt5.QtCore import QRectF
+from PyQt5.QtCore import QRectF, QPointF
 
 from lib.python.ui.MainWindowBase import Ui_MainWindowBase
 from lib.python.ui.QResizableObject import QResizableRect, QResizableEllipse
@@ -82,6 +82,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.selectedBlockID = None
         #b = RectForAreaSelection(QRectF(250, 250, 350.0, 350.0),None,self.inputGraphicsView)
         #self.inputScene.addItem(b)
+        self.sceneObjectInfo = {}
 
     def dragEnterEvent(self,event):
         event.accept()
@@ -227,11 +228,40 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
             self.setFrame(frame)
 
+    def getSceneObjectInfo(self):
+        for item in self.inputScene.items():
+            if isinstance(item,QGraphicsPixmapItem):
+                continue
+            try:
+                blockID = item.objectName()
+
+                self.sceneObjectInfo[blockID]["topLeftX"] = item._rect.topLeft().x()
+                self.sceneObjectInfo[blockID]["topLeftY"] = item._rect.topLeft().y()
+                self.sceneObjectInfo[blockID]["bottomRightX"] = item._rect.bottomRight().x()
+                self.sceneObjectInfo[blockID]["bottomRightY"] = item._rect.bottomRight().y()
+            except:
+                pass
+
+    def setSceneObjectInfo(self):
+        for item in self.inputScene.items():
+            if isinstance(item,QGraphicsPixmapItem):
+                continue
+            try:
+                pos = self.sceneObjectInfo[item.objectName()]
+                item._rect.setTopLeft(QPointF(pos["topLeftX"],pos["topLeftY"]))
+                item._rect.setBottomRight(QPointF(pos["bottomRightX"],pos["bottomRightY"]))
+            except:
+                pass
+
     def setFrame(self, frame):
         if frame is not None:
+
+            self.getSceneObjectInfo()
             self.cv_img = frame
             self.updateInputGraphicsView()
+
             self.evaluateSelectedBlock()
+            self.setSceneObjectInfo()
         else:
             self.videoPlaybackSlider.setValue(self.videoPlaybackSlider.maximum())
             self.videoPlaybackTimer.stop()
@@ -357,7 +387,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
         parameters = {
                 'Color': rgb,
-                'Distance': '100'
                 }
         string = json.dumps(parameters)
         webFrame = self.blocklyWebView.page().mainFrame()
@@ -445,8 +474,11 @@ class Ui_MainWindow(Ui_MainWindowBase):
             graphicsItem = self.getGrphicsItemFromInputScene(blockID)
 
             if graphicsItem is not None:
-                graphicsItem.show()
+                if graphicsItem.isVisible() is False:
+                    graphicsItem.show()
             else:
+                if blockID not in self.sceneObjectInfo:
+                    self.sceneObjectInfo[blockID] = {}
                 rect = QRectF(
                         int(parameters['topX']),
                         int(parameters['topY']),
@@ -485,7 +517,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
             #親クラスであるQGraphicsItem(QPixmapGraphicsItem)にダウンキャスト
             #されて返ってくるためtryが必要．
             try:
-                if blockID==item.objectName():
+                if blockID == item.objectName():
                     return item
             except:
                 pass
