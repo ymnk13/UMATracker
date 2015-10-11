@@ -105,7 +105,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         if ext == ".filter":
             # Read Filter
             self.openFilterFile(filePath=filePath)
-        elif ext.lower() in [".avi",".mpg",".mts"]:
+        elif ext.lower() in [".avi",".mpg",".mts",".mp4"]:
             # Read Video
             self.openVideoFile(filePath=filePath)
         elif ext.lower() in [".png",".bmp",".jpg",".jpeg"]:
