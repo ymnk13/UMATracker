@@ -15,6 +15,7 @@ class QResizableGraphicsObject(QGraphicsObject):
 
     def __init__(self, rect, parent=None, view=None):
         super(QResizableGraphicsObject, self).__init__()
+        self.setZValue(1000)
         self._view = view
         self._rect = rect
         self._boundingRect = rect
@@ -134,6 +135,7 @@ class QResizableGraphicsObject(QGraphicsObject):
 
     def updateResizeHandles(self):
         self.resizeHandleSize = 4.0
+        self._rect = self._rect.normalized()
         self.offset = self.resizeHandleSize * (self._view.mapToScene(1, 0).x() - self._view.mapToScene(0, 1).x())
         self._boundingRect = self._rect.adjusted(
                 -self.offset*2,

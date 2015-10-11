@@ -23,11 +23,12 @@ import os, re, hashlib, json
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QFileDialog
-from PyQt5.QtGui import QPixmap, QColor
+from PyQt5.QtGui import QPixmap, QColor, QBrush
 from PyQt5.QtCore import QRectF
 
 from lib.python.ui.MainWindowBase import Ui_MainWindowBase
 from lib.python.ui.QResizableObject import QResizableRect, QResizableEllipse
+from lib.python.ui.QOverlaidGraphicsView import QOverlaidGraphicsView
 
 from lib.python import misc
 
@@ -262,6 +263,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.outputGraphicsView.setScene(self.outputScene)
         self.outputGraphicsView.resizeEvent = self.outputGraphicsViewResized
 
+
         qimg = misc.cvMatToQImage(self.cv_img)
         self.inputPixMap = QPixmap.fromImage(qimg)
         self.inputPixMapItem = QGraphicsPixmapItem(self.inputPixMap)
@@ -329,7 +331,8 @@ class Ui_MainWindow(Ui_MainWindowBase):
             self.filterClassHash = None
 
     def updateInputGraphicsView(self):
-        self.inputScene.clear()
+        # self.inputScene.clear()
+        self.inputScene.removeItem(self.inputPixMapItem)
         qimg = misc.cvMatToQImage(self.cv_img)
         self.inputPixMap = QPixmap.fromImage(qimg)
 
@@ -338,6 +341,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.outputScene.setSceneRect(rect)
 
         self.inputPixMapItem = QGraphicsPixmapItem(self.inputPixMap)
+        # self.inputScene.setBackgroundBrush(QBrush(self.inputPixMap))
         self.inputScene.addItem(self.inputPixMapItem)
 
         self.inputGraphicsView.viewport().update()
@@ -390,7 +394,11 @@ class Ui_MainWindow(Ui_MainWindowBase):
             filterIO.save(filePath)
 
     def inputGraphicsViewResized(self, event=None):
-        self.inputGraphicsView.fitInView(self.inputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
+        # return
+        self.inputGraphicsView.fitInView(QtCore.QRectF(self.inputPixMap.rect()), QtCore.Qt.KeepAspectRatio)
+        # p = QPainter(self.inputGraphicsView.viewport())
+        # p.setRenderHints(self.inputGraphicsView.renderHints())
+        # self.m_overlayScene.render(p, self.inputGraphicsView.viewport().rect())
 
     def outputGraphicsViewResized(self, event=None):
         self.outputGraphicsView.fitInView(self.outputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
@@ -444,7 +452,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
                         int(parameters['topY']),
                         int(parameters['bottomX']),
                         int(parameters['bottomY']))
-                print(rect)
+                # print(rect)
 
                 if blockType == "rectRegionSelector":
                     graphicsItem = QResizableRect(rect, None, self.inputGraphicsView)
@@ -454,6 +462,8 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 graphicsItem.setObjectName(blockID)
                 graphicsItem.geometryChange.connect(self.setRectangleParameterToBlock)
                 self.inputScene.addItem(graphicsItem)
+
+            self.updateInputGraphicsView()
 
         elif 'colorSelector' in blockAttributes:
             self.inputPixMapItem.mousePressEvent = self.inputPixMapItemClicked
@@ -491,7 +501,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
         if text == "" or text is None:
             text = frame.evaluateJavaScript("Apps.getCodeFromWorkspace();")
 
-        print(text)
+        # print(text)
 
         if text is None:
             return False
