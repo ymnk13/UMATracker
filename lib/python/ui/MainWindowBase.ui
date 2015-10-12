@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>886</width>
-    <height>493</height>
+    <width>976</width>
+    <height>580</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -49,86 +49,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QWidget" name="videoPlaybackWidget" native="true">
-         <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
-           <layout class="QHBoxLayout" name="videoPlaybackButtons">
-            <item>
-             <widget class="QPushButton" name="videoGoHeadButton">
-              <property name="maximumSize">
-               <size>
-                <width>32</width>
-                <height>32</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>&lt;&lt;</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="videoGoBackwardButton">
-              <property name="maximumSize">
-               <size>
-                <width>32</width>
-                <height>32</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>&lt;</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="videoPlayStopButton">
-              <property name="maximumSize">
-               <size>
-                <width>32</width>
-                <height>32</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Play/Stop</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="videoGoForwardButton">
-              <property name="maximumSize">
-               <size>
-                <width>32</width>
-                <height>32</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>&gt;</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="videoGoLastButton">
-              <property name="maximumSize">
-               <size>
-                <width>32</width>
-                <height>32</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>&gt;&gt;</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSlider" name="videoPlaybackSlider">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
+        <widget class="VideoPlaybackWidget" name="videoPlaybackWidget"/>
        </item>
       </layout>
      </widget>
@@ -190,8 +111,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>886</width>
-     <height>22</height>
+     <width>976</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">
@@ -252,6 +173,11 @@
   </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>VideoPlaybackWidget</class>
+   <extends>QWidget</extends>
+   <header>.video_playback_widget</header>
+  </customwidget>
   <customwidget>
    <class>QWebView</class>
    <extends>QWidget</extends>
