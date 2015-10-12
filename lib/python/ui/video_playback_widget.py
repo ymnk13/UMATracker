@@ -1,4 +1,4 @@
-from ui_video_playback_widget import Ui_VideoPlaybackWidget
+from .ui_video_playback_widget import Ui_VideoPlaybackWidget
 
 import cv2
 import numpy as np
