@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from .ui_video_playback_widget import Ui_VideoPlaybackWidget
 
 import cv2
@@ -186,7 +188,7 @@ if __name__ == "__main__":
     widget = VideoPlaybackWidget(MainWindow)
     MainWindow.setCentralWidget(widget)
 
-    widget.frameChanged.connect(print)
+    #widget.frameChanged.connect(print)
     widget.openVideo("test3.mp4")
 
     MainWindow.show()
