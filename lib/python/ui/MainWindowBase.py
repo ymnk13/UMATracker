@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'MainWindowBase.ui'
+# Form implementation generated from reading ui file '.\MainWindowBase.ui'
 #
 # Created by: PyQt5 UI code generator 5.4.2
 #
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindowBase(object):
     def setupUi(self, MainWindowBase):
         MainWindowBase.setObjectName("MainWindowBase")
-        MainWindowBase.resize(886, 493)
+        MainWindowBase.resize(976, 580)
         MainWindowBase.setAcceptDrops(True)
         self.centralwidget = QtWidgets.QWidget(MainWindowBase)
         self.centralwidget.setObjectName("centralwidget")
@@ -36,37 +36,8 @@ class Ui_MainWindowBase(object):
         self.blocklyWebView.setUrl(QtCore.QUrl("about:blank"))
         self.blocklyWebView.setObjectName("blocklyWebView")
         self.verticalLayout.addWidget(self.blocklyWebView)
-        self.videoPlaybackWidget = QtWidgets.QWidget(self.blockEditorBox)
+        self.videoPlaybackWidget = VideoPlaybackWidget(self.blockEditorBox)
         self.videoPlaybackWidget.setObjectName("videoPlaybackWidget")
-        self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.videoPlaybackWidget)
-        self.verticalLayout_4.setObjectName("verticalLayout_4")
-        self.videoPlaybackButtons = QtWidgets.QHBoxLayout()
-        self.videoPlaybackButtons.setObjectName("videoPlaybackButtons")
-        self.videoGoHeadButton = QtWidgets.QPushButton(self.videoPlaybackWidget)
-        self.videoGoHeadButton.setMaximumSize(QtCore.QSize(32, 32))
-        self.videoGoHeadButton.setObjectName("videoGoHeadButton")
-        self.videoPlaybackButtons.addWidget(self.videoGoHeadButton)
-        self.videoGoBackwardButton = QtWidgets.QPushButton(self.videoPlaybackWidget)
-        self.videoGoBackwardButton.setMaximumSize(QtCore.QSize(32, 32))
-        self.videoGoBackwardButton.setObjectName("videoGoBackwardButton")
-        self.videoPlaybackButtons.addWidget(self.videoGoBackwardButton)
-        self.videoPlayStopButton = QtWidgets.QPushButton(self.videoPlaybackWidget)
-        self.videoPlayStopButton.setMaximumSize(QtCore.QSize(32, 32))
-        self.videoPlayStopButton.setObjectName("videoPlayStopButton")
-        self.videoPlaybackButtons.addWidget(self.videoPlayStopButton)
-        self.videoGoForwardButton = QtWidgets.QPushButton(self.videoPlaybackWidget)
-        self.videoGoForwardButton.setMaximumSize(QtCore.QSize(32, 32))
-        self.videoGoForwardButton.setObjectName("videoGoForwardButton")
-        self.videoPlaybackButtons.addWidget(self.videoGoForwardButton)
-        self.videoGoLastButton = QtWidgets.QPushButton(self.videoPlaybackWidget)
-        self.videoGoLastButton.setMaximumSize(QtCore.QSize(32, 32))
-        self.videoGoLastButton.setObjectName("videoGoLastButton")
-        self.videoPlaybackButtons.addWidget(self.videoGoLastButton)
-        self.videoPlaybackSlider = QtWidgets.QSlider(self.videoPlaybackWidget)
-        self.videoPlaybackSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.videoPlaybackSlider.setObjectName("videoPlaybackSlider")
-        self.videoPlaybackButtons.addWidget(self.videoPlaybackSlider)
-        self.verticalLayout_4.addLayout(self.videoPlaybackButtons)
         self.verticalLayout.addWidget(self.videoPlaybackWidget)
         self.horizontalLayout.addWidget(self.blockEditorBox)
         self.graphicsBox = QtWidgets.QGroupBox(self.centralwidget)
@@ -102,7 +73,7 @@ class Ui_MainWindowBase(object):
         self.horizontalLayout.addWidget(self.graphicsBox)
         MainWindowBase.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindowBase)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 886, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 976, 21))
         self.menubar.setObjectName("menubar")
         self.menuFiles = QtWidgets.QMenu(self.menubar)
         self.menuFiles.setObjectName("menuFiles")
@@ -144,11 +115,6 @@ class Ui_MainWindowBase(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindowBase.setWindowTitle(_translate("MainWindowBase", "MainWindow"))
         self.blockEditorBox.setTitle(_translate("MainWindowBase", "Block Editor"))
-        self.videoGoHeadButton.setText(_translate("MainWindowBase", "<<"))
-        self.videoGoBackwardButton.setText(_translate("MainWindowBase", "<"))
-        self.videoPlayStopButton.setText(_translate("MainWindowBase", "Play/Stop"))
-        self.videoGoForwardButton.setText(_translate("MainWindowBase", ">"))
-        self.videoGoLastButton.setText(_translate("MainWindowBase", ">>"))
         self.graphicsBox.setTitle(_translate("MainWindowBase", "Background"))
         self.menuFiles.setTitle(_translate("MainWindowBase", "Files"))
         self.actionOpenVideo.setText(_translate("MainWindowBase", "Open Video"))
@@ -161,13 +127,4 @@ class Ui_MainWindowBase(object):
         self.actionOpenFilterData.setText(_translate("MainWindowBase", "Open Filter Data"))
 
 from PyQt5 import QtWebKitWidgets
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindowBase = QtWidgets.QMainWindow()
-    ui = Ui_MainWindowBase()
-    ui.setupUi(MainWindowBase)
-    MainWindowBase.show()
-    sys.exit(app.exec_())
-
+from .video_playback_widget import VideoPlaybackWidget
