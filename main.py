@@ -163,14 +163,15 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.actionOpenFilterData.triggered.connect(self.openFilterFile)
         #self.actionTest00.triggered.connect(self.test00)
 
-    def setRectangleParameterToBlock(self,topLeft,bottomRight):
+    def setRectangleParameterToBlock(self, topLeft, bottomRight):
+        height, width, dim = self.cv_img.shape
         parameters = {
-                    'topX': topLeft.x(),
-                    'topY': topLeft.y(),
-                    'bottomX': bottomRight.x(),
-                    'bottomY': bottomRight.y()
+                    'topX': topLeft.x()/width,
+                    'topY': topLeft.y()/height,
+                    'bottomX': bottomRight.x()/width,
+                    'bottomY': bottomRight.y()/height
                     }
-        string = json.dumps({k: str(int(v)) for k, v in parameters.items()})
+        string = json.dumps({k: str(v) for k, v in parameters.items()})
         webFrame = self.blocklyWebView.page().mainFrame()
         webFrame.evaluateJavaScript("Apps.setValueToSelectedBlock({0});".format(string))
 
@@ -317,12 +318,13 @@ class Ui_MainWindow(Ui_MainWindowBase):
             else:
                 if blockID not in self.sceneObjectInfo:
                     self.sceneObjectInfo[blockID] = {}
+
+                height, width, dim = self.cv_img.shape
                 rect = QRectF(
-                        float(parameters['topX']),
-                        float(parameters['topY']),
-                        float(parameters['bottomX']) - float(parameters['topX']),
-                        float(parameters['bottomY']) - float(parameters['topY']))
-                # print(rect)
+                        float(parameters['topX'])*width,
+                        float(parameters['topY'])*height,
+                        float(parameters['bottomX'])*width - float(parameters['topX'])*width,
+                        float(parameters['bottomY'])*height - float(parameters['topY'])*height)
 
                 if blockType == "rectRegionSelector":
                     graphicsItem = QResizableRect()
