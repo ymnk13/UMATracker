@@ -116,40 +116,13 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.videoPlaybackWidget.hide()
         self.videoPlaybackWidget.frameChanged.connect(self.setFrame)
 
-    def getSceneObjectInfo(self):
-        for item in self.inputScene.items():
-            if isinstance(item,QGraphicsPixmapItem):
-                continue
-            try:
-                blockID = item.objectName()
-
-                self.sceneObjectInfo[blockID]["topLeftX"] = item._rect.topLeft().x()
-                self.sceneObjectInfo[blockID]["topLeftY"] = item._rect.topLeft().y()
-                self.sceneObjectInfo[blockID]["bottomRightX"] = item._rect.bottomRight().x()
-                self.sceneObjectInfo[blockID]["bottomRightY"] = item._rect.bottomRight().y()
-            except:
-                pass
-
-    def setSceneObjectInfo(self):
-        for item in self.inputScene.items():
-            if isinstance(item,QGraphicsPixmapItem):
-                continue
-            try:
-                pos = self.sceneObjectInfo[item.objectName()]
-                item._rect.setTopLeft(QPointF(pos["topLeftX"],pos["topLeftY"]))
-                item._rect.setBottomRight(QPointF(pos["bottomRightX"],pos["bottomRightY"]))
-            except:
-                pass
-
     def setFrame(self, frame):
         if frame is not None:
 
-            self.getSceneObjectInfo()
             self.cv_img = frame
             self.updateInputGraphicsView()
 
             self.evaluateSelectedBlock()
-            self.setSceneObjectInfo()
 
     def blocklyInit(self):
         self.blocklyWebView.setUrl(QtCore.QUrl(blocklyURL))
