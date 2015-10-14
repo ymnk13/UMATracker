@@ -81,7 +81,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
         self.selectedBlockID = None
         #b = RectForAreaSelection(QRectF(250, 250, 350.0, 350.0),None,self.inputGraphicsView)
         #self.inputScene.addItem(b)
-        self.sceneObjectInfo = {}
 
     def dragEnterEvent(self,event):
         event.accept()
@@ -315,9 +314,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 if graphicsItem.isVisible() is False:
                     graphicsItem.show()
             else:
-                if blockID not in self.sceneObjectInfo:
-                    self.sceneObjectInfo[blockID] = {}
-
                 height, width, dim = self.cv_img.shape
                 rect = QRectF(
                         float(parameters['topX'])*width,
