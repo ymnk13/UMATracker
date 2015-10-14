@@ -198,7 +198,6 @@ class Ui_MainWindow(Ui_MainWindowBase):
             self.videoPlaybackWidget.hide()
 
             self.updateInputGraphicsView()
-            self.releaseVideoCapture()
 
             # Initialize Filter when opening new file.
             self.filterClassHash = None
