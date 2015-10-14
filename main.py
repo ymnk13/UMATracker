@@ -318,10 +318,10 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 if blockID not in self.sceneObjectInfo:
                     self.sceneObjectInfo[blockID] = {}
                 rect = QRectF(
-                        int(parameters['topX']),
-                        int(parameters['topY']),
-                        int(parameters['bottomX']),
-                        int(parameters['bottomY']))
+                        float(parameters['topX']),
+                        float(parameters['topY']),
+                        float(parameters['bottomX']) - float(parameters['topX']),
+                        float(parameters['bottomY']) - float(parameters['topY']))
                 # print(rect)
 
                 if blockType == "rectRegionSelector":
