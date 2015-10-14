@@ -325,9 +325,10 @@ class Ui_MainWindow(Ui_MainWindowBase):
                 # print(rect)
 
                 if blockType == "rectRegionSelector":
-                    graphicsItem = QResizableRect(rect, None, self.inputGraphicsView)
+                    graphicsItem = QResizableRect()
                 elif blockType == "ellipseRegionSelector":
-                    graphicsItem = QResizableEllipse(rect, None, self.inputGraphicsView)
+                    graphicsItem = QResizableEllipse()
+                graphicsItem.setRect(rect)
 
                 graphicsItem.setObjectName(blockID)
                 graphicsItem.geometryChange.connect(self.setRectangleParameterToBlock)

@@ -13,15 +13,12 @@ from PyQt5.QtCore import pyqtSignal
 class QResizableGraphicsObject(QGraphicsObject):
     geometryChange = pyqtSignal('QPointF', 'QPointF')
 
-    def __init__(self, rect, parent=None, view=None):
-        super(QResizableGraphicsObject, self).__init__()
+    def __init__(self, parent=None):
+        super(QResizableGraphicsObject, self).__init__(parent)
         self.setZValue(1000)
-        self._view = view
-        self._rect = rect
-        self._boundingRect = rect
 
         self.mouseIsPressed = None
-        #
+
         self.setFlags(QGraphicsItem.ItemIsSelectable |
                       QGraphicsItem.ItemIsFocusable |
                       QGraphicsItem.ItemIsMovable |
@@ -30,6 +27,10 @@ class QResizableGraphicsObject(QGraphicsObject):
 
         self._buttonList = {}
         self.setFocus(Qt.ActiveWindowFocusReason)
+
+    def setRect(self, rect):
+        self._rect = rect
+        self._boundingRect = rect
 
     def prepareGeometryChange(self):
         self.geometryChange.emit(self._rect.topLeft(),
@@ -136,7 +137,10 @@ class QResizableGraphicsObject(QGraphicsObject):
     def updateResizeHandles(self):
         self.resizeHandleSize = 4.0
         self._rect = self._rect.normalized()
-        self.offset = self.resizeHandleSize * (self._view.mapToScene(1, 0).x() - self._view.mapToScene(0, 1).x())
+
+        # 結構アドホック，複数のビューでシーンを表示してるときには問題が出る．
+        views = self.scene().views()
+        self.offset = self.resizeHandleSize * (views[0].mapToScene(1, 0).x() - views[0].mapToScene(0, 1).x())
         self._boundingRect = self._rect.adjusted(
                 -self.offset*2,
                 -self.offset*2,

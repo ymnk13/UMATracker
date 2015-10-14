@@ -7,8 +7,8 @@ import copy
 from .QUserDefinedBaseObject import QResizableGraphicsObject
 
 class QResizableRect(QResizableGraphicsObject):
-    def __init__(self, rect, parent=None, view=None):
-        super(QResizableRect, self).__init__(rect, parent, view)
+    def __init__(self, parent=None):
+        super(QResizableRect, self).__init__(parent)
 
     def draw(self, painter, option, widget, rect):
         painter.setPen(QtGui.QPen(QtCore.Qt.red, 0, QtCore.Qt.DashLine))
@@ -18,8 +18,8 @@ class QResizableRect(QResizableGraphicsObject):
 
 
 class QResizableEllipse(QResizableGraphicsObject):
-    def __init__(self, rect, parent=None, view=None):
-        super(QResizableEllipse, self).__init__(rect, parent, view)
+    def __init__(self, parent=None):
+        super(QResizableEllipse, self).__init__(parent)
 
     def draw(self, painter, option, widget, rect):
         painter.setPen(QtGui.QPen(QtCore.Qt.red, 0, QtCore.Qt.DashLine))
