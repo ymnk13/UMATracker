@@ -98,9 +98,6 @@ class Ui_MainWindowBase(object):
         self.menuFiles.addAction(self.actionOpenVideo)
         self.menuFiles.addAction(self.actionOpenImage)
         self.menuFiles.addSeparator()
-        self.menuFiles.addAction(self.actionOpenBlockData)
-        self.menuFiles.addAction(self.actionSaveBlockData)
-        self.menuFiles.addSeparator()
         self.menuFiles.addAction(self.actionSaveFilterData)
         self.menuFiles.addAction(self.actionOpenFilterData)
         self.menuFiles.addSeparator()
@@ -115,7 +112,7 @@ class Ui_MainWindowBase(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindowBase.setWindowTitle(_translate("MainWindowBase", "MainWindow"))
         self.blockEditorBox.setTitle(_translate("MainWindowBase", "Block Editor"))
-        self.graphicsBox.setTitle(_translate("MainWindowBase", "Background"))
+        self.graphicsBox.setTitle(_translate("MainWindowBase", "I/O"))
         self.menuFiles.setTitle(_translate("MainWindowBase", "Files"))
         self.actionOpenVideo.setText(_translate("MainWindowBase", "Open Video"))
         self.actionOpenImage.setText(_translate("MainWindowBase", "Open Image"))

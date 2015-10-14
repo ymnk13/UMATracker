@@ -63,7 +63,7 @@
        </sizepolicy>
       </property>
       <property name="title">
-       <string>Background</string>
+       <string>I/O</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
@@ -121,9 +121,6 @@
     </property>
     <addaction name="actionOpenVideo"/>
     <addaction name="actionOpenImage"/>
-    <addaction name="separator"/>
-    <addaction name="actionOpenBlockData"/>
-    <addaction name="actionSaveBlockData"/>
     <addaction name="separator"/>
     <addaction name="actionSaveFilterData"/>
     <addaction name="actionOpenFilterData"/>
