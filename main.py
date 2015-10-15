@@ -22,7 +22,7 @@ if six.PY2:
 import os, re, hashlib, json
 
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QFileDialog
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QFileDialog, QMainWindow
 from PyQt5.QtGui import QPixmap, QColor, QBrush
 from PyQt5.QtCore import QRectF, QPointF
 
@@ -66,18 +66,16 @@ logger.setLevel(DEBUG)
 logger.addHandler(handler)
 
 
-class Ui_MainWindow(Ui_MainWindowBase):
-    def setupUi(self, MainWindow, path):
-        super(Ui_MainWindow, self).setupUi(MainWindow)
+class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
+    def __init__(self, path):
+        super(Ui_MainWindow, self).__init__()
+        self.setupUi(self)
 
         self.videoPlaybackInit()
         self.blocklyInit()
         self.imgInit()
         self.menuInit()
         self.menubar.setNativeMenuBar(False)
-        MainWindow.closeEvent = self.closeEvent
-        MainWindow.dragEnterEvent = self.dragEnterEvent
-        MainWindow.dropEvent = self.dropEvent
         self.selectedBlockID = None
         #b = RectForAreaSelection(QRectF(250, 250, 350.0, 350.0),None,self.inputGraphicsView)
         #self.inputScene.addItem(b)
@@ -409,9 +407,7 @@ class Ui_MainWindow(Ui_MainWindowBase):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow,currentDirPath)
+    MainWindow = Ui_MainWindow(currentDirPath)
     MainWindow.show()
     sys.exit(app.exec_())
 
