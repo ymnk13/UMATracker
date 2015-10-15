@@ -81,19 +81,17 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         #self.inputScene.addItem(b)
 
     def dragEnterEvent(self,event):
-        event.accept()
+        event.acceptProposedAction()
 
     def dropEvent(self,event):
-        event.setDropAction(QtCore.Qt.MoveAction)
+        # event.setDropAction(QtCore.Qt.MoveAction)
         mime = event.mimeData()
         if mime.hasUrls():
             urls = mime.urls()
             if len(urls) > 0:
-                #self.dragFile.emit()
                 self.processDropedFile(urls[0].toLocalFile())
-            event.accept()
-        else:
-            event.ignore()
+
+        event.acceptProposedAction()
 
     def closeEvent(self,event):
         pass
@@ -103,11 +101,11 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         if ext == ".filter":
             # Read Filter
             self.openFilterFile(filePath=filePath)
-        elif ext.lower() in [".avi",".mpg",".mts",".mp4"]:
-            # Read Video
-            self.openVideoFile(filePath=filePath)
-        elif ext.lower() in [".png",".bmp",".jpg",".jpeg"]:
-            self.openImageFile(filePath=filePath)
+            return
+        elif self.openImageFile(filePath=filePath):
+            return
+        elif self.openVideoFile(filePath=filePath):
+            return
 
     def videoPlaybackInit(self):
         self.videoPlaybackWidget.hide()
@@ -179,10 +177,14 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         if len(filePath) is not 0:
             self.filePath = filePath
 
-            self.videoPlaybackWidget.show()
-            self.videoPlaybackWidget.openVideo(filePath)
+            ret = self.videoPlaybackWidget.openVideo(filePath)
+            if ret == False:
+                return False
 
+            self.videoPlaybackWidget.show()
             self.filterClassHash = None
+
+            return True
 
 
     def openImageFile(self, activated=False, filePath = None):
@@ -191,13 +193,20 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
 
         if len(filePath) is not 0:
             self.filePath = filePath
-            self.cv_img = cv2.imread(filePath)
-            self.videoPlaybackWidget.hide()
+            img = cv2.imread(filePath)
+            if img is None:
+                return False
 
+            self.cv_img = img
+            self.videoPlaybackWidget.hide()
             self.updateInputGraphicsView()
 
             # Initialize Filter when opening new file.
             self.filterClassHash = None
+
+            return True
+        else:
+            return False
 
     def updateInputGraphicsView(self):
         # self.inputScene.clear()

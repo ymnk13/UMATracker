@@ -53,17 +53,23 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
         self.cap = cv2.VideoCapture()
 
     def openVideo(self, filename):
-        if self.cap.isOpened():
-            self.cap.release()
-
         if filename is not None:
-            self.cap = cv2.VideoCapture(filename)
-            self.playbackSlider.setValue(0)
-            self.playbackSlider.setRange(0, self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
-            if self.cap.isOpened():
+            cap = cv2.VideoCapture(filename)
+            if cap.isOpened():
+                if self.cap.isOpened():
+                    self.cap.release()
+
+                self.cap = cap
+                self.playbackSlider.setValue(0)
+                self.playbackSlider.setRange(0, self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
                 ret, frame = self.cap.read()
 
                 self.setFrame(frame)
+                return True
+            else:
+                return False
+        else:
+            return False
 
     def stop(self):
         qApp = QtWidgets.qApp
