@@ -26,8 +26,8 @@ from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QFileDialog, QM
 from PyQt5.QtGui import QPixmap, QColor, QBrush
 from PyQt5.QtCore import QRectF, QPointF
 
-from lib.python.ui.MainWindowBase import Ui_MainWindowBase
-from lib.python.ui.QResizableObject import QResizableRect, QResizableEllipse
+from lib.python.ui.main_window_base import Ui_MainWindowBase
+from lib.python.ui.resizable_object import ResizableRect, ResizableEllipse
 
 from lib.python import misc
 
@@ -329,9 +329,9 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
                         float(parameters['bottomY'])*height - float(parameters['topY'])*height)
 
                 if blockType == "rectRegionSelector":
-                    graphicsItem = QResizableRect()
+                    graphicsItem = ResizableRect()
                 elif blockType == "ellipseRegionSelector":
-                    graphicsItem = QResizableEllipse()
+                    graphicsItem = ResizableEllipse()
                 graphicsItem.setRect(rect)
 
                 graphicsItem.setObjectName(blockID)

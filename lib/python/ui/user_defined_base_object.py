@@ -10,11 +10,11 @@ import copy
 from PyQt5.QtCore import pyqtSignal
 
 
-class QResizableGraphicsObject(QGraphicsObject):
+class ResizableGraphicsObject(QGraphicsObject):
     geometryChange = pyqtSignal('QPointF', 'QPointF')
 
     def __init__(self, parent=None):
-        super(QResizableGraphicsObject, self).__init__(parent)
+        super(ResizableGraphicsObject, self).__init__(parent)
         self.setZValue(1000)
 
         self.mouseIsPressed = None
@@ -35,7 +35,7 @@ class QResizableGraphicsObject(QGraphicsObject):
     def prepareGeometryChange(self):
         self.geometryChange.emit(self._rect.topLeft(),
                                  self._rect.bottomRight())
-        super(QResizableGraphicsObject, self).prepareGeometryChange()
+        super(ResizableGraphicsObject, self).prepareGeometryChange()
 
     def hoverMoveEvent(self, event):
         hoverMovePos = event.scenePos()
@@ -48,15 +48,15 @@ class QResizableGraphicsObject(QGraphicsObject):
             self.setCursor(QtCore.Qt.PointingHandCursor)
             return
         self.setCursor(QtCore.Qt.SizeAllCursor)
-        super(QResizableGraphicsObject, self).hoverMoveEvent(event)
+        super(ResizableGraphicsObject, self).hoverMoveEvent(event)
 
     def hoverEnterEvent(self, event):
         self.setCursor(QtCore.Qt.SizeAllCursor)
-        super(QResizableGraphicsObject, self).hoverEnterEvent(event)
+        super(ResizableGraphicsObject, self).hoverEnterEvent(event)
 
     def hoverLeaveEvent(self, event):
         self.setCursor(QtCore.Qt.ArrowCursor)
-        super(QResizableGraphicsObject, self).hoverLeaveEvent(event)
+        super(ResizableGraphicsObject, self).hoverLeaveEvent(event)
 
     def mousePressEvent(self, event):
         self.mouseIsPressed = True
@@ -67,13 +67,13 @@ class QResizableGraphicsObject(QGraphicsObject):
             if self._buttonList[item].contains(self.mousePressPos):
                 self.mousePressArea = item
                 break
-        super(QResizableGraphicsObject, self).mousePressEvent(event)
+        super(ResizableGraphicsObject, self).mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
         self.mouseIsPressed = False
         self.updateResizeHandles()
         self.prepareGeometryChange()
-        super(QResizableGraphicsObject, self).mouseReleaseEvent(event)
+        super(ResizableGraphicsObject, self).mouseReleaseEvent(event)
 
     def paint(self, painter, option, widget):
         self.updateResizeHandles()
