@@ -1,11 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys, six
+import os, sys, six
 
 if six.PY2:
     reload(sys)
     sys.setdefaultencoding('UTF8')
+
+# determine if application is a script file or frozen exe
+if getattr(sys, 'frozen', False):
+    currentDirPath = sys._MEIPASS
+    import win32api
+    win32api.SetDllDirectory(sys._MEIPASS)
+    win32api.SetDllDirectory(os.path.join(sys._MEIPASS, 'dll'))
+elif __file__:
+    currentDirPath = os.getcwd()
+
+# currentDirPath = os.path.abspath(os.path.dirname(__file__) )
+sampleDataPath = os.path.join(currentDirPath,"data")
+userDir        = os.path.expanduser('~')
 
 # def tracefunc(frame, event, arg, indent=[0]):
 #     if event == "call":
@@ -19,7 +32,7 @@ if six.PY2:
 #     return tracefunc
 # sys.settrace(tracefunc)
 
-import os, re, hashlib, json
+import re, hashlib, json
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QFileDialog, QMainWindow
@@ -39,11 +52,6 @@ from lib.python.PythonClassGenerator.ClassTextGenerator import ClassTextGenerato
 import numpy as np
 from lib.python.pycv import filters
 ######################################
-
-
-currentDirPath = os.path.abspath(os.path.dirname(__file__) )
-sampleDataPath = os.path.join(currentDirPath,"data")
-userDir        = os.path.expanduser('~')
 
 if six.PY2:
     import urllib
