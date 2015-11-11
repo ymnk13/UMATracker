@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '.\ui_video_playback_widget.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created by: PyQt5 UI code generator 5.5
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -83,13 +83,7 @@ class Ui_VideoPlaybackWidget(object):
         self.moveLastButton.setText("")
         self.moveLastButton.setObjectName("moveLastButton")
         self.horizontalLayout.addWidget(self.moveLastButton)
-        self.playbackSlider = QtWidgets.QSlider(self.frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.playbackSlider.sizePolicy().hasHeightForWidth())
-        self.playbackSlider.setSizePolicy(sizePolicy)
-        self.playbackSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.playbackSlider = ColorRangeSlider(self.frame)
         self.playbackSlider.setObjectName("playbackSlider")
         self.horizontalLayout.addWidget(self.playbackSlider)
         self.verticalLayout.addWidget(self.frame)
@@ -101,3 +95,7 @@ class Ui_VideoPlaybackWidget(object):
         _translate = QtCore.QCoreApplication.translate
         VideoPlaybackWidget.setWindowTitle(_translate("VideoPlaybackWidget", "Form"))
 
+try:
+    from color_range_slider import ColorRangeSlider
+except ImportError:
+    from .color_range_slider import ColorRangeSlider

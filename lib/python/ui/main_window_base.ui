@@ -127,7 +127,14 @@
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
+   <widget class="QMenu" name="menuBackground">
+    <property name="title">
+     <string>Background</string>
+    </property>
+    <addaction name="actionCreateBackground"/>
+   </widget>
    <addaction name="menuFiles"/>
+   <addaction name="menuBackground"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpenVideo">
@@ -166,6 +173,16 @@
   <action name="actionOpenFilterData">
    <property name="text">
     <string>Open Filter Data</string>
+   </property>
+  </action>
+  <action name="actionCreateBackground">
+   <property name="text">
+    <string>Create</string>
+   </property>
+  </action>
+  <action name="actionEnable_Disable">
+   <property name="text">
+    <string>Enable/Disable</string>
    </property>
   </action>
  </widget>

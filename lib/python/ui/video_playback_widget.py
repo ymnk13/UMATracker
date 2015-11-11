@@ -28,7 +28,11 @@ elif __file__:
     currentDirPath = os.getcwd()
 
 vs_core = vs.get_core()
-vs_core.std.LoadPlugin(os.path.join(currentDirPath, 'dll', 'ffms2.dll'))
+
+try:
+    vs_core.std.LoadPlugin(os.path.join(currentDirPath, 'dll', 'ffms2.dll'))
+except vs.Error:
+    pass
 
 class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
     frameChanged = pyqtSignal(np.ndarray, int)
@@ -66,6 +70,29 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
 
         self.currentFrameNo = -1
         self.ret = None
+
+    def copySource(self, videoPlaybackWidget):
+        self.ret = videoPlaybackWidget.ret
+
+        try:
+            frame = self.ret.get_frame(0)
+        except ValueError:
+            return False
+
+        self.playbackSlider.setValue(0)
+        self.playbackSlider.setRange(0, self.getMaxFramePos())
+        self.fps = math.ceil((self.ret.fps_num)/self.ret.fps_den)
+        self.playbackSlider.setSingleStep(self.fps)
+        self.playbackSlider.setPageStep(self.fps)
+        self.playbackSlider.setTickInterval(self.fps)
+
+        ret, frame = self.readFrame(0)
+        if ret:
+            self.currentFrameNo = 0
+            self.frameChanged.emit(frame, 0)
+            return True
+        else:
+            return False
 
     def openVideo(self, filename):
         if filename is not None:
@@ -257,6 +284,26 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
 
         if self.isOpened():
             self.moveToFrame(currentValue, False)
+
+    @pyqtSlot()
+    def setMinRange(self):
+        self.playbackSlider.setMinRange(self.currentFrameNo/self.getMaxFramePos())
+
+    @pyqtSlot()
+    def setMaxRange(self):
+        self.playbackSlider.setMaxRange(self.currentFrameNo/self.getMaxFramePos())
+
+    def getMinRange(self):
+        if self.playbackSlider.min is None:
+            return 0
+        else:
+            return int(self.playbackSlider.min * self.getMaxFramePos())
+
+    def getMaxRange(self):
+        if self.playbackSlider.max is None:
+            return 0
+        else:
+            return int(self.playbackSlider.max * self.getMaxFramePos())
 
     # @pyqtSlot()
     # def playbackSliderPressed(self):

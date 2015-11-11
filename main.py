@@ -35,12 +35,13 @@ userDir        = os.path.expanduser('~')
 import re, hashlib, json
 
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QFileDialog, QMainWindow
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QFileDialog, QMainWindow, QDialog
 from PyQt5.QtGui import QPixmap, QColor, QBrush
-from PyQt5.QtCore import QRectF, QPointF
+from PyQt5.QtCore import QRectF, QPointF, Qt
 
 from lib.python.ui.main_window_base import Ui_MainWindowBase
 from lib.python.ui.resizable_object import ResizableRect, ResizableEllipse
+from lib.python.ui.background_generator_dialog import BackgroundGeneratorDialog
 
 from lib.python import misc
 
@@ -85,6 +86,7 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.menuInit()
         self.menubar.setNativeMenuBar(False)
         self.selectedBlockID = None
+        self.fgbg = None
         #b = RectForAreaSelection(QRectF(250, 250, 350.0, 350.0),None,self.inputGraphicsView)
         #self.inputScene.addItem(b)
 
@@ -164,6 +166,8 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
 
         self.actionSaveFilterData.triggered.connect(self.saveFilterFile)
         self.actionOpenFilterData.triggered.connect(self.openFilterFile)
+
+        self.actionCreateBackground.triggered.connect(self.createBackground)
         #self.actionTest00.triggered.connect(self.test00)
 
     def setRectangleParameterToBlock(self, topLeft, bottomRight):
@@ -178,12 +182,27 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         webFrame = self.blocklyWebView.page().mainFrame()
         webFrame.evaluateJavaScript("Apps.setValueToSelectedBlock({0});".format(string))
 
+    def createBackground(self, activated=False):
+        if self.videoPlaybackWidget.isOpened():
+            self.videoPlaybackWidget.stop()
+
+            bg_dialog = BackgroundGeneratorDialog(self)
+            # bg_dialog.openVideoFile(filePath=self.filePath)
+            bg_dialog.setWindowModality(Qt.WindowModal)
+            bg_dialog.videoPlaybackWidget.copySource(self.videoPlaybackWidget)
+
+            res = bg_dialog.exec()
+
+            if res == QDialog.Accepted:
+                self.fgbg = bg_dialog.fgbg
+
     def openVideoFile(self, activated=False, filePath = None):
         if filePath is None:
             filePath, _ = QFileDialog.getOpenFileName(None, 'Open Video File', userDir)
 
         if len(filePath) is not 0:
             self.filePath = filePath
+            self.fgbg = None
 
             ret = self.videoPlaybackWidget.openVideo(filePath)
             if ret == False:
@@ -206,6 +225,8 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
                 return False
 
             self.cv_img = img
+            self.fgbg = None
+
             self.videoPlaybackWidget.hide()
             self.updateInputGraphicsView()
 
@@ -390,6 +411,16 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
             return False
 
         xmlText = frame.evaluateJavaScript("Apps.getBlockData();")
+
+
+        additionalText = """#self.fgbg = None
+if self.fgbg is not None:
+    mask = self.fgbg.apply({input}, learningRate=0)
+    _, mask = cv2.threshold(mask, 1, 255, cv2.THRESH_BINARY)
+    {input} = cv2.bitwise_and({input}, {input}, mask=mask)
+"""
+
+        text = additionalText + text
         text = self.parseToClass(text)
 
         logger.debug("Generated Code: {0}".format(text))
@@ -403,6 +434,7 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
             try:
                 exec(text, globals())
                 self.filter = filterOperation(self.cv_img)
+                self.filter.fgbg = self.fgbg
             except Exception as e:
                 logger.debug("Block Evaluation Error: {0}".format(e))
 
