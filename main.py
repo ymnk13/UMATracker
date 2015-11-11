@@ -290,6 +290,7 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
             frame.evaluateJavaScript("Apps.setBlockData('{0}');".format(blockXML))
 
     def saveFilterFile(self):
+        self.blocklyEvaluationTimer.stop()
         filePath, _ = QFileDialog.getSaveFileName(None, 'Save Filter File', userDir, "Filter files (*.filter)")
 
         if len(filePath) is not 0:
@@ -303,6 +304,8 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
             filterClassText = self.parseToClass(frame.evaluateJavaScript("Apps.getCodeFromWorkspace();"))
             filterIO.setFilterCode(filterClassText)
             filterIO.save(filePath)
+
+        self.blocklyEvaluationTimer.start()
 
     def inputGraphicsViewResized(self, event=None):
         self.inputGraphicsView.fitInView(QtCore.QRectF(self.inputPixMap.rect()), QtCore.Qt.KeepAspectRatio)
