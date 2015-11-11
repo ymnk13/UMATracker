@@ -89,6 +89,7 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.fgbg = None
         #b = RectForAreaSelection(QRectF(250, 250, 350.0, 350.0),None,self.inputGraphicsView)
         #self.inputScene.addItem(b)
+        self.inputPixMapItem.mousePressEvent = self.getPixMapItemClickedPos
 
     def dragEnterEvent(self,event):
         event.acceptProposedAction()
@@ -254,6 +255,10 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.inputGraphicsView.viewport().update()
         self.inputGraphicsViewResized()
 
+    def getPixMapItemClickedPos(self, event):
+        pos = event.scenePos().toPoint()
+        print(pos)
+
     def inputPixMapItemClicked(self, event):
         pos = event.scenePos().toPoint()
 
@@ -371,6 +376,8 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
 
         elif 'colorSelector' in blockAttributes:
             self.inputPixMapItem.mousePressEvent = self.inputPixMapItemClicked
+        else:
+            self.inputPixMapItem.mousePressEvent = self.getPixMapItemClickedPos
 
     def resetSceneAction(self, blockID):
         graphicsItem = self.getGrphicsItemFromInputScene(blockID)
