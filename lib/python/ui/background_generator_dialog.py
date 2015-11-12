@@ -108,7 +108,7 @@ class BackgroundGeneratorDialog(Ui_BackgroundGeneratorDialog, QDialog):
         self.inputGraphicsViewResized()
 
     def updateOutputGraphicsView(self):
-        if True:
+        if False:
             out_img = self.fgbg.apply(self.cv_img, learningRate=0)
         else:
             bg = self.fgbg.getBackgroundImage()

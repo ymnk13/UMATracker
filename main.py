@@ -195,7 +195,7 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
             res = bg_dialog.exec()
 
             if res == QDialog.Accepted:
-                self.fgbg = bg_dialog.fgbg
+                self.fgbg = bg_dialog.fgbg.getBackgroundImage()
 
     def openVideoFile(self, activated=False, filePath = None):
         if filePath is None:
@@ -282,6 +282,7 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
             logger.debug("Open Filter file: {0}".format(filePath))
 
             filterIO = FilterIO(filePath)
+            self.fgbg = filterIO.getBackgroundImg()
 
             exec(filterIO.getFilterCode(), globals())
 
@@ -303,6 +304,9 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
 
             filterClassText = self.parseToClass(frame.evaluateJavaScript("Apps.getCodeFromWorkspace();"))
             filterIO.setFilterCode(filterClassText)
+
+            filterIO.setBackgroundImg(self.fgbg)
+
             filterIO.save(filePath)
 
         self.blocklyEvaluationTimer.start()
@@ -314,6 +318,18 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.outputGraphicsView.fitInView(self.outputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
 
     def parseToClass(self, text):
+        additionalText = """#self.fgbg = None
+if self.fgbg is not None:
+    {input} = cv2.absdiff({input}, self.fgbg)
+"""
+#         additionalText = """#self.fgbg = None
+# if self.fgbg is not None:
+#     mask = self.fgbg.apply({input}, learningRate=0)
+#     _, mask = cv2.threshold(mask, 1, 255, cv2.THRESH_BINARY)
+#     {input} = cv2.bitwise_and({input}, {input}, mask=mask)
+# """
+        text = additionalText + text
+
         lines = text.split("\n")
         classMemberPattern = r"^#"
 
@@ -422,15 +438,6 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
 
         xmlText = frame.evaluateJavaScript("Apps.getBlockData();")
 
-
-        additionalText = """#self.fgbg = None
-if self.fgbg is not None:
-    mask = self.fgbg.apply({input}, learningRate=0)
-    _, mask = cv2.threshold(mask, 1, 255, cv2.THRESH_BINARY)
-    {input} = cv2.bitwise_and({input}, {input}, mask=mask)
-"""
-
-        text = additionalText + text
         text = self.parseToClass(text)
 
         logger.debug("Generated Code: {0}".format(text))
