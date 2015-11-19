@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="ja" ng-app="myApp">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css"></link>
+    <link rel="stylesheet" href="./css/jquery-ui.css">
+  <script src="./js/jquery-1.10.2.js"></script>
+  <script src="./js/jquery-ui.js"></script>
+  <script src="./js/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-beta.1/angular-animate.js"></script>
+
+  <script src="./js/app.js"></script>
+  <script>
+  
+  </script>
+    <style>
+     
+    </style>
+    <script>
+     $(function() {
+       $( "#menu" ).menu();
+     });
+    </script>
+    <style>
+     html,body{
+       height:100%;
+       }
+     .ui-menu { width: 200px; }
+     ul#menu{
+       height:100%;
+       float:left;
+       //background-color: #EEE;
+       padding-top:20px;
+     }
+     ul#menu li{
+       padding-left:20px;
+       border:None;
+     }
+     #DocumentView{
+       padding-left:150px;
+     }
+     ul#menu li ul li{
+       padding-top:50px;
+       padding-bottom: 50px;
+     }
+     ul#menu li ul{
+       width:auto;
+       height:auto;
+       background-color:#DDD;
+     }
+     ul#menu img:hover{
+       border-color: 10px #00ff00 solid;
+     }
+     ul#menu li ul li img{
+       border-color: 10px #00ff00 solid;
+     }
+     ul#menu .ui-button{
+       border-color: 10px #00ff00 solid;
+     }
+     /*
+
+     ul#menu img a:hover{
+       border-color:#FF0000;
+       //width:99%;
+     }
+     */
+    </style>
+    
+  </head>
+  <body ng-controller="changeView">
+    <ul id="menu">
+      <li>
+	I/O
+	<ul>
+	  <li><a href="#" ng-click="getLink('Input');">Input</a></li>
+	  <li><a href="#" ng-click="getLink('Output');">Output</a></li>
+	</ul>
+      </li>
+      <li>BGR Image
+	<ul>
+	  <li><a href="#" ng-click="getLink('img_bgr_absdiff');">BGR_AbsDiff</a></li>
+	</ul>
+      </li>
+      <li>Filters
+	<ul>
+	  <li>
+	    
+	    <!-- <img src="./partials/image/img_gray_bgrtogray.png" ng-click="getLink('img_gray_bgrtogray');" alt="BGRToGray" class="ui-button"/> -->
+	    <a href="#" ng-click="getLink('img_gray_bgrtogray');">BGRToGray</a>
+	  </li>
+	  <li>
+	   <!-- <img src="./partials/image/im_threshold.png" ng-click="getLink('im_threshold');" alt="Threshold" />-->
+	    <a href="#" ng-click="getLink('im_threshold');">Threshold</a>
+	  </li>
+	  <li>
+	    <!-- 
+	    <img src="./partials/image/colorFilter_colorSelector.png" ng-click="getLink('colorFilter_colorSelector');" alt="ColorSelector" />
+	    -->
+	    <a href="#" ng-click="getLink('colorFilter_colorSelector');">ColorSelector</a>
+	  </li>
+	  <li>
+	    <!--
+	    <img src="./partials/image/img_median.png" ng-click="getLink('img_median');" alt="MedianFilter" />
+	    -->
+	    <a href="#" ng-click="getLink('img_median');">MedianFilter</a>
+	  </li>
+	  <li>
+	    <!-- 
+	    <img src="./partials/image/img_inverse.png" ng-click="getLink('img_inverse');" alt="Color Inversion" />
+	    -->
+	    <a href="#" ng-click="getLink('img_inverse');">Color Inversion</a>
+	  </li>
+	  <li>
+	    <!-- 
+	    <img src="./partials/image/rectRegionSelector_regionSelector.png" ng-click="getLink('rectRegionSelector_regionSelector');" alt="Rectangle Selection" >
+	    -->
+	    <a href="#" ng-click="getLink('rectRegionSelector_regionSelector');">Rectangle Selection</a>
+	  </li>
+	  <li>
+	    <!--
+	    <img src="./partials/image/ellipseRegionSelector_regionSelector.png" ng-click="getLink('ellipseRegionSelector_regionSelector');" alt="Circular Selection" />
+	    -->
+	    <a href="#" ng-click="getLink('ellipseRegionSelector_regionSelector');">Circular Selection</a>
+	  </li>
+	</ul>
+      </li>
+      <li>Mask Image
+	<ul>
+	  <li><a href="#" ng-click="getLink('im_mask');">im_mask</a></li>
+	  <li><a href="#" ng-click="getLink('im_circle_mask');">Circle IMG</a></li>
+	  <li><a href="#" ng-click="getLink('im_rectangle_mask');">Rectangle IMG</a></li>
+	</ul>
+      </li>
+      <li>Operator
+	<ul>
+	  <li><a href="#" ng-click="getLink('im_mask');">im_mask</a></li>
+	  <li><a href="#" ng-click="getLink('img_gray_absdiff');">AbsDiff</a></li>
+	  <li><a href="#" ng-click="getLink('operator_and');">And</a></li>
+	  <li><a href="#" ng-click="getLink('operator_or');">Or</a></li>
+	</ul>
+      </li>
+      
+      <li>Morphology
+	<ul>
+	  <li><a href="#" ng-click="getLink('cv_erosion');">Erosion</a></li>
+	  <li><a href="#" ng-click="getLink('dilation');">Dilation</a></li>
+	  <li><a href="#" ng-click="getLink('Opening');">Opening</a></li>
+	  <li><a href="#" ng-click="getLink('Closing');">Closing</a></li>
+	</ul>
+      </li>
+      <li><a href="#" ng-click="getLink('Variables');">Variables</a></li>
+      
+      </li>
+    </ul>
+
+    <div class="container" style="margin-left:50px;">
+      <!-- <div ng-include="'./threshold.html'" ></div>-->
+      
+      <h1><a href="#" ng-click="getLink('documents');">UMATracker Document</a></h1>
+      {{mainUrl}}
+      <div id="DocumentView" ng-include="mainUrl" class="container"></div>
+    </div>
+
+    
+    <script type="text/javascript">
+    </script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+  </body>
+</html>
