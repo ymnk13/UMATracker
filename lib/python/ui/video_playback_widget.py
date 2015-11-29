@@ -82,6 +82,8 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
         self.thread.started.connect(self.started)
         self.thread.run = self.run
 
+        self.stopFlag = False
+
     def copySource(self, videoPlaybackWidget):
         self.ret = videoPlaybackWidget.ret
 
@@ -238,7 +240,7 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
         self.frameChanged.emit(frame, frameNo)
 
     def run(self):
-        while True:
+        while not self.stopFlag:
             print(self.fps, self.delay)
             self.thread.msleep(self.delay)
             self.videoPlayback()
@@ -246,31 +248,32 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
     @pyqtSlot()
     def playButtonClicked(self):
         if self.isPlaying():
-            self.thread.terminate()
+            self.stopFlag = True
         else:
             if self.playbackSlider.value() < self.getMaxFramePos():
                 self.delay = int(1000.0/float(self.fps))
+                self.stopFlag = False
                 self.thread.start()
 
     @pyqtSlot()
     def moveFirstButtonClicked(self):
-        self.thread.terminate()
+        self.stopFlag = True
         self.moveToFrame(0)
 
     @pyqtSlot()
     def moveLastButtonClicked(self):
-        self.thread.terminate()
+        self.stopFlag = True
         maxFrameNo = self.getMaxFramePos()
         self.moveToFrame(maxFrameNo)
 
     @pyqtSlot()
     def moveNextButtonClicked(self):
-        self.thread.terminate()
+        self.stopFlag = True
         self.moveToFrame()
 
     @pyqtSlot()
     def movePrevButtonClicked(self):
-        self.thread.terminate()
+        self.stopFlag = True
         prevFrameNo = self.getPrevFramePos()
         self.moveToFrame(prevFrameNo)
 
@@ -283,7 +286,7 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
     def playbackSliderActionTriggered(self, value):
         print('Slider val: {0}'.format(self.playbackSlider.value()))
         if self.isPlaying():
-            self.thread.terminate()
+            self.stopFlag = True
 
     @pyqtSlot(int)
     def playbackSliderValueChanged(self, value):
