@@ -29,15 +29,18 @@ elif __file__:
 
 vs_core = vs.get_core()
 
+print(os.name)
+
 if os.name == 'nt':
     try:
         vs_core.std.LoadPlugin(os.path.join(currentDirPath, 'dll', 'ffms2.dll'))
     except vs.Error:
         pass
-elif os.name == 'mac':
+elif os.name == 'posix':
     # FIXME:これじゃあたぶん動かない．
     # ディレクトリがこのときはOKだろうけど，ちがうディレクトリに
     # FFMS2が入ってたらどうする？
+    print("Mac!")
     for libfile in [os.path.join(currentDirPath, 'dll', 'ffms2.dll'),
                     r'/usr/local/Cellar/ffms2/2.21/lib/libffms2.dylib']:
         if os.path.isfile(libfile):
@@ -135,6 +138,10 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
                 return False
         else:
             return False
+
+    def stop(self):
+        self.stopFlag = True
+        self.terminated()
 
     def terminated(self):
         qApp = QtWidgets.qApp
