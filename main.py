@@ -10,9 +10,11 @@ if six.PY2:
 # determine if application is a script file or frozen exe
 if getattr(sys, 'frozen', False):
     currentDirPath = sys._MEIPASS
-    import win32api
-    win32api.SetDllDirectory(sys._MEIPASS)
-    win32api.SetDllDirectory(os.path.join(sys._MEIPASS, 'dll'))
+    print(currentDirPath)
+    if os.name == 'nt':
+        import win32api
+        win32api.SetDllDirectory(sys._MEIPASS)
+        win32api.SetDllDirectory(os.path.join(sys._MEIPASS, 'dll'))
 elif __file__:
     currentDirPath = os.getcwd()
 
@@ -37,7 +39,7 @@ import re, hashlib, json
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QFileDialog, QMainWindow, QDialog
 from PyQt5.QtGui import QPixmap, QColor, QBrush
-from PyQt5.QtCore import QRectF, QPointF, Qt
+from PyQt5.QtCore import QRectF, QPointF, Qt, QMutex
 
 from lib.python.ui.main_window_base import Ui_MainWindowBase
 from lib.python.ui.resizable_object import ResizableRect, ResizableEllipse
@@ -91,6 +93,8 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         #self.inputScene.addItem(b)
         self.inputPixMapItem.mousePressEvent = self.getPixMapItemClickedPos
 
+        self.mutex = QMutex()
+
     def dragEnterEvent(self,event):
         event.acceptProposedAction()
 
@@ -123,12 +127,14 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.videoPlaybackWidget.frameChanged.connect(self.setFrame)
 
     def setFrame(self, frame):
+        self.mutex.lock()
         if frame is not None:
 
             self.cv_img = frame
             self.updateInputGraphicsView()
 
             self.evaluateSelectedBlock()
+        self.mutex.unlock()
 
     def blocklyInit(self):
         self.blocklyWebView.setUrl(QtCore.QUrl(blocklyURL))
