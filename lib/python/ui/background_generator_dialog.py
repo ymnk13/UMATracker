@@ -6,7 +6,7 @@ import os, sys, six, time
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QDialog, QProgressDialog
 from PyQt5.QtGui import QPixmap, QColor, QBrush, QImage
-from PyQt5.QtCore import QRectF, QPointF, Qt, QMutex
+from PyQt5.QtCore import QRectF, QPointF, Qt
 
 try:
     from ui_background_generator_dialog import Ui_BackgroundGeneratorDialog
@@ -51,16 +51,14 @@ class BackgroundGeneratorDialog(Ui_BackgroundGeneratorDialog, QDialog):
 
         self.generateButton.pressed.connect(self.generateBackground)
 
-        self.mutex = QMutex()
 
     def closeEvent(self,event):
         pass
 
     def videoPlaybackInit(self):
-        self.videoPlaybackWidget.frameChanged.connect(self.setFrame)
+        self.videoPlaybackWidget.frameChanged.connect(self.setFrame, type=Qt.QueuedConnection)
 
     def setFrame(self, frame):
-        self.mutex.lock()
         if frame is not None:
 
             self.cv_img = frame
@@ -68,7 +66,6 @@ class BackgroundGeneratorDialog(Ui_BackgroundGeneratorDialog, QDialog):
 
             if self.fgbg is not None:
                 self.updateOutputGraphicsView()
-        self.mutex.unlock()
 
     def imgInit(self):
         self.inputScene = QGraphicsScene()
