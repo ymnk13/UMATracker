@@ -4,6 +4,7 @@ user/
 dist/
 build/
 *.spec
+!umatracker-mac.spec
 *.pyc
 Thumbs.db
 *.log
