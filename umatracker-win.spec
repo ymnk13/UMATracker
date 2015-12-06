@@ -5,15 +5,11 @@ datas = [('./data', 'data'),
         ('./lib/blockly', 'lib/blockly'),
         ('./lib/closure-library', 'lib/closure-library'),
         ('./lib/editor', 'lib/editor'),]
-# binaries = [('ffms2.dll',    os.path.join(os.getcwd(), 'dll', 'ffms2.dll'),    'BINARY'),
-#             ('msvcp120.dll', os.path.join(os.getcwd(), 'dll', 'msvcp120.dll'), 'BINARY'),
-#             ('msvcr120.dll', os.path.join(os.getcwd(), 'dll', 'msvcr120.dll'), 'BINARY'),
-#             ('opencv_ffmpeg300_64.dll', os.path.join(os.getcwd(), 'dll', 'opencv_ffmpeg300_64.dll'), 'BINARY')]
 
-binaries = [(os.path.join(os.getcwd(), 'dll', 'ffms2.dll'), 'dll'),
-        (os.path.join(os.getcwd(), 'dll', 'msvcp120.dll'), 'dll'),
-        (os.path.join(os.getcwd(), 'dll', 'msvcr120.dll'), 'dll'),
-        (os.path.join(os.getcwd(), 'dll', 'opencv_ffmpeg300_64.dll'), 'dll')]
+binaries = []
+for dir_path, dir_names, file_names in os.walk("dll"):
+    for file_name in file_names:
+        binaries.append((os.path.join('.\\', dir_path, file_name), 'dll'))
 
 a = Analysis(['./main.py'],
         pathex=['./'],

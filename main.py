@@ -13,6 +13,7 @@ if getattr(sys, 'frozen', False):
     print(currentDirPath)
     if os.name == 'nt':
         import win32api
+
         win32api.SetDllDirectory(sys._MEIPASS)
         win32api.SetDllDirectory(os.path.join(sys._MEIPASS, 'dll'))
 elif __file__:
