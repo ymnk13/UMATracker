@@ -23,7 +23,27 @@ a = Analysis(['./main.py'],
         win_private_assemblies=None,
         cipher=None)
 
-pyz = PYZ(a.pure, a.zipped_data, cipher=None)
+# Additional DLLs
+tmp = []
+
+# For Numpy MKL
+blacklist = ['mkl_rt.dll', 'tbb.dll', 'libmmd.dll', 'libifcoremd.dll']
+a.binaries = list(filter(lambda t:t[0] not in blacklist, a.binaries))
+numpy_dll_path = os.path.join(get_python_lib(), 'numpy', 'core')
+for dir_path, dir_names, file_names in os.walk(numpy_dll_path):
+    for file_name in file_names:
+        if os.path.splitext(file_name)[1]=='.dll':
+            tmp.append(
+                    (
+                        os.path.join('numpy', 'core', file_name),
+                        os.path.join(dir_path, file_name),
+                        'BINARY'
+                        )
+                    )
+
+a.binaries += tmp
+
+pyz = PYZ(a.pure, cipher=None)
 
 exe = EXE(pyz,
         a.scripts,
