@@ -36,9 +36,11 @@ userDir        = os.path.expanduser('~')
 
 import re, hashlib, json
 
+import icon
+
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QFileDialog, QMainWindow, QDialog
-from PyQt5.QtGui import QPixmap, QColor, QBrush
+from PyQt5.QtGui import QPixmap, QColor, QBrush, QIcon
 from PyQt5.QtCore import QRectF, QPointF, Qt
 
 from lib.python.ui.main_window_base import Ui_MainWindowBase
@@ -476,6 +478,7 @@ if self.fgbg is not None:
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = Ui_MainWindow(currentDirPath)
+    MainWindow.setWindowIcon(QIcon(':/icon/icon.ico'))
     MainWindow.show()
     sys.exit(app.exec_())
 
