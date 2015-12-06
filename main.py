@@ -15,7 +15,6 @@ if getattr(sys, 'frozen', False):
         import win32api
 
         win32api.SetDllDirectory(sys._MEIPASS)
-        win32api.SetDllDirectory(os.path.join(sys._MEIPASS, 'dll'))
 elif __file__:
     currentDirPath = os.getcwd()
 

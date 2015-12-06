@@ -1,19 +1,14 @@
 import os
-
+from distutils.sysconfig import get_python_lib
 
 datas = [('./data', 'data'),
         ('./lib/blockly', 'lib/blockly'),
         ('./lib/closure-library', 'lib/closure-library'),
         ('./lib/editor', 'lib/editor'),]
 
-binaries = []
-for dir_path, dir_names, file_names in os.walk("dll"):
-    for file_name in file_names:
-        binaries.append((os.path.join('.\\', dir_path, file_name), 'dll'))
-
 a = Analysis(['./main.py'],
         pathex=['./'],
-        binaries=binaries,
+        binaries=None,
         datas=datas,
         hiddenimports=[],
         hookspath=None,
@@ -25,6 +20,15 @@ a = Analysis(['./main.py'],
 
 # Additional DLLs
 tmp = []
+for dir_path, dir_names, file_names in os.walk("dll"):
+    for file_name in file_names:
+        tmp.append(
+                (
+                    file_name,
+                    os.path.join(os.getcwd(), dir_path, file_name),
+                    'BINARY'
+                    )
+                )
 
 # For Numpy MKL
 blacklist = ['mkl_rt.dll', 'tbb.dll', 'libmmd.dll', 'libifcoremd.dll']
@@ -35,7 +39,7 @@ for dir_path, dir_names, file_names in os.walk(numpy_dll_path):
         if os.path.splitext(file_name)[1]=='.dll':
             tmp.append(
                     (
-                        os.path.join('numpy', 'core', file_name),
+                        file_name,
                         os.path.join(dir_path, file_name),
                         'BINARY'
                         )
