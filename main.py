@@ -177,12 +177,12 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
 
     def setRectangleParameterToBlock(self, topLeft, bottomRight):
         height, width, dim = self.cv_img.shape
-        parameters = {
-                    'topX': topLeft.x()/width,
-                    'topY': topLeft.y()/height,
-                    'bottomX': bottomRight.x()/width,
-                    'bottomY': bottomRight.y()/height
-                    }
+
+        array = [
+                [topLeft.x()/width, topLeft.y()/height],
+                [bottomRight.x()/width, bottomRight.y()/height]
+                ]
+        parameters = {'array': '{0}'.format(array)}
         string = json.dumps({k: str(v) for k, v in parameters.items()})
         webFrame = self.blocklyWebView.page().mainFrame()
         webFrame.evaluateJavaScript("Apps.setValueToSelectedBlock({0});".format(string))
@@ -379,11 +379,8 @@ if self.fgbg is not None:
                     graphicsItem.show()
             else:
                 height, width, dim = self.cv_img.shape
-                rect = QRectF(
-                        float(parameters['topX'])*width,
-                        float(parameters['topY'])*height,
-                        float(parameters['bottomX'])*width - float(parameters['topX'])*width,
-                        float(parameters['bottomY'])*height - float(parameters['topY'])*height)
+                array = [[x[0]*width, x[1]*height] for x in eval(parameters['array'])]
+                rect = QRectF(QPointF(*array[0]), QPointF(*array[1]))
 
                 if blockType == "rectRegionSelector":
                     graphicsItem = ResizableRect()
@@ -434,8 +431,6 @@ if self.fgbg is not None:
         self.startUIBySelectedBlock()
         if text == "" or text is None:
             text = frame.evaluateJavaScript("Apps.getCodeFromWorkspace();")
-
-        # print(text)
 
         if text is None:
             return False
