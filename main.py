@@ -46,6 +46,7 @@ from PyQt5.QtCore import QRectF, QPointF, Qt
 from lib.python.ui.main_window_base import Ui_MainWindowBase
 from lib.python.ui.resizable_object import ResizableRect, ResizableEllipse
 from lib.python.ui.background_generator_dialog import BackgroundGeneratorDialog
+from lib.python.ui.movable_polygon import MovablePolygon
 
 from lib.python import misc
 
@@ -73,7 +74,7 @@ elif six.PY3:
 # If handler = StreamHandler(), log will output into StandardOutput.
 from logging import getLogger, NullHandler, StreamHandler, DEBUG
 logger = getLogger(__name__)
-handler = NullHandler() if True else StreamHandler()
+handler = NullHandler() if False else StreamHandler()
 handler.setLevel(DEBUG)
 logger.setLevel(DEBUG)
 logger.addHandler(handler)
@@ -187,6 +188,15 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         webFrame = self.blocklyWebView.page().mainFrame()
         webFrame.evaluateJavaScript("Apps.setValueToSelectedBlock({0});".format(string))
 
+    def setArrayParameterToBlock(self, array):
+        height, width, dim = self.cv_img.shape
+
+        array = [[x[0]/width, x[1]/height] for x in array]
+        parameters = {'array': '{0}'.format(array)}
+        string = json.dumps({k: str(v) for k, v in parameters.items()})
+        webFrame = self.blocklyWebView.page().mainFrame()
+        webFrame.evaluateJavaScript("Apps.setValueToSelectedBlock({0});".format(string))
+
     def createBackground(self, activated=False):
         if self.videoPlaybackWidget.isOpened():
             self.videoPlaybackWidget.stop()
@@ -217,7 +227,6 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
             self.filterClassHash = None
 
             return True
-
 
     def openImageFile(self, activated=False, filePath = None):
         if filePath == None:
@@ -380,16 +389,17 @@ if self.fgbg is not None:
             else:
                 height, width, dim = self.cv_img.shape
                 array = [[x[0]*width, x[1]*height] for x in eval(parameters['array'])]
-                rect = QRectF(QPointF(*array[0]), QPointF(*array[1]))
 
                 if blockType == "rectRegionSelector":
                     graphicsItem = ResizableRect()
                 elif blockType == "ellipseRegionSelector":
                     graphicsItem = ResizableEllipse()
-                graphicsItem.setRect(rect)
+                elif blockType == "polyRegionSelector":
+                    graphicsItem = MovablePolygon()
+                graphicsItem.setPoints(array)
 
                 graphicsItem.setObjectName(blockID)
-                graphicsItem.geometryChange.connect(self.setRectangleParameterToBlock)
+                graphicsItem.geometryChange.connect(self.setArrayParameterToBlock)
                 self.inputScene.addItem(graphicsItem)
 
             self.updateInputGraphicsView()

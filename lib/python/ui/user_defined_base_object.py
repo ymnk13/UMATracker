@@ -4,14 +4,14 @@ from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QGraphicsObject
 
 from PyQt5.QtWidgets import QGraphicsItem
-from PyQt5.QtCore import QRectF
+from PyQt5.QtCore import QRectF, QPointF
 from PyQt5.QtCore import Qt
 import copy
 from PyQt5.QtCore import pyqtSignal
 
 
 class ResizableGraphicsObject(QGraphicsObject):
-    geometryChange = pyqtSignal('QPointF', 'QPointF')
+    geometryChange = pyqtSignal(object)
 
     def __init__(self, parent=None):
         super(ResizableGraphicsObject, self).__init__(parent)
@@ -28,13 +28,19 @@ class ResizableGraphicsObject(QGraphicsObject):
         self._buttonList = {}
         self.setFocus(Qt.ActiveWindowFocusReason)
 
+    def setPoints(self, points):
+        self.points = points
+        rect = QRectF(QPointF(*points[0]), QPointF(*points[1]))
+        self.setRect(rect)
+
     def setRect(self, rect):
         self._rect = rect
         self._boundingRect = rect
 
     def prepareGeometryChange(self):
-        self.geometryChange.emit(self._rect.topLeft(),
-                                 self._rect.bottomRight())
+        top = self._rect.topLeft()
+        bottom = self._rect.bottomRight()
+        self.geometryChange.emit([[top.x(), top.y()], [bottom.x(), bottom.y()]])
         super(ResizableGraphicsObject, self).prepareGeometryChange()
 
     def hoverMoveEvent(self, event):
@@ -138,7 +144,7 @@ class ResizableGraphicsObject(QGraphicsObject):
         self.resizeHandleSize = 4.0
         self._rect = self._rect.normalized()
 
-        # 結構アドホック，複数のビューでシーンを表示してるときには問題が出る．
+        # FIXME:結構アドホック，複数のビューでシーンを表示してるときには問題が出る．
         views = self.scene().views()
         self.offset = self.resizeHandleSize * (views[0].mapToScene(1, 0).x() - views[0].mapToScene(0, 1).x())
         self._boundingRect = self._rect.adjusted(
