@@ -35,6 +35,7 @@ class MovablePolygonVertex(QGraphicsObject):
         self.points.clear()
         for point in ps:
             self.points.append(QPointF(*point))
+        self.updateResizeHandles()
 
     def setRect(self):
         polygon = QPolygonF(self.points)

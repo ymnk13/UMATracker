@@ -74,7 +74,7 @@ elif six.PY3:
 # If handler = StreamHandler(), log will output into StandardOutput.
 from logging import getLogger, NullHandler, StreamHandler, DEBUG
 logger = getLogger(__name__)
-handler = NullHandler() if False else StreamHandler()
+handler = NullHandler() if True else StreamHandler()
 handler.setLevel(DEBUG)
 logger.setLevel(DEBUG)
 logger.addHandler(handler)
@@ -396,11 +396,11 @@ if self.fgbg is not None:
                     graphicsItem = ResizableEllipse()
                 elif blockType == "polyRegionSelector":
                     graphicsItem = MovablePolygon()
+                self.inputScene.addItem(graphicsItem)
                 graphicsItem.setPoints(array)
 
                 graphicsItem.setObjectName(blockID)
                 graphicsItem.geometryChange.connect(self.setArrayParameterToBlock)
-                self.inputScene.addItem(graphicsItem)
 
             self.updateInputGraphicsView()
 
