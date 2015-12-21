@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <style>
+     body {
+       position: relative;
+     }
+     ul.nav-pills {
+       position: fixed;
+     }
+     #myScrollspy{
+       height:100%;
+     }
+     #main selection{
+       height:500px;
+     }
+     #main h3{
+       margin-left:10px;
+     }
+     #main >div{
+       margin-top:50px;
+     }
+     section > div {
+       padding-left:50px;
+       }
+    </style>
+  </head>
+  <body data-spy="scroll" data-target="#scrollspy" data-offset="20">
+    <div class="container">
+      <h1>UMATracker Reference</h1>
+      <h2>フィルタブロック一覧</h2>
+      <div class="row">
+	<nav class="col-sm-3" id="myScrollspy">
+	  <ul class="nav nav-pills nav-stacked">
+	    <li>
+	      <p><a href="#I_O">I/O</a></p>
+	      <ul>
+		<li><a href="#InputBlock">Input</a></li>
+		<li><a href="#OutputBlock">Output</a></li>
+	      </ul>
+	    </li>
+	    <li>
+	      <p><a href="#BGRImage">BGR Image</a></p>
+	      <ul>
+		<li><a href="#BGRAbsDiff">absdiff</a></li>
+	      </ul>
+	    </li>
+	    <li>
+	      <p><a href="#Filters">Filters</a></p>
+	      <ul>
+		<li><a href="#BGRToGray">BGRToGray</a></li>
+		<li><a href="#Threshold">Threshold</a></li>
+		<li><a href="#ColorFilter">Color</a></li>
+		<li><a href="#MedianFilter">MedianFilter</a></li>
+		<li><a href="#ColorInversion">Color Inversion</a></li>
+		<li><a href="#RectangleSelection">Rectangle Selection</a></li>
+		<li><a href="#CircularSelection">Circular Selection</a></li>
+	      </ul>
+	    </li>
+	    <li>
+	      <p><a href="#MaskImage">Mask Image</a></p>
+	      <ul>
+		<li><a href="#Circle Mask">Circle Mask</a></li>
+		<li><a href="#Rectangle Mask">Rectangle Mask</a></li>
+	      </ul>
+	    </li>
+	    <li>
+	      <p><a href="#Operator">Operator</a></p>
+	      <ul>
+		<li><a href="#AbsDiff">|A-B|</a></li>
+		<li><a href="#And">A and B</a></li>
+		<li><a href="#Or">A or B</a></li>
+	      </ul>
+	    </li>
+	    <li>
+	      <p><a href="#Morphology">Morphology</a></p>
+	      <ul>
+		<li><a href="#Erosion">Erosion</a></li>
+		<li><a href="#Dilation">Dilation</a></li>
+		<li><a href="#Opening">Opening</a></li>
+		<li><a href="#Closing">Closing</a></li>
+	      </ul>
+	    </li>
+	    <li>
+	      <p>Other</p>
+	    </li>
+	    <li>
+	      <p><a href="#Variables">Variables</a></p>
+	      <ul>
+	      </ul>
+	    </li>
+	  </ul>
+	</nav>
+	<div class="col-sm-9" id="main">
+	  <hr />
+	  <div>
+	    <h3 id="I_O">I/O</h3>
+	    
+	    <section>
+	      <h4 id="InputBlock">Inputeブロック<img src="./img/I_O/InputBlock201512092028.png" /></h4>
+	      
+	    </section>
+	    <hr />
+	    <section>
+	      <h4 id="OutputBlock">Outputブロック<img src="./img/I_O/OutputBlock201512092027.png" /></h4>
+	      
+	    </section>
+	    <hr />
+	  </div>
+
+	  <div>
+	    <h3 id="BGRImage">BGR Image</h3>
+	    <section>
+	      <h4 id="BGRAbsDiff">AbsDiffブロック<img src="./img/BGRImage/AbsDiff.png" /></h4>
+	      
+	    </section>
+	    <hr />
+	  </div>
+	  
+	  <div>
+	    <h3 id="Filters">Filters</h3>
+	    <section>
+	      <h4 id="BGRToGray">BGRToGrayブロック<img src="./img/Filter/img_gray_bgrtogray.png" /></h4>
+	      <div>
+		<iframe width="560" height="315" src="https://www.youtube.com/embed/PWU-oIr0-w0" frameborder="0" allowfullscreen></iframe>
+	      </div>
+	    </section>
+	    <hr />
+	    <section>
+	      <h4 id="Threshold">Thresholdブロック<img src="./img/Filter/im_threshold.png" /></h4>
+	      <div>
+		<iframe width="560" height="315" src="https://www.youtube.com/embed/Z86yvoGQwNA" frameborder="0" allowfullscreen></iframe>
+	      </div>
+	    </section>
+	    <hr />
+	    <section>
+	      <h4 id="ColorFilter">ColorFilterブロック<img src="./img/Filter/colorFilter_colorSelector.png" /></h4>
+	      <div>
+		<iframe width="560" height="315" src="https://www.youtube.com/embed/3ktUtdCrQzk" frameborder="0" allowfullscreen></iframe>
+	      </div>
+	    </section>
+	    <hr />
+	    <section>
+	      <h4 id="MedianFilter">MedianFilterブロック<img src="./img/Filter/img_median.png" /></h4>
+	      
+	    </section>
+	    <hr />
+	    <section>
+	      
+	      <h4 id="ColorInversion">ColorInversionブロック<img src="./img/Filter/img_inverse.png" /></h4>
+	      <div>
+		<iframe width="560" height="315" src="https://www.youtube.com/embed/_r1P25_Skcc" frameborder="0" allowfullscreen></iframe>
+	      </div>
+	    </section>
+	    <hr />
+	    <section>
+	      <h4 id="RectangleSelection">RectangleSelectionブロック<img src="./img/Filter/rectRegionSelector_regionSelector.png" /></h4>
+	      <div>
+		<iframe width="560" height="315" src="https://www.youtube.com/embed/NRFRUSzR6xk" frameborder="0" allowfullscreen></iframe>
+	      </div>
+	    </section>
+	    <hr />
+	    <section>
+	      <h4 id="CircularSelection">CircularSelectionブロック<img src="./img/Filter/ellipseRegionSelector_regionSelector.png" /></h4>
+	      <div>
+		<iframe width="560" height="315" src="https://www.youtube.com/embed/fqht_bxmx3s" frameborder="0" allowfullscreen></iframe>
+	      </div>
+	    </section>
+	    <hr />
+	  </div>
+	  
+	  
+	  <div>
+	    <h3 id="MaskImage">MaskImage</h3>
+	    <section>
+	      <h4 id="Circle Mask">CircleMaskブロック<img src="./img/MaskImage/CircleMask.png" /></h4>
+	    </section>
+	    <hr />
+	    <section>
+	      <h4 id="Rectangle Mask">RectangleMaskブロック<img src="./img/MaskImage/RectangleMask.png" /></h4>
+	    </section>
+	    <hr />
+	  </div>
+
+	  
+	  <div>
+	    <h3 id="Operator">Operator</h3>
+	    <section>
+	      <h4 id="AbsDiff">AbsDiffブロック<img src="./img/Operator/AbsDiff.png" /></h4>
+	    </section>
+	    <hr />
+	    <section>
+	      <h4 id="And">Andブロック<img src="./img/Operator/And.png" /></h4>
+	    </section>
+	    <hr />
+	    <section>
+	      <h4 id="Or">Orブロック<img src="./img/Operator/Or.png" /></h4>
+	    </section>
+	    <hr />
+	  </div>
+
+	  <div>
+	    <h3 id="Morphology">Morphology</h3>
+	    <section>
+	      <h4 id="Erosion">Erosionブロック<img src="./img/Morphology/Erosion.png" /></h4>
+	      <div>
+		<iframe width="560" height="315" src="https://www.youtube.com/embed/um5WE6Fs510" frameborder="0" allowfullscreen></iframe>
+	      </div>
+	    </section>
+	    <hr />
+	    <section>
+	      <h4 id="Dilation">Dilationブロック<img src="./img/Morphology/Dilation.png" /></h4>
+	      <div>
+		<iframe width="560" height="315" src="https://www.youtube.com/embed/KWnrXGmzMYY" frameborder="0" allowfullscreen></iframe>
+	      </div>
+	    </section>
+	    <hr />
+	    <section>
+	      <h4 id="Opening">Openingブロック<img src="./img/Morphology/Opening.png" /></h4>
+	    </section>
+	    <hr />
+	    <section>
+	      <h4 id="Closing">Closingブロック<img src="./img/Morphology/Closing.png" /></h4>
+	    </section>
+	    <hr />
+	  </div>
+
+	  
+	  <div>
+	    <h3 id="Variables">Variables</h3>
+	    <section>
+	      <h4 id="SetVariable">SetVariableブロック<img src="./img/variables/SetVariable.png" /></h4>
+	    </section>
+	    <hr />
+	    <section>
+	      <h4 id="OutVariable">OutVariableブロック<img src="./img/variables/OutVariable.png" /></h4>
+	    </section>
+	    <hr />
+	  </div>
+
+
+
+	</div>
+      </div>
+    </div>
+    <script type="text/javascript">
+     $(".nav li ul").css('display','none');
+     $(".nav li p").click(function(){
+       $(this).toggleClass("open").next().slideToggle("fast");
+       //console.log($(this).toggleClass("open").children())
+       
+       //console.log($(this).toggleClass("open").children());
+    });
+    </script>
+    
+  </body>
+</html>

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css"></link>
+    <style>
+     
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>UMATracker Manual</h1>
+      <h2>FilterGeneratorの使いかた</h2>
+      <p><u>FilterGeneratorでは、位置座標を抽出したい物体の場所が白くなる動画フィルタを作成することが目標です。</u>下の画像のように、"フィルタをかけた後の画像"で白い場所は、"元の動画"でアリのいた場所です。この様な画像になるまで、フィルタを変化させていきます。</p>
+      <center><img src="../img/FilterAfter201512101517.png" /></center>
+      <hr />
+      <h3>FilterGeneratorの画面</h3>
+      <p>UMATracker-FilterGeneratorを起動すると下記の画面が現れる。主要な機能について説明する。</p>
+      <div class="row">
+	<div class="col-md-6">
+	  <img src="../img/UMATrackerFilter201512091952.png" alt="FilterGenerator起動画面" width="100%"/>
+	</div>
+	<div class="col-md-6">
+	  <ol>
+	    <li><b>フィルタツールチップ</b></li>
+	    <p>
+	      フィルタブロックの一覧が表示されるツールチップ。フィルタブロックは入力画像を変化させるフィルタのことです。
+	      ブロック毎に入力画像に与える効果は変化します。
+	    </p>
+	    <li><b>フィルタブロック</b></li>
+	    <p>
+	      このブロックをドラッグアンドドロップし、キャンバスに配置することでフィルタ群を作成する。
+	    </p>
+	    <li><b>キャンバス</b></li>
+	    <p>
+	      フィルタブロックを配置し、フィルタ群を作成する場所。
+	    </p>
+	    <li><b>入力した画像</b></li>
+	    <p>
+	      読み込ませた動画が表示される。FilterGeneratorを起動した直後には、足の模様が表示される。
+	    </p>
+	    <li><b>フィルタを掛けた後の画像</b></li>
+	    <p>
+	      キャンバスに設置したフィルタ群を入力した動画に適応した結果が表示される。
+	    </p>
+	  </ol>
+	</div>
+      </div>
+      <hr />
+      <h3>フィルタブロック</h3>
+      
+      フィルタブロックは大別すると３つに分ることができる。入力ブロック、入力／出力ブロック、出力ブロック。これら3つを組合せることでフィルタ群を構成する。
+      
+      
+      <ol>
+	<li>入力ブロック</li>
+	<p>
+	  <img src="../img/OutputBlock201512092027.png" style="float:left;margin-right:50px;">
+	  <img src="../img/Input201512092048.png" width="50px" />または<img src="../img/input201512092051.png" width="40px" />のかたちのついたブロックを入力ブロックと呼びます。
+	  入力のみを受け付けるフィルタです。出力はありません。
+	  例えば、"Output","Variable"ブロックなどが入力ブロックに当る。
+	  <br clear="left">
+	</p>
+	
+	<li>入力／出力ブロック</li>
+	<p>
+	  <img src="../img/BGRToGrayBlock201512092029.png" style="float:left;margin-right:50px;"><!-- align="left"/>-->
+	  <img src="../img/Output201512092049.png" width="50px" />と<img src="../img/input201512092051.png" width="40px" />のかたちのついたブロックを入力／出力ブロックと呼びます。
+	  入力と出力の両方を供えたブロックです。入力ブロックにフィルタをかけた物を出力します。
+	  <br clear="left">
+	</p>
+	<li>出力ブロック</li>
+	<p>
+	  <img src="../img/InputBlock201512092028.png" style="float:left;margin-right:120px;">
+	  <img src="../img/Output201512092049.png" width="50px" />のかたちのついたブロックを出力ブロックと呼びます。
+	  出力のみを行うブロックです。
+	  I/O -> Input、Mask Image -> "Circle"ブロック、Mask Image->"Rectangle"ブロック等のことです。
+	  <br clear="left">
+	</p>
+      </ol>
+      <p>
+	フィルタブロックの<img src="../img/input201512092051.png" width="40px" />側に並んだブロックをInフィルタ、<img src="../img/Output201512092049.png" width="50px" />側に続くブロックをOutフィルタと呼ぶ。
+      </p>
+      <h4>フィルタブロック例</h4>
+      <ul>
+	<li>Inputブロック</li>
+	<p>
+	  <u>InputブロックはFilterGeneratorに読み込ませた動画像を出力するブロックです。</u>
+	  
+	</p>
+	<li>BGRToGrayブロック</li>
+	<p>
+	  入力には、カラー画像を、出力は、GrayScale画像を出力します。
+	  カラー画像をGrayScale画像に変換するフィルタです。明るい場所を白に、黒い場所を黒色というふうに、白色から黒色までの明暗のみで画像を表現します。
+	</p>
+	<li>Color Inversionブロック</li>
+	<p>
+	  入力には、GrayScale画像を、出力は、GrayScale画像です。
+	  白い色を黒に、黒い色を白い色に変換します。
+	</p>
+	<li>Outputブロック</li>
+	<p>
+	  入力のみを受け付けるブロック。受け取った入力を"フィルタを掛けた後の画像"に出力する。
+	</p>
+      </ul>
+      
+
+      <hr />
+      <h3>動画を読み込む</h3>
+      <p>まず、動画ファイルを読み込みます。動画のファイルをFilterGeneratorにドラッグ&ドロップする。</p>
+      <img src="../img/DragDrop201512092120.png" width="95%"/>
+      <p>動画ファイルが読み込まれ、"入力した画像"が変化します。</p>
+      <hr />
+      <h3>キャンバス(フィルタ群の作りかた)</h3>
+      <p>キャンバスにフィルタ群を作る。フィルタツールチップ内のフィルタブロックをinputとoutputの間にドラッグアンドドロップすることで、フィルタ群が作れる。</p>
+      <div class="row">
+	<div class="col-md-6">
+	  <figure>
+	    <img src="../img/canvas 201512092105.png" width="95%">
+	    <figcaption>起動時のキャンバスの画面</figcaption>
+	  </figure>
+	</div>
+	<div class="col-md-6">
+	  <p>
+	    起動時には、OutputブロックとInputブロックのみが表示される。inputはソフトウェアに読み込ませた動画像のことをさしている。<u>inputブロックはこの動画像を出力するフィルタである。</u>Outputブロックには、フィルタ操作を行ったフィルタ群を入力する。こうすることで、フィルタを付けた変化が"フィルタを掛けた後の画像"に表示される。
+	    起動時の"フィルタを掛けた後の画像"は、キャンバスにInputブロックがOutputブロックに接続されているので、動画ファイルの内容そのもの(無加工)の画像が表示される。
+	  </p>
+	  <p>
+	    キャンバスには、<u>OutputブロックとInputブロックが必須</u>となる。これらのブロックはフィルタツールチップの"I/O"の中に入っている。
+	  </p>
+	</div>
+      </div>
+      <h4>フィルタの作りかた</h4>
+      <p></p>
+      <div class="row">
+	<div class="col-md-6">
+	  <img src="../img/FilterMake201512101447.png"/>
+	</div>
+	<div class="col-md-6">
+	  これは、インプットブロックにBGRToGrayフィルタを繋げた状態である。Inputブロックは、読み込ませた動画像を出力する。Inputブロックに、BGRToGrayフィルタがつながっているので、Inputブロックを入力として受ける。その後、GrayScale画像に変換し、出力している。しかし、出力を受けるブロックがないので、"フィルタを掛けた後の画像"は変化しない。
+	</div>
+      </div>
+      <hr />
+      <div class="row">
+	<div class="col-md-6">
+	  <img src="../img/FilterMake201512101451.png" width="95%"/>
+	</div>
+	<div class="col-md-6">
+	  上のフィルタをOutputブロックに繋げると、"フィルタを掛けた後の画像"に黒白の画像が表示される。これは、BGRToGrayブロックの出力先がOutputブロックになったことで、フィルタがただしくどうさするようになったからである。
+	</div>
+      </div>
+      <hr />
+
+      
+      <h4>フィルタ群例</h4>
+      <div class="row">
+	<div class="col-md-6">
+	  <img src="../img/FilterMake201512101146.png" width="95%"/>
+	</div>
+	<div class="col-md-6">
+	  <ol>
+	    <li>Inputブロックは入力した画像のこと</li>
+	    <p>Inputブロックは入力した画像／動画像のこと。<!-- Inputブロックはこの画像を出力する。--></p>
+	    <li>Inputブロックからは入力した画像が出力される</li>
+	    <p>Inputブロックからは入力した画像が出力される。それを受けたBGRToGrayブロックは、入力画像を黒白にする処理をかけた画像を出力する。</p>
+	    <li>BGRToGrayブロックから出力された画像がOutputブロックに入力される</li>
+	    <p>
+	      GrayScale画像になった結果が出力される。
+	    </p>
+	    <li>Outputブロックに入力された画像が"フィルタを掛けた後の画像"に表示される</li>
+	    <p>
+	      この例では、GrayScale画像になった入力画像が入力される。つまり、"フィルタを掛けた後の画像"は、入力した動画像がGrayScale画像になっている。
+	      Outputブロックがキャンバスに存在しない場合、"フィルタを掛けた後の画像"には正しい結果が表示されない。
+	    </p>
+	  </ol>
+	</div>
+      </div>
+      <hr />
+      <h4>フィルタブロックの削除方法</h4>
+      <div class="row">
+	<div class="col-md-6">
+	  <img src="../img/FilterDelete201512101502.png" width="95%"/>
+	</div>
+	<div class="col-md-6">
+	  不要になったフィルタブロックを削除するには、"フィルタツールチップ"または、"キャンバス"にあるゴミ箱にフィルタブロックをドラッグ&ドロップすれば良い。"Inフィルタ"と繋った状況でも複数のフィルタブロックを削除することができる。
+	</div>
+      </div>
+
+      <h4>エラーが起きる場合</h4>
+      <ol>
+	<li class="toggle-li">Outputブロックと他のブロックが離れている場合。</li>
+	<p class="data-toggle"><img src="../img/Error1201512092304.png"/></p>
+	<li class="toggle-li">他のブロックと繋っていないフィルタブロックがある場合</li>
+	<p class="data-toggle"><img src="../img/Error2201512092306.png" /></p>
+      </ol>
+      <hr />
+      <h3>FilterGeneratorがあつかう画像の種類</h3>
+      <p>FilterGeneratorでは3つの画像を扱うことができる。言い替えれば、フィルタブロックにはそれぞれの種類の画像を出力する。</p>
+      <div class="row">
+	<div class="col-md-6">
+	  <img src="../img/FilterIMAGE.png" width="95%"/>
+	</div>
+	<div class="col-md-6">
+	  <ol>
+	    <li>カラー画像</li>
+	    <p>カラー画像は、RGB三色で表現された画像のこと。Inputブロックは、カラー画像を出力するブロック。</p>
+	    <li>GrayScale画像</li>
+	    <p>
+	      カラー画像を白いろから黒色までの明暗のみで表現した画像。BGTRoGrayブロックを使うことで、カラー画像からGrayScale画像に変換できる。
+	    </p>
+	    <li>黒白画像</li>
+	    <p>
+	      GrayScale画像を黒色と白色のみで表現した画像。
+	      最終的なOutputは黒白画像であることが必須。
+	      位置座標を抽出したい物体の場所が白くなるように調整を行う。
+	    </p>
+	  </ol>
+	  <p>
+	    カラー画像から、GrayScale画像に変換。<u>最終的に黒白画像になるようにフィルタを調整する。</u>
+	  </p>
+	</div>
+      </div>
+      <hr />
+      <h3>フィルタ例</h3>
+      
+    </div>
+    
+
+
+     <footer class="footer">
+      <div class="container">
+        <p class="text-muted">@UMATracker</p>
+      </div>
+     </footer>
+     
+    <script type="text/javascript">
+     $(function() {
+       $(".data-toggle").hide();
+       $(".toggle-li").click(function() {
+         $(this).next().slideToggle().siblings(".data").slideUp();
+       });
+     });
+    </script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+  </body>
+</html>
