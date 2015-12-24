@@ -369,6 +369,8 @@ if self.fgbg is not None:
 
         data = webFrame.evaluateJavaScript("Apps.getBlockTypeFromSelectedBlock();")
         if data is None:
+            self.resetSceneAction(self.selectedBlockID)
+            self.selectedBlockID = None
             return
 
         blockType = data['type']
