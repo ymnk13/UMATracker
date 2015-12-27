@@ -2,3 +2,11 @@ test/
 user/
 lib/
 .DS_Store
+dist/
+build/
+*.spec
+*.pyc
+Thumbs.db
+*.log
+*~
+*.swp
