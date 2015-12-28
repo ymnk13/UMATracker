@@ -94,7 +94,10 @@
 	      <ul>
 	      </ul>
 	    </li>
+	    <li><p><a href="../index.html">&gt;&gt; Documentsへ戻る</a></p></li>
+	    <li><p><a href="../../index.html">&gt;&gt; UMATrackerへ戻る</a></p></li>
 	  </ul>
+
 	</nav>
 	<div class="col-sm-9" id="main">
 	  <hr />
@@ -126,21 +129,25 @@
 	    <h3 id="Filters">Filters</h3>
 	    <section>
 	      <h4 id="BGRToGray">BGRToGrayブロック<img src="./img/Filter/img_gray_bgrtogray.png" /></h4>
-	      <div>
+	      <div class="VideoView">
+		<p><button type="button" class="btn btn-info btn-lg">View Video &gt;&gt;</button></p>
+		<!-- <p class="lead"> >> View Video</p>-->
 		<iframe width="560" height="315" src="https://www.youtube.com/embed/PWU-oIr0-w0" frameborder="0" allowfullscreen></iframe>
 	      </div>
 	    </section>
 	    <hr />
 	    <section>
 	      <h4 id="Threshold">Thresholdブロック<img src="./img/Filter/im_threshold.png" /></h4>
-	      <div>
+	      <div class="VideoView">
+		<p><button type="button" class="btn btn-info btn-lg">View Video &gt;&gt;</button></p>
 		<iframe width="560" height="315" src="https://www.youtube.com/embed/Z86yvoGQwNA" frameborder="0" allowfullscreen></iframe>
 	      </div>
 	    </section>
 	    <hr />
 	    <section>
 	      <h4 id="ColorFilter">ColorFilterブロック<img src="./img/Filter/colorFilter_colorSelector.png" /></h4>
-	      <div>
+	      <div class="VideoView">
+		<p><button type="button" class="btn btn-info btn-lg">View Video &gt;&gt;</button></p>
 		<iframe width="560" height="315" src="https://www.youtube.com/embed/3ktUtdCrQzk" frameborder="0" allowfullscreen></iframe>
 	      </div>
 	    </section>
@@ -153,21 +160,24 @@
 	    <section>
 	      
 	      <h4 id="ColorInversion">ColorInversionブロック<img src="./img/Filter/img_inverse.png" /></h4>
-	      <div>
+	      <div class="VideoView">
+		<p><button type="button" class="btn btn-info btn-lg">View Video &gt;&gt;</button></p>
 		<iframe width="560" height="315" src="https://www.youtube.com/embed/_r1P25_Skcc" frameborder="0" allowfullscreen></iframe>
 	      </div>
 	    </section>
 	    <hr />
 	    <section>
 	      <h4 id="RectangleSelection">RectangleSelectionブロック<img src="./img/Filter/rectRegionSelector_regionSelector.png" /></h4>
-	      <div>
+	      <div class="VideoView">
+		<p><button type="button" class="btn btn-info btn-lg">View Video &gt;&gt;</button></p>
 		<iframe width="560" height="315" src="https://www.youtube.com/embed/NRFRUSzR6xk" frameborder="0" allowfullscreen></iframe>
 	      </div>
 	    </section>
 	    <hr />
 	    <section>
 	      <h4 id="CircularSelection">CircularSelectionブロック<img src="./img/Filter/ellipseRegionSelector_regionSelector.png" /></h4>
-	      <div>
+	      <div class="VideoView">
+		<p><button type="button" class="btn btn-info btn-lg">View Video &gt;&gt;</button></p>
 		<iframe width="560" height="315" src="https://www.youtube.com/embed/fqht_bxmx3s" frameborder="0" allowfullscreen></iframe>
 	      </div>
 	    </section>
@@ -208,14 +218,16 @@
 	    <h3 id="Morphology">Morphology</h3>
 	    <section>
 	      <h4 id="Erosion">Erosionブロック<img src="./img/Morphology/Erosion.png" /></h4>
-	      <div>
+	      <div class="VideoView">
+		<p><button type="button" class="btn btn-info btn-lg">View Video &gt;&gt;</button></p>
 		<iframe width="560" height="315" src="https://www.youtube.com/embed/um5WE6Fs510" frameborder="0" allowfullscreen></iframe>
 	      </div>
 	    </section>
 	    <hr />
 	    <section>
 	      <h4 id="Dilation">Dilationブロック<img src="./img/Morphology/Dilation.png" /></h4>
-	      <div>
+	      <div class="VideoView">
+		<p><button type="button" class="btn btn-info btn-lg">View Video &gt;&gt;</button></p>
 		<iframe width="560" height="315" src="https://www.youtube.com/embed/KWnrXGmzMYY" frameborder="0" allowfullscreen></iframe>
 	      </div>
 	    </section>
@@ -255,7 +267,11 @@
        //console.log($(this).toggleClass("open").children())
        
        //console.log($(this).toggleClass("open").children());
-    });
+     });
+     $("div iframe").css('display','none');
+     $("div.VideoView p").click(function(){
+       $(this).toggleClass("open").next().slideToggle("fast");
+       });
     </script>
     
   </body>

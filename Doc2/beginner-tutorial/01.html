@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -7,14 +6,18 @@
     <link rel="stylesheet" href="../css/bootstrap.min.css"></link>
     
     <style>
-     
+     p { margin-bottom:20px;font-size:16px;font-weight:300;line-height:1.4;}
     </style>
   </head>
   <body>
     <div class="container">
       <h1>UMATracker Manual</h1>
+      <ul>
+	<li><a href="../index.html">&gt;&gt;Document</a></li>
+	<li><a href="../../index.html">&gt;&gt;UMATracker</a></li>
+      </ul>
       <h2>FilterGeneratorの使いかた</h2>
-      <p><u>FilterGeneratorでは、位置座標を抽出したい物体の場所が白くなる動画フィルタを作成することが目標です。</u>下の画像のように、"フィルタをかけた後の画像"で白い場所は、"元の動画"でアリのいた場所です。この様な画像になるまで、フィルタを変化させていきます。</p>
+      <p class="lead"><u>FilterGeneratorでは、位置座標を抽出したい物体の場所が白くなる動画フィルタを作成することが目標です。</u>下の画像のように、"フィルタをかけた後の画像"で白い場所は、"元の動画"でアリのいた場所です。この様な画像になるまで、フィルタを変化させていきます。</p>
       <center><img src="../img/FilterAfter201512101517.png" /></center>
       <hr />
       <h3>FilterGeneratorの画面</h3>
@@ -52,7 +55,7 @@
       <hr />
       <h3>フィルタブロック</h3>
       
-      フィルタブロックは大別すると３つに分ることができる。入力ブロック、入力／出力ブロック、出力ブロック。これら3つを組合せることでフィルタ群を構成する。
+      <p>フィルタブロックは大別すると３つに分ることができる。入力ブロック、入力／出力ブロック、出力ブロック。これら3つを組合せることでフィルタ群を構成する。</p>
       
       
       <ol>
@@ -185,7 +188,7 @@
 	  <img src="../img/FilterDelete201512101502.png" width="95%"/>
 	</div>
 	<div class="col-md-6">
-	  不要になったフィルタブロックを削除するには、"フィルタツールチップ"または、"キャンバス"にあるゴミ箱にフィルタブロックをドラッグ&ドロップすれば良い。"Inフィルタ"と繋った状況でも複数のフィルタブロックを削除することができる。
+	  <p>不要になったフィルタブロックを削除するには、"フィルタツールチップ"または、"キャンバス"にあるゴミ箱にフィルタブロックをドラッグ&ドロップすれば良い。"Inフィルタ"と繋った状況でも複数のフィルタブロックを削除できる。</p>
 	</div>
       </div>
 
