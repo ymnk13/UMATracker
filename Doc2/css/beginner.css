@@ -1,0 +1,26 @@
+p {
+    margin-bottom:20px;
+    font-size:16px;
+    font-weight:300;
+    line-height:1.4;
+}
+h1
+{
+    border-left: 22px solid #1e50a2;
+    padding-left: 12px;
+}
+h2
+{
+    border-left: 17px solid #3e62ad;
+    padding-left: 7px;
+}
+h3
+{
+    border-left: 15px solid #008899;
+    padding-left: 5px;
+}
+h4
+{
+    border-left: 5px solid #a0d8ef;
+    padding-left: 1px;
+}

@@ -14,10 +14,23 @@
       <ul>
 	<li><a href="../index.html">&gt;&gt;UMATracker</a></li>
       </ul>
-      <p><a href="reference/index.html">Reference（ブロック一覧）</a></p>
-      <p><a href="beginner-tutorial/01.html">Beginner-tutorial01（UMATracker FilterGenerator）</a></p>
-      <p><a href="beginner-tutorial/02.html">Beginner-tutorial02（UMATracker DetectCenter）</a></p>
-      <p><a href="beginner-tutorial/03.html">Beginner-tutorial03（UMATracker TrackingCorrector）</a></p>
+
+      <p class="lead">UMATrackerは、3つの工程を経て追跡したい物体の座標点を抽出する。</p>
+      <p class="lead">
+	&#9312;FilterGeneratorでは、画像処理をおこなうフィルタを作成し、抽出したい物体の場所のみが白くなるようにする。
+      </p>
+      <p class="lead">
+	&#9313;DetectCenterでは、前の工程で作ったフィルタを使って、位置座標を抽出。さらに、フレーム毎に個体を判別する工程。トラキングアルゴリズムは情報処理分野で有名な物を実装し、選択できるようになっている。さらに、時前で実装したアルゴリズムを組込むこともできる。
+      </p>
+
+      <p class="lead">
+	&#9314;TrackingCorrector この工程では、前工程でのミスを修正する。最新のアルゴリズムを使っても、追跡個体を100%の精度で追跡することは不可能。そこで、目視により、ミスを修正する。
+      </p>
+      
+      <p class="lead"><a href="reference/index.html">Reference（ブロック一覧）</a></p>
+      <p class="lead"><a href="beginner-tutorial/01.html">Beginner-tutorial01（UMATracker FilterGenerator）</a></p>
+      <p class="lead"><a href="beginner-tutorial/02.html">Beginner-tutorial02（UMATracker DetectCenter）</a></p>
+      <p class="lead"><a href="beginner-tutorial/03.html">Beginner-tutorial03（UMATracker TrackingCorrector）</a></p>
     </div>
     <div class="container">
       <p class="lead">作りかけ。Beginner-tutorial01の動画バージョン</p>
