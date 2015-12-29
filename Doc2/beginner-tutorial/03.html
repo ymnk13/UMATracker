@@ -18,7 +18,69 @@
       </ul>
       <h2>TrackingCorrectorの使いかた</h2>
       <p class="lead">TrackingCorrectorでは、DetectCenterで出力した追跡軌道の修正を行う。トラッキングアルゴリズムを使っても、100%完璧な物体追跡は難しい。そこで、この工程で目視でトラッキングできているかを検査し、人力で修正を行う。</p>
+
+      <h3>TrackingCorrector</h3>
+      <div class="row">
+	<div class="col-md-6">
+	  <img src="../img/bt03/TrackingCorrector201512291832.png" alt="TrackingCorrector起動画面" width="100%"/>
+	</div>
+	<div class="col-md-6">
+	  <ol>
+	    <li><b>トラッキング結果</b></li>
+	    <p class="lead">
+	      
+	    </p>
+	    
+	    <li><b>拡大画面</b></li>
+	    <p class="lead">
+	      
+	    </p>
+
+	    <li><b>描画用パラメータ</b></li>
+	    <p class="lead">
+	      
+	    </p>
+
+	    <li><b>File(ファイル)</b></li>
+	    <p class="lead">
+	      
+	    </p>
+	    
+	  </ol>
+	</div>
+      </div>
+      <h3>動画を読み込む</h3>
+      <h3>トラッキング結果を読み込む</h3>
+      <h3>ミストラッキングを修正する</h3>
+      <p class="lead">修正すべきミスは、二つです。１つめは、座標点が飛んだ場合の修正。個体が通った座標から著しく離れた場所に座標点が表示される場合のこと。このミスの多くはフィルタ作成で減らせる。２つめは、スワッピングの修正。つまり、個体の座標点の色が切り替わる場合。2つ以上の個体が接近するとおきます。トラッキングアルゴリズムのミスによって起きるミス。</p>
+      <h4>座標点の修正</h4>
+      <div class="row">
+	<div class="col-md-6">
+	  <img src="../img/bt03/TrackingCorrector201512291925.png" alt="Error" width="100%">
+	</div>
+	<div class="col-md-6">
+	  
+	</div>
+      </div>
+      <h4>スワッピングの修正</h4>
+      <div class="row">
+	<div class="col-md-6">
+	  <img src="../img/bt03/TrackingCorrector201512291936.png" alt="Error" width="100%">
+	</div>
+	<div class="col-md-6">
+	  
+	</div>
+      </div>
+      <h3>修正結果の再保存</h3>
+
     </div>
+    
+    <footer class="footer">
+      <div class="container">
+        <p class="text-muted">@UMATracker</p>
+      </div>
+     </footer>
+
     <script type="text/javascript">
     </script>
     <!-- Latest compiled and minified JavaScript -->

@@ -17,9 +17,138 @@
 	<li><a href="../../index.html">&gt;&gt;UMATracker</a></li>
       </ul>
       <h2>DetectCenterの使いかた</h2>
-      <p class="lead">DetectCenterでは、FilterGeneratorで作ったフィルタを使って、トラッキングアルゴリズムを動作させる。この工程で物体追跡を行う。<u>作ったフィルタの精度（追跡したい物体のみが白くなっているか）がトラッキングの正確をあれする。</u>上手く追跡出来無いなら、もう一度フィルタを作り直す。又は、<a href="./03.html">次の工程</a>で、人力で追跡補正を行う。</p>
+      <p class="lead">DetectCenterでは、FilterGeneratorで作ったフィルタを使って、トラッキングアルゴリズムを動作させる。この工程で物体追跡を行う。<u>作ったフィルタの精度（追跡したい物体のみが白くなっているか）がトラッキングの正確をあれする。</u>上手く追跡出来無いなら、もう一度フィルタを作り直すか、トラッキングパラメータを見直す。又は、<a href="./03.html">次の工程</a>で、人力で追跡補正を行う。</p>
       <p class="lead"></p>
+      <h3>DetectCenterの画面</h3>
+      <div class="row">
+	<div class="col-md-6">
+	  <img src="../img/bt02/DetectCenter201512291429.png" alt="DetectCenter起動画面" width="100%"/>
+	</div>
+	<div class="col-md-6">
+	  <ol>
+	    <li><b>トラッキング結果</b></li>
+	    <p class="lead">入力した画像とトラッキング結果を表示する。</p>
+	    
+	    <li><b>トラッキングパラメータ</b></li>
+	    <p class="lead">トラッキングで使用する値を変更する。個体数や、動物の大きさを設定する。</p>
+
+	    <li><b>表示点の大きさ</b></li>
+	    <p class="lead">Radiusは、表示点の大きさ。Line Widthは、軌跡の幅。of overlay数でいくつのフレームの軌跡を描画するかを決定する。これらの値は、トラッキングアルゴリズムに関係ないので、変更しても精度の向上には繋らない。</p>
+	    
+	    <li><b>Algorithms（トラッキングアルゴリズム選択）</b></li>
+	    <p class="lead">
+	      UMATrackerは、複数のトラッキングアルゴリズムを選択し、使える。ここで、Group Tracker GMM、RMOTを選択できる。デフォルトでは、Group Tracker GMMが選択されている。
+	    </p>
+
+	    <li><b>File(ファイル)</b></li>
+	    <p class="lead">フィルタの読込・ビデオデータの読み込み。トラッキングした座標をCSVに保存する。</p>
+	  </ol>
+	</div>
+      </div>
+      <h3>動画を読み込む</h3>
+      <p class="lead">DetectCenterでは、最初に動画を読み込む。</p>
+      <img src="../img/bt02/DetectCenter201512291523.png" alt="DetectCenter動画の読込" width="100%"/>
+      
+      <h3>フィルタを読み込む</h3>
+      <p class="lead">次に、FilterGeneratorで作ったフィルタを読み込ませる。</p>
+      <img src="../img/bt02/DetectCenter201512291524.png" alt="DetectCenterフィルタの読込" width="100%"/>
+      <h3>パラメータ設定</h3>
+      <p class="lead">次に、トラッキングアルゴリズムを使う際に必要となる数値を設定する。何れか一つを選択し、設定すればよい。</p>
+      <h4>GroupTracker GMMの設定</h4>
+      <div class="row">
+	<div class="col-md-6">
+	  <img src="../img/bt02/AlgorithmGroup201512291616.png" alt="トラッキングアルゴリズムGroupTracker" width="100%"/>
+	  <p class="lead">Group Tracker GMMを選択（デフォルト）すると、上の様な画面がWindow内の"トラッキングパラメータ"の部分に表示される。</p>
+	</div>
+	<div class="col-md-6">
+	  <ol>
+	    <li><b>#of objects</b></li>
+	    <p id="OfObject" class="lead">追跡したい物体の数を入力する。動画内に移っている個体数を入力すればいい。</p>
+	    <li><b>#of k-means</b></li>
+	    <p id="OfKMeans" class="lead">基本的に#of objectsと同じ数を入力する。</p>
+	    <li><b>Likelihood diff. threshold</b></li>
+	    <p class="lead">前フレームとの形の変化度が規定数値以下の場合は同じ物体だとみなさない。ここの数値は経験(Try&Error)によって変化させる。</p>
+	    
+	    <li><b>Restart from this frame</b></li>
+	    <p id="RestartFromThis" class="lead">現在のフレームからトラッキングをスタートさせる。動画の途中で、追跡したい物体が増えた場合に使用する。個体が増えたフレームで一時停止を行い、"#of object"の数値を変化させ、再び再生ボタンをおすと、上手くトラッキングしてくれる。</p>
+	    
+	    <li><b>Set/Reset</b></li>
+	    <p id="SetReset" class="lead">
+	      一番初めに、パラメータを設定した後におすボタン。
+	    </p>
+	  </ol>
+	</div>
+      </div>
+      <h4>RMOTの設定</h4>
+      <div class="row">
+	<div class="col-md-6">
+	  <img src="../img/bt02/AlgorithmRMOT201512291616.png.png" alt="トラッキングアルゴリズムRMOT" width="100%"/>
+	  <p class="lead">
+	    RMOTを選択すると、上の様な画面がWindow内の"トラッキングパラメータ"の部分に表示される。
+	  </p>
+	</div>
+	<div class="col-md-6">
+	  <ol>
+	    <li><b>#of objects</b></li>
+	    <p class="lead">
+	      <a href="02.html#OfObject"">GroupTracker GMMと同じ</a>
+	    </p>
+	    <li><b>#of k-means</b></li>
+	    <p class="lead">
+	      <a href="#OfKMeans">GroupTracker GMMと同じ</a>
+	    </p>
+	    
+	    <li><b>Window Width</b></li>
+	    <li><b>Window Height</b></li>
+	    <p class="lead">
+	      物体の倍程度を囲む様に調整をおこなう。この値は、経験をつんで、変化させていく。
+	    </p>
+
+	    <li><b>Restart from this frame</b></li>
+	    <p class="lead">
+	      <a href="#RestartFromThis">GroupTracker GMMと同じ</a>
+	    </p>
+
+	    <li><b>Set/Reset</b></li>
+	    <p class="lead">
+	      <a href="#SetReset">GroupTracker GMMと同じ</a>
+	    </p>
+
+	  </ol>
+	</div>
+      </div>
+      <h3>トラッキングアルゴリズムを動かす</h3>
+      <div>
+	<p class="lead">
+	  トラッキングアルゴリズムを動作させる。現在"トラッキング結果"画面に表示されているフレームからトラッキングを行うなら、"Restart fomr this frame"ボタンを押した後、"再生"ボタンまたは、"Run >> Run Object Trackine"ボタンを押す。前者の場合、トラッキングアルゴリズムを動作させながら、"トラッキング結果"画面にトラッキング点を描画しながらアルゴリズムが動作する。後者の場合、結果を見ないでトラッキングアルゴリズムが動作する。前者に比べて後者の方が早く動作する。もしも、最初のフレームからトラッキングアルゴリズムを動作させたいなら、"Set/Reset"ボタンを押した後に、"再生"ボタンまたは、"Run >> Run Object Trackine"ボタンを押す。
+	</p>
+	<p class="lead">
+	  前述したが、動画の途中で、<u>個体数が変動する場合、トラッキングアルゴリズムは上手く動作しない</u>(GroupTracker GMM、RMOTの場合)。これは、デフォルトのトラッキングアルゴリズムは個体数を決定した上で上手く動作するアルゴリズムだからである。なので、個体数の変動がおきた場合、一時停止ボタンをおし、パラメータの"#of objects"を変化させる。その後再び、トラッキングアルゴリズムを動作すれば、上手くトラッキングを続けられる。
+	</p>
+      </div>
+      <h3>トラッキング結果の保存</h3>
+      <p class="lead">トラッキングアルゴリズムを動かした後は、結果を保存する。この工程をやらなければ、結果は得られない。"File >> Save to CSV"を選択し、保存したいディレクトリとファイル名をしていする。</p>
+      <p class="lead">
+	出力結果は、CSV形式で保存される。最初の行には、x0,y0,x1,y1。次からの行には、フレームナンバー、個体ナンバー0のx座標、個体ナンバー0のy座標、個体ナンバー1のx座標、個体ナンバー1のy座標。。。が保存されている。
+      </p>
+      <div class="row">
+	<div class="col-md-6">
+	  <img src="../img/bt02/SaveDetectCenter201512291940.png" alt="DetectCenterの結果保存" width="100%"/>
+	</div>
+	<div class="col-md-6">
+	  <img src="../img/bt02/CSV201512291944.png" alt="DetectCenterの結果CSV" width="100%"/>
+	</div>
+      </div>
+      <h3>失敗例と対処方法</h3>
     </div>
+
+    
+    <footer class="footer" style="margin-top:25px;">
+      <div class="container">
+        <p class="text-muted">@UMATracker</p>
+      </div>
+     </footer>
+
     <script type="text/javascript">
     </script>
     <!-- Latest compiled and minified JavaScript -->
