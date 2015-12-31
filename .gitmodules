@@ -1,16 +1,16 @@
 [submodule "lib/closure-library"]
 	path = lib/closure-library
-	url = git@github.com:ymnk13/closure-library.git
+	url = https://github.com/ymnk13/closure-library.git
 	ignore = dirty
 [submodule "lib/blockly"]
 	path = lib/blockly
-	url = git@github.com:ymnk13/blockly.git
+	url = https://github.com/ymnk13/blockly.git
 	ignore = dirty
 [submodule "lib/python/FilterIO"]
 	path = lib/python/FilterIO
-	url = git@github.com:Licht-T/FilterIO.git
+	url = https://github.com/Licht-T/FilterIO.git
 	ignore = dirty
 [submodule "lib/python/PythonClassGenerator"]
 	path = lib/python/PythonClassGenerator
-	url = git@github.com:Licht-T/PythonClassGenerator.git
+	url = https://github.com/Licht-T/PythonClassGenerator.git
 	ignore = dirty
