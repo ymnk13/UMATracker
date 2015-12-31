@@ -107,11 +107,56 @@
 	    
 	    <section>
 	      <h4 id="InputBlock">Inputeブロック<img src="./img/I_O/InputBlock201512092028.png" /></h4>
+
 	      
+	      <div class="row">
+		<div class="col-md-6">
+		  <p class="lead">
+		    <figure>
+		      <img src="img/I_O/InputBlockExample.png" width="100%" />
+		      <figcaption>Inputブロックの使用例</figcaption>
+		    </figure>
+		  </p>
+		</div>
+		<div class="col-md-6">
+		  <p class="lead">
+		    <ul>
+		      <li class="lead">入力: なし</li>
+		      <li class="lead">出力: カラー画像</li>
+		    </ul>
+		  </p>
+		  <p class="lead">
+		    FilterGeneratorに読み込ませた画像を出力する。動画であれば、現在表示中の1Frameの画像を出力する。
+		  </p>
+		</div>
+	      </div>
+
 	    </section>
 	    <hr />
 	    <section>
 	      <h4 id="OutputBlock">Outputブロック<img src="./img/I_O/OutputBlock201512092027.png" /></h4>
+	      
+	      <div class="row">
+		<div class="col-md-6">
+		  <p class="lead">
+		    <figure>
+		      <img src="img/I_O/InputBlockExample.png" width="100%" />
+		      <figcaption>Outputブロックの使用例</figcaption>
+		    </figure>
+		  </p>
+		</div>
+		<div class="col-md-6">
+		  <p class="lead">
+		    <ul>
+		      <li class="lead">入力: カラー画像／GrayScale画像／黒白画像</li>
+		      <li class="lead">出力: なし</li>
+		    </ul>
+		  </p>
+		  <p class="lead">
+		    入力された画像を、"フィルタを掛けた後の画像"へ出力する。
+		  </p>
+		</div>
+	      </div>
 	      
 	    </section>
 	    <hr />
@@ -169,6 +214,36 @@
 		<p><button type="button" class="btn btn-info btn-lg">View Video &gt;&gt;</button></p>
 		<iframe width="560" height="315" src="https://www.youtube.com/embed/Z86yvoGQwNA" frameborder="0" allowfullscreen></iframe>
 	      </div>
+
+
+	      <div class="row">
+		<div class="col-md-6">
+		  <p class="lead">
+		    <figure>
+		      <img src="img/Filter/im_thresholdExample.png" width="100%" />
+		      <figcaption>Thresholdブロックの使用例</figcaption>
+		    </figure>
+		    <figure>
+		      <img src="img/Filter/img_gray_bgrtograyScreen.png" width="30%" />
+		      <img src="img/Filter/im_thresholdScreen220.png" width="30%" /> 
+		      <img src="img/Filter/im_thresholdScreen230.png" width="30%" />
+		      <figcaption>Thresholdブロックの（左から、入力したGrayScale画像、Threshold:220の時の結果、Threshold:230の時の結果）</figcaption>
+		    </figure>
+		  </p>
+		</div>
+		<div class="col-md-6">
+		  <p class="lead">
+		    <ul>
+		      <li class="lead">入力: GrayScale画像</li>
+		      <li class="lead">出力: 黒白画像</li>
+		    </ul>
+		  </p>
+		  <p class="lead">
+		    GrayScale画像を値に応じて黒白画像に変換する。0-255の数値を入力して使用する。250に近いほど、白に近い色も黒に変換する。0に近いほど、黒色に近いいろを黒に変換する。結果は、黒白画像に変換される。
+		  </p>
+		</div>
+	      </div>
+
 	    </section>
 	    <hr />
 	    <section>
@@ -262,6 +337,34 @@
 		<p><button type="button" class="btn btn-info btn-lg">View Video &gt;&gt;</button></p>
 		<iframe width="560" height="315" src="https://www.youtube.com/embed/fqht_bxmx3s" frameborder="0" allowfullscreen></iframe>
 	      </div>
+	      
+	      <div class="row">
+		<div class="col-md-6">
+		  <p class="lead">
+		    <figure>
+		      <img src="img/Filter/ellipseRegionSelector_regionSelectorExample.png" width="100%" />
+		      <figcaption>CircularSelelectionブロックの使用例</figcaption>
+		    </figure>
+		    <figure>
+		      <img src="img/color_filter_test.png" width="30%" /> -> 
+		      <img src="img/Filter/ellipseRegionSelector_regionSelectorScreen.png" width="30%" />
+		      <figcaption>CircularSelectionブロックの結果</figcaption>
+		    </figure>
+		  </p>
+		</div>
+		<div class="col-md-6">
+		  <p class="lead">
+		    <ul>
+		      <li class="lead">入力: カラー画像／GrayScale画像／黒白画像</li>
+		      <li class="lead">出力: カラー画像／GrayScale画像／黒白画像</li>
+		    </ul>
+		  </p>
+		  <p class="lead">
+		    入力した画像の使用する部位を選択し、それいがいの場所を黒色に塗り潰す。範囲の指定は、RectangleSelectionブロックを選択した後に、"入力した画像"の中で決定する。
+		  </p>
+		</div>
+	      </div>
+	      
 	    </section>
 	    <hr />
 	  </div>
@@ -271,10 +374,65 @@
 	    <h3 id="MaskImage">MaskImage</h3>
 	    <section>
 	      <h4 id="Circle Mask">CircleMaskブロック<img src="./img/MaskImage/CircleMask.png" /></h4>
+	      
+	      <div class="row">
+		<div class="col-md-6">
+		  <p class="lead">
+		    <figure>
+		      <img src="img/MaskImage/CircleMaskExample.png" width="100%" />
+		      <figcaption>CircleMaskブロックの使用例</figcaption>
+		    </figure>
+		    <figure>
+		      <img src="img/MaskImage/CircleMaskScreen.png" width="30%" /> 		      
+		      <figcaption>CircleMaskブロックの例</figcaption>
+		    </figure>
+		  </p>
+		</div>
+		<div class="col-md-6">
+		  <p class="lead">
+		    <ul>
+		      <li class="lead">入力: なし</li>
+		      <li class="lead">出力: 黒白画像</li>
+		    </ul>
+		  </p>
+		  <p class="lead">
+		    Circle画像を出力する。
+		  </p>
+		</div>
+	      </div>
+	      
 	    </section>
 	    <hr />
 	    <section>
 	      <h4 id="Rectangle Mask">RectangleMaskブロック<img src="./img/MaskImage/RectangleMask.png" /></h4>
+	      
+	      <div class="row">
+		<div class="col-md-6">
+		  <p class="lead">
+		    <figure>
+		      <img src="img/MaskImage/RectangleMaskExample.png" width="100%" />
+		      <figcaption>RectangleMaskブロックの使用例</figcaption>
+		    </figure>
+		    <figure>
+		      <img src="img/MaskImage/RectangleMaskScreen.png" width="30%" />
+		      <figcaption>
+			RectangleMaskブロックの例
+		      </figcaption>
+		    </figure>
+		  </p>
+		</div>
+		<div class="col-md-6">
+		  <p class="lead">
+		    <ul>
+		      <li class="lead">入力: なし</li>
+		      <li class="lead">出力: 黒白画像</li>
+		    </ul>
+		  </p>
+		  <p class="lead">
+		    Rectangle画像を出力する。
+		  </p>
+		</div>
+	      </div>
 	    </section>
 	    <hr />
 	  </div>
@@ -304,6 +462,36 @@
 		<p><button type="button" class="btn btn-info btn-lg">View Video &gt;&gt;</button></p>
 		<iframe width="560" height="315" src="https://www.youtube.com/embed/um5WE6Fs510" frameborder="0" allowfullscreen></iframe>
 	      </div>
+
+	      <div class="row">
+		<div class="col-md-6">
+		  <p class="lead">
+		    <figure>
+		      <img src="img/Morphology/ErosionExample.png" width="100%" />
+		      <figcaption>Erosionブロックの使用例</figcaption>
+		    </figure>
+		    <figure>
+		      <img src="img/color_filter_test.png" width="30%" /> ->
+		      <img src="img/Morphology/ErosionScreen12.png" width="30%" />
+		      <img src="img/Morphology/ErosionScreen60.png" width="30%" />
+		      <figcaption>Erosionブロックの結果(左から、入力画像、Kernel=12の場合、Kernel=60の場合)</figcaption>
+		    </figure>
+		  </p>
+		</div>
+		<div class="col-md-6">
+		  <p class="lead">
+		    <ul>
+		      <li class="lead">入力: カラー画像／GrayScale画像／黒白画像</li>
+		      <li class="lead">出力: カラー画像／GrayScale画像／黒白画像</li>
+		    </ul>
+		  </p>
+		  <p class="lead">
+		    Erosionフィルタは、画像を膨張する。
+		  </p>
+		</div>
+	      </div>
+
+	      
 	    </section>
 	    <hr />
 	    <section>
@@ -312,6 +500,38 @@
 		<p><button type="button" class="btn btn-info btn-lg">View Video &gt;&gt;</button></p>
 		<iframe width="560" height="315" src="https://www.youtube.com/embed/KWnrXGmzMYY" frameborder="0" allowfullscreen></iframe>
 	      </div>
+
+	      
+	      <div class="row">
+		<div class="col-md-6">
+		  <p class="lead">
+		    <figure>
+		      <img src="img/Morphology/DilationExample.png" width="100%" />
+		      <figcaption>Erosionブロックの使用例</figcaption>
+		    </figure>
+		    <figure>
+		      <img src="img/color_filter_test.png" width="30%" /> ->
+		      <img src="img/Morphology/DilationScreen10.png" width="30%" />
+		      <img src="img/Morphology/DilationScreen20.png" width="30%" />
+		      <figcaption>Dilationブロックの結果(左から、入力画像、Kernel=10の場合、Kernel=20の場合)</figcaption>
+		    </figure>
+		  </p>
+		</div>
+		<div class="col-md-6">
+		  <p class="lead">
+		    <ul>
+		      <li class="lead">入力: カラー画像／GrayScale画像／黒白画像</li>
+		      <li class="lead">出力: カラー画像／GrayScale画像／黒白画像</li>
+		    </ul>
+		  </p>
+		  <p class="lead">
+		    Dilationフィルタは、画像を収縮する。
+		  </p>
+		</div>
+	      </div>
+
+
+
 	    </section>
 	    <hr />
 	    <section>
