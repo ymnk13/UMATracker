@@ -81,7 +81,7 @@ logger.addHandler(handler)
 
 
 class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
-    def __init__(self, path):
+    def __init__(self):
         super(Ui_MainWindow, self).__init__()
         self.setupUi(self)
 
@@ -484,7 +484,7 @@ if self.fgbg is not None:
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = Ui_MainWindow(currentDirPath)
+    MainWindow = Ui_MainWindow()
     MainWindow.setWindowIcon(QIcon(':/icon/icon.ico'))
     MainWindow.show()
     sys.exit(app.exec_())
