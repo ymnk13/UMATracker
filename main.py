@@ -92,6 +92,7 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.menubar.setNativeMenuBar(False)
         self.selectedBlockID = None
         self.fgbg = None
+        self.filePath = None
         #b = RectForAreaSelection(QRectF(250, 250, 350.0, 350.0),None,self.inputGraphicsView)
         #self.inputScene.addItem(b)
         self.inputPixMapItem.mousePressEvent = self.getPixMapItemClickedPos
@@ -305,7 +306,11 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
 
     def saveFilterFile(self):
         self.blocklyEvaluationTimer.stop()
-        filePath, _ = QFileDialog.getSaveFileName(None, 'Save Filter File', userDir, "Filter files (*.filter)")
+        if self.filePath is not None:
+            candidateFilePath = os.path.splitext(self.filePath)[0] + '.filter'
+        else:
+            candidateFilePath = userDir
+        filePath, _ = QFileDialog.getSaveFileName(None, 'Save Filter File', candidateFilePath, "Filter files (*.filter)")
 
         if len(filePath) is not 0:
             logger.debug("Saving Filter file: {0}".format(filePath))
