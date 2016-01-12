@@ -148,7 +148,7 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.filter = None
 
     def imgInit(self):
-        self.filePath = os.path.join(sampleDataPath,"color_filter_test.png")
+        # self.filePath = os.path.join(sampleDataPath,"color_filter_test.png")
         self.cv_img = cv2.imread(os.path.join(sampleDataPath,"color_filter_test.png"))
 
         self.inputScene = QGraphicsScene()
