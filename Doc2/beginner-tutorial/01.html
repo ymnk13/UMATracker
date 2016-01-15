@@ -235,13 +235,48 @@
 	  <img src="../img/bt01/Process20160115175147.png" width="95%">
 	</div>
 	<div class="col-md-6">
-	  
+	  <p class="lead">
+	    まず、撮影した画像を確認して、動物が写っている範囲を確認します。動物が写っている範囲の中に容器の縁や他の物体が写っているなら必ず範囲指定のブロックを使用します。RectangleSelectionブロックかCircleSelectionブロックを使います。
+	  </p>
+	  <p class="lead">
+	    次に、追跡したい物体に色がついているかどうかを確認します。色がついているなら、ColorDistanceブロックを使います。
+	  </p>
+	  <p class="lead">
+	    色で識別できない場合も、識別出来る場合も、BGRToGrayフィルタを使いGrayScale画像に変換します。
+	  </p>
+	  <p class="lead">
+	    その後、閾値フィルタを使い色の濃さによって物体を抽出します。
+	  </p>
+	  <p class="lead">
+	    最後に、追跡したい物体以外にノイズがかかっている場合、Erosionブロックを使用します。
+	  </p>
 	</div>
       </div>
       <hr />
       <h3>フィルタ例</h3>
+      <div class="container">
+	<p class="lead">
+	  追跡物体に色が無いとは、BGRToGrayブロックでGrayScale変換した場合とカラー画像の状態が殆ど変化しない映像のこと。アリやゼブラフィッシュの動画は色が無いものといえる。
+	</p>
+	<p class="lead">
+	  追跡物体に色が有るとは、実験対象にペイントやカラーシールをはった状態の事。
+	</p>
+	<img src="../img/bt01/FilterExample0020160115181604.png" />
+	<p class="lead">
+	  追跡物体に色が有る場合、範囲指定のブロックを追加した後、<a href="../reference/index.html#ColorFilter">色フィルタ</a>を使用する。色を選択した後、BGRToGrayブロックでGrayScale画像に変換する。その後、細かなノイズを消すため、ThresholdブロックとErosionブロックを使う。
+	  <a href="FilterExample/ColorFilter.filter">このフィルタをダウンロードする</a>
+	</p>
+	<img src="../img/bt01/FilterExample0120160115181641.png" />
+	<p class="lead">
+	  追跡物体に色が無い場合、<a href="../reference/index.html#ColorFilter">色フィルタ</a>の無い状態でフィルタを構成すればよい。
+	  <a href="FilterExample/GrayScaleFilter.filter">このフィルタをダウンロードする</a>
+	</p>
+      </div>
+      <hr />
+      <!-- -
+      <h3>フィルタ例</h3>
       <h4>アリ（トビイロケアリ）</h4>
-      
+       -->
     </div>
     
 
