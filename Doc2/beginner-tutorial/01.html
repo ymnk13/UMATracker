@@ -273,7 +273,7 @@
 	</p>
 	<h5>Erosionブロックを使ったノイズ削減</h5>
 	<p class="lead">
-	  最も簡単なノイズ削減方法は、Erosionブロックを使うことである。
+	  最も簡単なノイズ削減方法は、Erosionブロックを使うことである。<a href="./FilterExample/ErosionFilterExample.filter">このフィルタをダウンロード</a>
 	</p>
 	<div class="row">
 	  <div class="col-md-6">
@@ -286,9 +286,17 @@
 	    <img src="../img/bt01/ErosionAfter20160116201743.png" width="95%">
 	    <p class="lead">
 	      Erosionブロックを使用した後の状態。画像の何ヵ所かにあった白い点が消えている。この状態になるまで、ErosionブロックとThresholdブロックの数値を変化させる。
+	      
 	    </p>
 	  </div>
-      </div>
+	</div>
+	<h5>BlurFilterブロックを使ったノイズ削減</h5>
+	<div>
+	  <img src="../img/bt01/BlurFilter20160115210908.png">
+	  <p class="lead">
+	    Blurブロックを使えば、小さな白い領域は、黒色に近い色にニジム。一方で、白い大きな領域の中心は白色をたもち続ける。この性質をThresholdブロックと共に利用すると、ノイズが削減できる場合がある。<a href="./FilterExample/BlurFilterExample.filter">このフィルタをダウンロード</a>
+	  </p>
+	</div>
       <hr />
       <h3>フィルタ例</h3>
       <div class="container">
