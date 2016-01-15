@@ -17,6 +17,9 @@
 	<li><a href="../index.html">&gt;&gt;Document</a></li>
 	<li><a href="../../index.html">&gt;&gt;UMATracker</a></li>
       </ul>
+      <div id="menu">
+	<h2>Menu</h2>
+      </div>
       <h2>TrackingCorrectorの使いかた</h2>
       <p class="lead">TrackingCorrectorでは、DetectCenterで出力した追跡軌道の修正を行う。トラッキングアルゴリズムを使っても、100%完璧な物体追跡は難しい。そこで、この工程で目視でトラッキングできているかを検査し、人力で修正を行う。</p>
 
@@ -107,8 +110,18 @@
       </div>
      </footer>
 
-    <script type="text/javascript">
-    </script>
+     <script type="text/javascript">
+      $(function() {
+	$(document).ready(function(){
+	  $("h3").each(function(index,domElement){
+	    $("#menu").append("<a href=\"./03.html#HREF"+index+"\">"+$(this).text()+"</a><br />");
+	    var title = $(this).text();
+	    $(this).text("");
+	    $(this).append("<a name=\"HREF"+index+"\">"+title+"</a>");
+	  });
+	});
+      });
+     </script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="../js/bootstrap.min.js"></script>
   </body>

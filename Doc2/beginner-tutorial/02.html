@@ -17,6 +17,9 @@
 	<li><a href="../index.html">&gt;&gt;Document</a></li>
 	<li><a href="../../index.html">&gt;&gt;UMATracker</a></li>
       </ul>
+      <div id="menu">
+	<h2>Menu</h2>
+      </div>
       <h2>DetectCenterの使いかた</h2>
       <p class="lead">DetectCenterでは、FilterGeneratorで作ったフィルタを使って、トラッキングアルゴリズムを動作させる。この工程で物体追跡を行う。<u>作ったフィルタの精度（追跡したい物体のみが白くなっているか）がトラッキングの正確をあれする。</u>上手く追跡出来無いなら、もう一度フィルタを作り直すか、トラッキングパラメータを見直す。又は、<a href="./03.html">次の工程</a>で、人力で追跡補正を行う。</p>
       <p class="lead"></p>
@@ -180,6 +183,16 @@
      </footer>
 
     <script type="text/javascript">
+     $(function() {
+       $(document).ready(function(){
+	 $("h3").each(function(index,domElement){
+	   $("#menu").append("<a href=\"./02.html#HREF"+index+"\">"+$(this).text()+"</a><br />");
+	   var title = $(this).text();
+	   $(this).text("");
+	   $(this).append("<a name=\"HREF"+index+"\">"+title+"</a>");
+	 });
+       });
+     });
     </script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="../js/bootstrap.min.js"></script>
