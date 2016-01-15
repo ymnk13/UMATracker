@@ -224,10 +224,11 @@
 	  </p>
 	</div>
       </div>
+      <hr />
       <h3>フィルタの基本的な構成手順</h3>
       <div class="container">
 	<p class="lead">
-	  <u>フィルタを構成するには、BGRToGrayブロックとThresholdブロックを必ず使う。BGRToGrayブロックは、カラー画像からGrayScale画像に変換させる為に必要。そして、Thresholdブロックは、GrayScale画像から黒白画像に変換する際に必須である。</u>
+	  <u>フィルタを構成するには、BGRToGrayブロックとThresholdブロックを必ず使う。BGRToGrayブロックは、カラー画像からGrayScale画像に変換させる為に必要。そして、Thresholdブロックは、GrayScale画像から黒白画像に変換する際に必須である。</u>フィルタは、黒白画像になるようにしなければならない。
 	</p>
       </div>
       <div class="row">
@@ -252,6 +253,42 @@
 	  </p>
 	</div>
       </div>
+      <h4>ノイズについて</h4>
+      <div class="container">
+	<p class="lead">動画ファイルには、ノイズが必ず含まれる。ノイズの原因は、観察者の移動などで発生する照度の微妙な変化・実験環境に含まれる微妙なチリ・動物の糞など様々である。これらのノイズを極力(完璧に)消してからトラッキングアルゴリズムを動作させなければ、自動トラッキングに失敗する。
+	  <div class="row">
+	    <div class="col-md-6">
+	      <img src="../img/bt01/ImageNoise20160115200101.png" alt="ノイズアリ" width="95%">
+	      <p class="lead">
+		ノイズの残った画像。この状態で次の工程に進むとミストラッキングが増え、修正回数も増える。
+	      </p>
+	    </div>
+	    <div class="col-md-6">
+	      <img src="../img/bt01/ImageNoNoise20160115200101.png" alt="ノイズナシ" width="95%">
+	      <p class="lead">
+		ノイズの無い状態。
+	      </p>
+	    </div>
+	  </div>
+	</p>
+	<h5>Erosionブロックを使ったノイズ削減</h5>
+	<p class="lead">
+	  最も簡単なノイズ削減方法は、Erosionブロックを使うことである。
+	</p>
+	<div class="row">
+	  <div class="col-md-6">
+	    <img src="../img/bt01/ErosionBefore20160116201743.png" width="95%">
+	    <p class="lead">
+	      Thresholdブロックを使用した後の状態。画像の何ヵ所かに白い点が残っている。動物個体以外の点がノイズである。このノイズはErosionブロックを追加すると消せる。
+	    </p>
+	  </div>
+	  <div class="col-md-6">
+	    <img src="../img/bt01/ErosionAfter20160116201743.png" width="95%">
+	    <p class="lead">
+	      Erosionブロックを使用した後の状態。画像の何ヵ所かにあった白い点が消えている。この状態になるまで、ErosionブロックとThresholdブロックの数値を変化させる。
+	    </p>
+	  </div>
+      </div>
       <hr />
       <h3>フィルタ例</h3>
       <div class="container">
@@ -273,7 +310,7 @@
 	</p>
       </div>
       <hr />
-      <!-- -
+      <!-- 
       <h3>フィルタ例</h3>
       <h4>アリ（トビイロケアリ）</h4>
        -->
