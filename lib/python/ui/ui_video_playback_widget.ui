@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>VideoPlaybackWidgetBase</class>
- <widget class="QWidget" name="VideoPlaybackWidgetBase">
+ <class>VideoPlaybackWidget</class>
+ <widget class="QWidget" name="VideoPlaybackWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

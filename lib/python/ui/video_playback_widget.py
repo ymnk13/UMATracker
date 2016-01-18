@@ -269,6 +269,12 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
     def setFrame(self, frame, frameNo):
         logger.debug('Frame No: {0}'.format(frameNo))
         self.currentFrame = frame
+        second = (frameNo/self.fps)
+        msecond = ((frameNo%self.fps))/self.fps
+        minute = int((second/60.0))
+        second = int((second%60.0))
+        timerString = "%02d:%02d:%02d"%(minute,second,msecond*100)
+        self.timeLabel.setText(timerString)
         self.frameChanged.emit(frame, frameNo)
 
     @pyqtSlot()
