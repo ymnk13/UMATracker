@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\main_window_base.ui'
+# Form implementation generated from reading ui file 'main_window_base.ui'
 #
-# Created by: PyQt5 UI code generator 5.5
+# Created by: PyQt5 UI code generator 5.4.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -56,9 +56,10 @@ class Ui_MainWindowBase(object):
         sizePolicy.setHeightForWidth(self.inputGraphicsView.sizePolicy().hasHeightForWidth())
         self.inputGraphicsView.setSizePolicy(sizePolicy)
         self.inputGraphicsView.setAcceptDrops(False)
-        self.inputGraphicsView.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.inputGraphicsView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.inputGraphicsView.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.inputGraphicsView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.inputGraphicsView.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustIgnored)
+        self.inputGraphicsView.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
         self.inputGraphicsView.setObjectName("inputGraphicsView")
         self.verticalLayout_2.addWidget(self.inputGraphicsView)
         self.outputGraphicsView = QtWidgets.QGraphicsView(self.graphicsBox)
@@ -68,12 +69,15 @@ class Ui_MainWindowBase(object):
         sizePolicy.setHeightForWidth(self.outputGraphicsView.sizePolicy().hasHeightForWidth())
         self.outputGraphicsView.setSizePolicy(sizePolicy)
         self.outputGraphicsView.setAcceptDrops(False)
+        self.outputGraphicsView.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.outputGraphicsView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.outputGraphicsView.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
         self.outputGraphicsView.setObjectName("outputGraphicsView")
         self.verticalLayout_2.addWidget(self.outputGraphicsView)
         self.horizontalLayout.addWidget(self.graphicsBox)
         MainWindowBase.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindowBase)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 976, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 976, 22))
         self.menubar.setObjectName("menubar")
         self.menuFiles = QtWidgets.QMenu(self.menubar)
         self.menuFiles.setObjectName("menuFiles")

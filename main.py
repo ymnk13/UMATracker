@@ -39,7 +39,7 @@ import re, hashlib, json
 import icon
 
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QFileDialog, QMainWindow, QDialog
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsPixmapItem, QFileDialog, QMainWindow, QDialog
 from PyQt5.QtGui import QPixmap, QColor, QBrush, QIcon
 from PyQt5.QtCore import QRectF, QPointF, Qt
 
@@ -95,7 +95,7 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.filePath = None
         #b = RectForAreaSelection(QRectF(250, 250, 350.0, 350.0),None,self.inputGraphicsView)
         #self.inputScene.addItem(b)
-        self.inputPixMapItem.mousePressEvent = self.getPixMapItemClickedPos
+        #self.inputPixMapItem.mousePressEvent = self.getPixMapItemClickedPos
 
     def dragEnterEvent(self,event):
         event.acceptProposedAction()
@@ -166,6 +166,42 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.inputPixMap = QPixmap.fromImage(qimg)
         self.inputPixMapItem = QGraphicsPixmapItem(self.inputPixMap)
         self.inputScene.addItem(self.inputPixMapItem)
+
+        self.inputGraphicsView.keyPressEvent = self.generateGraphicsViewKeyPressEvent(self.inputGraphicsView)
+        self.outputGraphicsView.keyPressEvent = self.generateGraphicsViewKeyPressEvent(self.outputGraphicsView)
+
+    def generateGraphicsViewKeyPressEvent(self,graphicsView):
+        def graphicsViewScaleDown(graphicsView):
+            scaleFactor = 1.15
+            graphicsView.scale(1.0 / scaleFactor, 1.0 / scaleFactor)
+        def graphicsViewScaleUp(graphicsView):
+            scaleFactor = 1.15
+            graphicsView.scale(scaleFactor, scaleFactor)
+        videoPlayFunc = self.videoPlaybackWidget.playButtonClicked
+        movePrevFrameFunc = self.videoPlaybackWidget.movePrevButtonClicked
+        moveNextFrameFunc = self.videoPlaybackWidget.moveNextButtonClicked
+        inputGraphicsViewResized = self.inputGraphicsViewResized
+        outputGraphicsViewResized = self.outputGraphicsViewResized
+        def graphicsViewKeyPressEvent(event):
+            if event.type() == QtCore.QEvent.KeyPress:
+                key = event.key()
+                if key == QtCore.Qt.Key_Space:
+                    #self.videoPlaybackWidget.playButtonClicked()
+                    videoPlayFunc()
+                elif key == QtCore.Qt.Key_A:
+                    movePrevFrameFunc()
+                elif key == QtCore.Qt.Key_D:
+                    moveNextFrameFunc()
+                elif key == QtCore.Qt.Key_Down:
+                    graphicsViewScaleDown(graphicsView)
+                elif key == QtCore.Qt.Key_Up:
+                    graphicsViewScaleUp(graphicsView)
+                elif key == QtCore.Qt.Key_R:
+                    inputGraphicsViewResized()
+                    outputGraphicsViewResized()
+                QGraphicsView.keyPressEvent(graphicsView, event)
+        return graphicsViewKeyPressEvent
+
 
     def menuInit(self):
         self.actionOpenVideo.triggered.connect(self.openVideoFile)
@@ -414,7 +450,8 @@ if self.fgbg is not None:
         elif 'colorSelector' in blockAttributes:
             self.inputPixMapItem.mousePressEvent = self.inputPixMapItemClicked
         else:
-            self.inputPixMapItem.mousePressEvent = self.getPixMapItemClickedPos
+            pass
+            #self.inputPixMapItem.mousePressEvent = self.getPixMapItemClickedPos
 
     def resetSceneAction(self, blockID):
         graphicsItem = self.getGrphicsItemFromInputScene(blockID)
@@ -485,7 +522,7 @@ if self.fgbg is not None:
         self.outputScene.addPixmap(pixmap)
 
         self.outputGraphicsView.viewport().update()
-        self.outputGraphicsViewResized()
+        #self.outputGraphicsViewResized()
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
