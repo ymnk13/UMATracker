@@ -89,7 +89,6 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.blocklyInit()
         self.imgInit()
         self.menuInit()
-        self.menubar.setNativeMenuBar(False)
         self.selectedBlockID = None
         self.fgbg = None
         self.filePath = None
