@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script src="js/jquery-1.10.2.js"></script>
+        <link rel="stylesheet" href="css/bootstrap.min.css"></link>
+        <link rel="stylesheet" type="text/css" href="css/screen.css" media="all" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <title>動物／物理現象の解明ツール - UMATracker - </title>
+	<meta name="keywords" content="トラッキングソフト,物体追跡,動画解析">
+	<meta property="og:description" content="UMATrackerは、動画中から物体を追跡するソフトウェア。トラッキングアルゴリズムの拡張機能。画像フィルタ機能。トラッキング補正機能。">
+
+        <style>
+.section{
+    padding-top:150px;
+    padding-bottom:100px;
+    min-height:500px;
+    color:#fff;
+}
+
+     a:link:not(.btn) { color: #e6eae3;text-decoration: underline;}
+     a:visited:not(.btn){ color: #fff; }
+     a:hover:not(.btn){ color: #fff;text-decoration: none; }
+     a:active:not(.btn){ color: #fff; }
+
+        </style>
+        <script type="text/javascript">
+$(window).load(function(){
+    colorList = ["#1E88E5","#673ab7","#ff9800","#00bcd4","#009688"];
+    $.each($(".section"),function(i,val){
+        color = colorList[i%colorList.length];
+        console.log(color);
+        $(val).css("background-color",color);
+    });
+});
+        </script>
+    </head>
+    <body>
+
+        <div class="container-fluid section">
+            <div class="container" style="text-align:center;">
+                <h1>UMATracker</h1>
+                <span>
+                    <p class="lead">UMATrackerは、動物行動や物理現象に特化した動画解析ツールです。</p>
+                    <p class="lead">ビジュアルプログラミングの様に画像にフィルタを掛けることが出来ます</p>
+                    <p class="lead">最新のアルゴリズムを使い物体を追跡できます</p>
+                    <p class="lead">ミスした追跡軌道を修正できます</p>
+                </span>
+            </div>
+        </div>
+        <div class="container-fluid section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h2>SourceCode</h2>
+                        <p class="lead">UMATrackerは、オープンソースのソフトウェアです。トラッキングアルゴリズムは拡張して作ることができます。</p>
+                        <p style="text-align:center;"><a href="https://github.com/ymnk13/UMATracker" role="button"><i class="fa fa-github fa-5"  style="font-size:5em;"></i><span style="font-size:5em;">Github</span></a></p>
+                    </div>
+                    <div class="col-md-4">
+                        <h2>Binary</h2>
+                        <p class="lead">WindowとMacのバイナリを配布しています。Windows版は64bitと32bitバージョン、Mac版はそれぞれのOSのバージョンにあったバイナリをダウンロードして使ってください。</p>
+			<div style="font-size:5em;text-align:center;">
+			  
+			  <p><a href="https://github.com/ymnk13/UMATracker/releases" role="button"><i class="fa fa-windows fa-5"><span style="font-size:45px;"> Windows</span></i></a></p>
+			  <p><a href="https://github.com/ymnk13/UMATracker/releases" role="button"><i class="fa fa-apple fa-5"><span style="font-size:45px;"> Mac</span></i></a></p>
+			</div>
+
+                        <!--<p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>-->
+                    </div>
+                    <div class="col-md-4">
+                        <h2>Documents</h2>
+                        <p class="lead">Help Documentは準備中。フィルターブロックのReferenceと、Beginnerチュートリアルを用意しています。</p>
+                        <p style="text-align:center;"><a href="./Doc2/index.html" role="button"><span class="glyphicon glyphicon-book" style="font-size:5em;"></span><span style="font-size:45px;">Documents</span></a></p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="container-fluid section">
+            <div class="container" style="text-align:center;">
+                <h2>Software</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <iframe width="576" height="432" src="https://www.youtube.com/embed/wYsBX9HnmZA" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="col-md-6">
+                        <iframe width="576" height="432" src="https://www.youtube.com/embed/DTQXbZEl6Cs" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="col-md-6">
+                        <iframe width="576" height="432" src="https://www.youtube.com/embed/ZtKnXm_2kIw" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid section">
+            <div class="container" style="text-align:center;">
+                <h2>Tracking Results</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/5WXX4jc6zmY" frameborder="0" allowfullscreen></iframe>
+                        <p>アリの位置座標抽出</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/Mb4RgqLennU" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+		<div class="row">
+		  <div class="col-md-6">
+		    <iframe width="560" height="315" src="https://www.youtube.com/embed/KKe9GlUsL6Q" frameborder="0" allowfullscreen></iframe>
+		    <p>メダカの向きと位置抽出</p>
+		  </div>
+		  <div class="col-md-6">
+		    <!-- <iframe width="560" height="315" src="https://www.youtube.com/embed/KKe9GlUsL6Q" frameborder="0" allowfullscreen></iframe>-->
+		  </div>
+		</div>
+            </div>
+        </div>
+        <div class="container-fluid section">
+            <div class="container">
+                <h2  style="text-align:center;">発表等</h2>
+                <ul>
+                  <li>これから
+		    <!-- <p class="lead"><a href="https://www.ipa.go.jp/jinzai/mitou/2015/seikahoukoku22th.html">2015MITOU Final Reports（第22回（2015年度）未踏事業成果報告会）</a></p>-->
+                  </li>
+                    <li>やった
+                      <p class="lead"><a href="http://ethology34.jimdo.com/">動物行動解析のための個体追跡ソフトウェアの開発（動物行動学会）</a></p>
+                        <p class="lead"><a href="http://square.umin.ac.jp/doushin75/">動物行動解析のための個体追跡ソフトウェアの開発（動物心理学会）</a></p>
+                        <p class="lead"><a href="http://www.ipa.go.jp/jinzai/mitou/2015/koubokekka_index.html">集団運動・動物行動の解析ソフトウェアの開発（未踏採択2015年6月）</a></p>
+
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+        <div class="container-fluid section">
+            <div class="container" style="text-align:center;">
+              <h2>Contact</h2>
+	      <p class="lead">東京工業大学 竹内理人／ 広島大学 山中治</p>
+                <p class="lead"> <i class="glyphicon glyphicon-envelope fa-5" style="font-size:2em;"></i>zz.to13+UMA _at_ gmail.com</p>
+		<p class="lead">
+		  メールでソフトウェアの使用方法について問い合わせる場合、解析を行いたい動画サンプルを送ってもらえると、素早く対応できます。
+		</p>
+            </div>
+        </div>
+
+	<div class="container-fluid section">
+            <div class="container" style="text-align:center;">
+              <h2>使用条件</h2>
+	      <p class="lead">
+		UMATrackerで得られた結果を論文にする場合、以下の文章又は同等の文章を記述してください。<br />
+		"動画データから生物の座標データを取得するのにUMATracker('http://ymnk13.github.io/UMATracker/')を使った。"
+	      </p>
+	      <p class="lead">
+		論文に使ってくださったことを連絡してください
+	      </p>
+	      <p class="lead">
+		授業等で使用する場合も連絡ください。
+	      </p>
+            </div>
+        </div>
+
+
+        <script src="./css/bootstrap.min.js"></script>
+    </body>
+</html>
+
