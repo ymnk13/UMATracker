@@ -160,7 +160,6 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.outputGraphicsView.setScene(self.outputScene)
         self.outputGraphicsView.resizeEvent = self.outputGraphicsViewResized
 
-
         qimg = misc.cvMatToQImage(self.cv_img)
         self.inputPixMap = QPixmap.fromImage(qimg)
         self.inputPixMapItem = QGraphicsPixmapItem(self.inputPixMap)
@@ -479,9 +478,14 @@ if self.fgbg is not None:
             return False
 
         self.outputScene.clear()
-        qimg = misc.cvMatToQImage(im_output)
-        pixmap = QPixmap.fromImage(qimg)
-        self.outputScene.addPixmap(pixmap)
+
+        # TODO: Variableブロックが整数を返す可能性がある，要調査．
+        try:
+            qimg = misc.cvMatToQImage(im_output)
+            self.pixmap = QPixmap.fromImage(qimg)
+        except:
+            pass
+        self.outputScene.addPixmap(self.pixmap)
 
         self.outputGraphicsView.viewport().update()
         self.outputGraphicsViewResized()
