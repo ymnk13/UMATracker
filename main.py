@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, sys, six
-
-if six.PY2:
-    reload(sys)
-    sys.setdefaultencoding('UTF8')
+import os, sys
+import re, hashlib, json
 
 # determine if application is a script file or frozen exe
 if getattr(sys, 'frozen', False):
@@ -13,30 +10,12 @@ if getattr(sys, 'frozen', False):
     print(currentDirPath)
     if os.name == 'nt':
         import win32api
-
         win32api.SetDllDirectory(sys._MEIPASS)
 elif __file__:
     currentDirPath = os.getcwd()
 
-# currentDirPath = os.path.abspath(os.path.dirname(__file__) )
 sampleDataPath = os.path.join(currentDirPath,"data")
 userDir        = os.path.expanduser('~')
-
-# def tracefunc(frame, event, arg, indent=[0]):
-#     if event == "call":
-#         indent[0] += 2
-#         if indent[0] < 10:
-#             print("-" * indent[0] + "> call function", frame.f_code.co_name)
-#     elif event == "return":
-#         if indent[0] < 10:
-#             print("<" + "-" * indent[0], "exit function", frame.f_code.co_name)
-#         indent[0] -= 2
-#     return tracefunc
-# sys.settrace(tracefunc)
-
-import re, hashlib, json
-
-import icon
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QFileDialog, QMainWindow, QDialog
@@ -49,6 +28,7 @@ from lib.python.ui.background_generator_dialog import BackgroundGeneratorDialog
 from lib.python.ui.movable_polygon import MovablePolygon
 
 from lib.python import misc
+import icon
 
 import cv2
 from lib.python.FilterIO.FilterIO import FilterIO
@@ -92,15 +72,12 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.selectedBlockID = None
         self.fgbg = None
         self.filePath = None
-        #b = RectForAreaSelection(QRectF(250, 250, 350.0, 350.0),None,self.inputGraphicsView)
-        #self.inputScene.addItem(b)
         self.inputPixMapItem.mousePressEvent = self.getPixMapItemClickedPos
 
     def dragEnterEvent(self,event):
         event.acceptProposedAction()
 
     def dropEvent(self,event):
-        # event.setDropAction(QtCore.Qt.MoveAction)
         mime = event.mimeData()
         if mime.hasUrls():
             urls = mime.urls()
@@ -129,15 +106,12 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
 
     def setFrame(self, frame):
         if frame is not None:
-
             self.cv_img = frame
             self.updateInputGraphicsView()
-
             self.evaluateSelectedBlock()
 
     def blocklyInit(self):
         self.blocklyWebView.setUrl(QtCore.QUrl(blocklyURL))
-
         self.blocklyEvaluationTimer = QtCore.QTimer(parent=self.blocklyWebView)
         self.blocklyEvaluationTimer.setInterval(1*100)
         self.blocklyEvaluationTimer.timeout.connect(self.evaluateSelectedBlock)
@@ -147,14 +121,11 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.filter = None
 
     def imgInit(self):
-        # self.filePath = os.path.join(sampleDataPath,"color_filter_test.png")
         self.cv_img = cv2.imread(os.path.join(sampleDataPath,"color_filter_test.png"))
 
         self.inputScene = QGraphicsScene()
         self.inputGraphicsView.setScene(self.inputScene)
         self.inputGraphicsView.resizeEvent = self.inputGraphicsViewResized
-
-        #self.inputScene.mousePressEvent = None
 
         self.outputScene = QGraphicsScene()
         self.outputGraphicsView.setScene(self.outputScene)
@@ -173,7 +144,6 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.actionOpenFilterData.triggered.connect(self.openFilterFile)
 
         self.actionCreateBackground.triggered.connect(self.createBackground)
-        #self.actionTest00.triggered.connect(self.test00)
 
     def setRectangleParameterToBlock(self, topLeft, bottomRight):
         height, width, dim = self.cv_img.shape
@@ -201,7 +171,6 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
             self.videoPlaybackWidget.stop()
 
             bg_dialog = BackgroundGeneratorDialog(self)
-            # bg_dialog.openVideoFile(filePath=self.filePath)
             bg_dialog.setWindowModality(Qt.WindowModal)
             bg_dialog.videoPlaybackWidget.copySource(self.videoPlaybackWidget)
 
@@ -251,7 +220,6 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
             return False
 
     def updateInputGraphicsView(self):
-        # self.inputScene.clear()
         self.inputScene.removeItem(self.inputPixMapItem)
         qimg = misc.cvMatToQImage(self.cv_img)
         self.inputPixMap = QPixmap.fromImage(qimg)
@@ -261,7 +229,6 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.outputScene.setSceneRect(rect)
 
         self.inputPixMapItem = QGraphicsPixmapItem(self.inputPixMap)
-        # self.inputScene.setBackgroundBrush(QBrush(self.inputPixMap))
         self.inputScene.addItem(self.inputPixMapItem)
 
         self.inputGraphicsView.viewport().update()
@@ -338,12 +305,6 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
 if self.fgbg is not None:
     {input} = cv2.absdiff({input}, self.fgbg)
 """
-#         additionalText = """#self.fgbg = None
-# if self.fgbg is not None:
-#     mask = self.fgbg.apply({input}, learningRate=0)
-#     _, mask = cv2.threshold(mask, 1, 255, cv2.THRESH_BINARY)
-#     {input} = cv2.bitwise_and({input}, {input}, mask=mask)
-# """
         text = additionalText + text
 
         lines = text.split("\n")
@@ -456,9 +417,6 @@ if self.fgbg is not None:
 
         logger.debug("Generated Code: {0}".format(text))
 
-        # TODO: あまりにも大きいイメージは縮小しないと処理がなかなか終わらない
-        #       ので，そうしたほうがいい．
-
         textHash = hashlib.md5(text.encode())
         if self.filterClassHash != textHash:
             self.filterClassHash = textHash
@@ -479,7 +437,6 @@ if self.fgbg is not None:
 
         self.outputScene.clear()
 
-        # TODO: Variableブロックが整数を返す可能性がある，要調査．
         try:
             qimg = misc.cvMatToQImage(im_output)
             self.pixmap = QPixmap.fromImage(qimg)
