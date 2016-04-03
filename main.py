@@ -69,10 +69,50 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.blocklyInit()
         self.imgInit()
         self.menuInit()
+
+    def videoPlaybackInit(self):
+        self.videoPlaybackWidget.hide()
+        self.videoPlaybackWidget.frameChanged.connect(self.setFrame, type=Qt.QueuedConnection)
+        self.filePath = None
+
+    def blocklyInit(self):
+        self.blocklyWebView.setUrl(QtCore.QUrl(blocklyURL))
+        self.blocklyEvaluationTimer = QtCore.QTimer(parent=self.blocklyWebView)
+        self.blocklyEvaluationTimer.setInterval(1*100)
+        self.blocklyEvaluationTimer.timeout.connect(self.evaluateSelectedBlock)
+        self.blocklyEvaluationTimer.start()
+
+        self.filterClassHash = None
+        self.filter = None
         self.selectedBlockID = None
         self.fgbg = None
-        self.filePath = None
+
         self.inputPixMapItem.mousePressEvent = self.getPixMapItemClickedPos
+
+    def imgInit(self):
+        self.cv_img = cv2.imread(os.path.join(sampleDataPath,"color_filter_test.png"))
+
+        self.inputScene = QGraphicsScene()
+        self.inputGraphicsView.setScene(self.inputScene)
+        self.inputGraphicsView.resizeEvent = self.inputGraphicsViewResized
+
+        self.outputScene = QGraphicsScene()
+        self.outputGraphicsView.setScene(self.outputScene)
+        self.outputGraphicsView.resizeEvent = self.outputGraphicsViewResized
+
+        qimg = misc.cvMatToQImage(self.cv_img)
+        self.inputPixMap = QPixmap.fromImage(qimg)
+        self.inputPixMapItem = QGraphicsPixmapItem(self.inputPixMap)
+        self.inputScene.addItem(self.inputPixMapItem)
+
+    def menuInit(self):
+        self.actionOpenVideo.triggered.connect(self.openVideoFile)
+        self.actionOpenImage.triggered.connect(self.openImageFile)
+
+        self.actionSaveFilterData.triggered.connect(self.saveFilterFile)
+        self.actionOpenFilterData.triggered.connect(self.openFilterFile)
+
+        self.actionCreateBackground.triggered.connect(self.createBackground)
 
     def dragEnterEvent(self,event):
         event.acceptProposedAction()
@@ -100,50 +140,11 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         elif self.openVideoFile(filePath=filePath):
             return
 
-    def videoPlaybackInit(self):
-        self.videoPlaybackWidget.hide()
-        self.videoPlaybackWidget.frameChanged.connect(self.setFrame, type=Qt.QueuedConnection)
-
     def setFrame(self, frame):
         if frame is not None:
             self.cv_img = frame
             self.updateInputGraphicsView()
             self.evaluateSelectedBlock()
-
-    def blocklyInit(self):
-        self.blocklyWebView.setUrl(QtCore.QUrl(blocklyURL))
-        self.blocklyEvaluationTimer = QtCore.QTimer(parent=self.blocklyWebView)
-        self.blocklyEvaluationTimer.setInterval(1*100)
-        self.blocklyEvaluationTimer.timeout.connect(self.evaluateSelectedBlock)
-        self.blocklyEvaluationTimer.start()
-
-        self.filterClassHash = None
-        self.filter = None
-
-    def imgInit(self):
-        self.cv_img = cv2.imread(os.path.join(sampleDataPath,"color_filter_test.png"))
-
-        self.inputScene = QGraphicsScene()
-        self.inputGraphicsView.setScene(self.inputScene)
-        self.inputGraphicsView.resizeEvent = self.inputGraphicsViewResized
-
-        self.outputScene = QGraphicsScene()
-        self.outputGraphicsView.setScene(self.outputScene)
-        self.outputGraphicsView.resizeEvent = self.outputGraphicsViewResized
-
-        qimg = misc.cvMatToQImage(self.cv_img)
-        self.inputPixMap = QPixmap.fromImage(qimg)
-        self.inputPixMapItem = QGraphicsPixmapItem(self.inputPixMap)
-        self.inputScene.addItem(self.inputPixMapItem)
-
-    def menuInit(self):
-        self.actionOpenVideo.triggered.connect(self.openVideoFile)
-        self.actionOpenImage.triggered.connect(self.openImageFile)
-
-        self.actionSaveFilterData.triggered.connect(self.saveFilterFile)
-        self.actionOpenFilterData.triggered.connect(self.openFilterFile)
-
-        self.actionCreateBackground.triggered.connect(self.createBackground)
 
     def setRectangleParameterToBlock(self, topLeft, bottomRight):
         height, width, dim = self.cv_img.shape
