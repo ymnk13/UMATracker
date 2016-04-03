@@ -389,9 +389,9 @@ if self.fgbg is not None:
             return None
 
         for item in self.inputScene.items():
-            #QGraphicsObjectをSceneから取り出そうとすると，
-            #親クラスであるQGraphicsItem(QPixmapGraphicsItem)にダウンキャスト
-            #されて返ってくるためtryが必要．
+            # QGraphicsObjectをSceneから取り出そうとすると，
+            # 親クラスであるQGraphicsItem(QPixmapGraphicsItem)にダウンキャスト
+            # されて返ってくるためtryが必要．
             try:
                 if blockID == item.objectName():
                     return item
