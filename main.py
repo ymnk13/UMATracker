@@ -328,7 +328,7 @@ if self.fgbg is not None:
 
         return generator.generate().format(input="im_input", output="im_output")
 
-    def startUIBySelectedBlock(self):
+    def reflectSelectedBlockStateIntoUI(self):
         webFrame = self.blocklyWebView.page().mainFrame()
 
         data = webFrame.evaluateJavaScript("Apps.getBlockTypeFromSelectedBlock();")
@@ -404,7 +404,7 @@ if self.fgbg is not None:
         frame = self.blocklyWebView.page().mainFrame()
 
         text = frame.evaluateJavaScript("Apps.getCodeFromSelectedBlock();")
-        self.startUIBySelectedBlock()
+        self.reflectSelectedBlockStateIntoUI()
         if text == "" or text is None:
             text = frame.evaluateJavaScript("Apps.getCodeFromWorkspace();")
 
