@@ -90,15 +90,16 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.inputGraphicsView.setScene(self.inputScene)
         self.inputGraphicsView.resizeEvent = self.inputGraphicsViewResized
 
+        self.outputPixmap = None
         self.outputScene = QGraphicsScene()
         self.outputGraphicsView.setScene(self.outputScene)
         self.outputGraphicsView.resizeEvent = self.outputGraphicsViewResized
 
         qimg = misc.cvMatToQImage(self.cv_img)
-        self.inputPixMap = QPixmap.fromImage(qimg)
-        self.inputPixMapItem = QGraphicsPixmapItem(self.inputPixMap)
-        self.inputPixMapItem.mousePressEvent = self.getPixMapItemClickedPos
-        self.inputScene.addItem(self.inputPixMapItem)
+        self.inputPixmap = QPixmap.fromImage(qimg)
+        self.inputPixmapItem = QGraphicsPixmapItem(self.inputPixmap)
+        self.inputPixmapItem.mousePressEvent = self.getPixmapItemClickedPos
+        self.inputScene.addItem(self.inputPixmapItem)
 
     def menuInit(self):
         self.actionOpenVideo.triggered.connect(self.openVideoFile)
@@ -216,28 +217,27 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
             return False
 
     def updateInputGraphicsView(self):
-        self.inputScene.removeItem(self.inputPixMapItem)
+        self.inputScene.removeItem(self.inputPixmapItem)
         qimg = misc.cvMatToQImage(self.cv_img)
-        self.inputPixMap = QPixmap.fromImage(qimg)
+        self.inputPixmap = QPixmap.fromImage(qimg)
 
-        rect = QtCore.QRectF(self.inputPixMap.rect())
+        rect = QtCore.QRectF(self.inputPixmap.rect())
         self.inputScene.setSceneRect(rect)
-        self.outputScene.setSceneRect(rect)
 
-        self.inputPixMapItem = QGraphicsPixmapItem(self.inputPixMap)
-        self.inputScene.addItem(self.inputPixMapItem)
+        self.inputPixmapItem = QGraphicsPixmapItem(self.inputPixmap)
+        self.inputScene.addItem(self.inputPixmapItem)
 
         self.inputGraphicsView.viewport().update()
         self.inputGraphicsViewResized()
 
-    def getPixMapItemClickedPos(self, event):
+    def getPixmapItemClickedPos(self, event):
         pos = event.scenePos().toPoint()
         print(pos)
 
-    def inputPixMapItemClicked(self, event):
+    def inputPixmapItemClicked(self, event):
         pos = event.scenePos().toPoint()
 
-        img = self.inputPixMap.toImage()
+        img = self.inputPixmap.toImage()
         pix = img.pixel(pos)
         rgb = QColor(pix).name()
         logger.debug("Selected pixel color: {0}".format(rgb))
@@ -291,16 +291,24 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.blocklyEvaluationTimer.start()
 
     def inputGraphicsViewResized(self, event=None):
-        self.inputGraphicsView.fitInView(QtCore.QRectF(self.inputPixMap.rect()), QtCore.Qt.KeepAspectRatio)
+        self.inputGraphicsView.fitInView(QtCore.QRectF(self.inputPixmap.rect()), QtCore.Qt.KeepAspectRatio)
 
     def outputGraphicsViewResized(self, event=None):
-        self.outputGraphicsView.fitInView(self.outputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
+        if self.outputPixmap is None:
+            self.outputGraphicsView.fitInView(self.outputScene.sceneRect(), QtCore.Qt.KeepAspectRatio)
+        else:
+            self.outputGraphicsView.fitInView(QtCore.QRectF(self.outputPixmap.rect()), QtCore.Qt.KeepAspectRatio)
 
     def parseToClass(self, text):
         additionalText = """#self.fgbg = None
+#self.resize_flag = {resize_flag}
+#if self.resize_flag:
+#    im_input = cv2.pyrDown(im_input)
+if self.resize_flag:
+    {input} = cv2.pyrDown({input})
 if self.fgbg is not None:
     {input} = cv2.absdiff({input}, self.fgbg)
-"""
+""".format(resize_flag=self.actionResize.isChecked(), input="{input}")
         text = additionalText + text
 
         lines = text.split("\n")
@@ -367,15 +375,15 @@ if self.fgbg is not None:
             self.updateInputGraphicsView()
 
         elif 'colorSelector' in blockAttributes:
-            self.inputPixMapItem.mousePressEvent = self.inputPixMapItemClicked
+            self.inputPixmapItem.mousePressEvent = self.inputPixmapItemClicked
         else:
-            self.inputPixMapItem.mousePressEvent = self.getPixMapItemClickedPos
+            self.inputPixmapItem.mousePressEvent = self.getPixmapItemClickedPos
 
     def resetSceneAction(self, blockID):
         graphicsItem = self.getGrphicsItemFromInputScene(blockID)
         if graphicsItem is not None:
             graphicsItem.hide()
-        self.inputPixMapItem.mousePressEvent = QGraphicsPixmapItem(self.inputPixMapItem).mousePressEvent
+        self.inputPixmapItem.mousePressEvent = QGraphicsPixmapItem(self.inputPixmapItem).mousePressEvent
 
     def getGrphicsItemFromInputScene(self, blockID):
         try:
@@ -435,10 +443,14 @@ if self.fgbg is not None:
 
         try:
             qimg = misc.cvMatToQImage(im_output)
-            self.pixmap = QPixmap.fromImage(qimg)
+            self.outputPixmap = QPixmap.fromImage(qimg)
         except:
             pass
-        self.outputScene.addPixmap(self.pixmap)
+
+        rect = QtCore.QRectF(self.outputPixmap.rect())
+        self.outputScene.setSceneRect(rect)
+
+        self.outputScene.addPixmap(self.outputPixmap)
 
         self.outputGraphicsView.viewport().update()
         self.outputGraphicsViewResized()

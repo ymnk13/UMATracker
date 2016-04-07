@@ -49,7 +49,7 @@
         </widget>
        </item>
        <item>
-        <widget class="VideoPlaybackWidget" name="videoPlaybackWidget"/>
+        <widget class="VideoPlaybackWidget" name="videoPlaybackWidget" native="true"/>
        </item>
       </layout>
      </widget>
@@ -112,7 +112,7 @@
      <x>0</x>
      <y>0</y>
      <width>976</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">
@@ -133,8 +133,15 @@
     </property>
     <addaction name="actionCreateBackground"/>
    </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionResize"/>
+   </widget>
    <addaction name="menuFiles"/>
    <addaction name="menuBackground"/>
+   <addaction name="menuSettings"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpenVideo">
@@ -185,17 +192,25 @@
     <string>Enable/Disable</string>
    </property>
   </action>
+  <action name="actionResize">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Resize</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>VideoPlaybackWidget</class>
-   <extends>QWidget</extends>
-   <header>.video_playback_widget</header>
-  </customwidget>
   <customwidget>
    <class>QWebView</class>
    <extends>QWidget</extends>
    <header>QtWebKitWidgets/QWebView</header>
+  </customwidget>
+  <customwidget>
+   <class>VideoPlaybackWidget</class>
+   <extends>QWidget</extends>
+   <header>.video_playback_widget</header>
   </customwidget>
  </customwidgets>
  <resources/>

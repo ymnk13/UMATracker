@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\main_window_base.ui'
+# Form implementation generated from reading ui file 'main_window_base.ui'
 #
-# Created by: PyQt5 UI code generator 5.5
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -73,12 +73,14 @@ class Ui_MainWindowBase(object):
         self.horizontalLayout.addWidget(self.graphicsBox)
         MainWindowBase.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindowBase)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 976, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 976, 22))
         self.menubar.setObjectName("menubar")
         self.menuFiles = QtWidgets.QMenu(self.menubar)
         self.menuFiles.setObjectName("menuFiles")
         self.menuBackground = QtWidgets.QMenu(self.menubar)
         self.menuBackground.setObjectName("menuBackground")
+        self.menuSettings = QtWidgets.QMenu(self.menubar)
+        self.menuSettings.setObjectName("menuSettings")
         MainWindowBase.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindowBase)
         self.statusbar.setObjectName("statusbar")
@@ -101,6 +103,9 @@ class Ui_MainWindowBase(object):
         self.actionCreateBackground.setObjectName("actionCreateBackground")
         self.actionEnable_Disable = QtWidgets.QAction(MainWindowBase)
         self.actionEnable_Disable.setObjectName("actionEnable_Disable")
+        self.actionResize = QtWidgets.QAction(MainWindowBase)
+        self.actionResize.setCheckable(True)
+        self.actionResize.setObjectName("actionResize")
         self.menuFiles.addAction(self.actionOpenVideo)
         self.menuFiles.addAction(self.actionOpenImage)
         self.menuFiles.addSeparator()
@@ -109,8 +114,10 @@ class Ui_MainWindowBase(object):
         self.menuFiles.addSeparator()
         self.menuFiles.addAction(self.actionQuit)
         self.menuBackground.addAction(self.actionCreateBackground)
+        self.menuSettings.addAction(self.actionResize)
         self.menubar.addAction(self.menuFiles.menuAction())
         self.menubar.addAction(self.menuBackground.menuAction())
+        self.menubar.addAction(self.menuSettings.menuAction())
 
         self.retranslateUi(MainWindowBase)
         self.actionQuit.triggered.connect(MainWindowBase.close)
@@ -123,6 +130,7 @@ class Ui_MainWindowBase(object):
         self.graphicsBox.setTitle(_translate("MainWindowBase", "I/O"))
         self.menuFiles.setTitle(_translate("MainWindowBase", "Files"))
         self.menuBackground.setTitle(_translate("MainWindowBase", "Background"))
+        self.menuSettings.setTitle(_translate("MainWindowBase", "Settings"))
         self.actionOpenVideo.setText(_translate("MainWindowBase", "Open Video"))
         self.actionOpenImage.setText(_translate("MainWindowBase", "Open Image"))
         self.actionOpenBlockData.setText(_translate("MainWindowBase", "Open Block Data"))
@@ -133,6 +141,7 @@ class Ui_MainWindowBase(object):
         self.actionOpenFilterData.setText(_translate("MainWindowBase", "Open Filter Data"))
         self.actionCreateBackground.setText(_translate("MainWindowBase", "Create"))
         self.actionEnable_Disable.setText(_translate("MainWindowBase", "Enable/Disable"))
+        self.actionResize.setText(_translate("MainWindowBase", "Resize"))
 
 from PyQt5 import QtWebKitWidgets
 from .video_playback_widget import VideoPlaybackWidget
