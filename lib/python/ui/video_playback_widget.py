@@ -103,6 +103,9 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
         self.currentFrameNo = -1
         self.ret = None
         self.currentFrame = None
+        self.playbackDelta = 1
+        self.maxTickableFrameNo = 0
+        self.playFlag = False
 
         self.playbackTimer = QtCore.QTimer()
         self.playbackTimer.timeout.connect(self.videoPlayback)
@@ -118,8 +121,10 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
         self.playbackSlider.setValue(0)
         self.playbackSlider.setRange(0, self.getMaxFramePos())
         self.fps = math.ceil((self.ret.fps_num)/self.ret.fps_den)
-        self.playbackSlider.setSingleStep(self.fps)
-        self.playbackSlider.setPageStep(self.fps)
+        # self.playbackSlider.setSingleStep(self.fps)
+        # self.playbackSlider.setPageStep(self.fps)
+        self.playbackSlider.setSingleStep(1)
+        self.playbackSlider.setPageStep(1)
         self.playbackSlider.setTickInterval(self.fps)
 
         ret, frame = self.readFrame(0)
@@ -153,8 +158,8 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
             self.playbackSlider.setValue(0)
             self.playbackSlider.setRange(0, self.getMaxFramePos())
             self.fps = math.ceil((self.ret.fps_num)/self.ret.fps_den)
-            self.playbackSlider.setSingleStep(self.fps)
-            self.playbackSlider.setPageStep(self.fps)
+            self.playbackSlider.setSingleStep(1)
+            self.playbackSlider.setPageStep(1)
             self.playbackSlider.setTickInterval(self.fps)
 
             # FIXME:おそらくFFMS2かVapourSynthのバグで，
@@ -166,6 +171,7 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
             ret, frame = self.readFrame(0)
             if ret:
                 self.currentFrameNo = 0
+                self.setMaxTickableFrameNo(self.getMaxFramePos())
                 self.setFrame(frame, 0)
                 return True
             else:
@@ -179,6 +185,7 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
     def terminated(self):
         qApp = QtWidgets.qApp
         self.playButton.setIcon(qApp.style().standardIcon(QStyle.SP_MediaPlay))
+        self.playFlag = False
         self.playbackTimer.stop()
 
     def started(self):
@@ -190,20 +197,32 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
         self.playButton.setIcon(qApp.style().standardIcon(QStyle.SP_MediaPause))
         self.playbackTimer.setInterval(interval)
         self.playbackTimer.start()
+        self.playFlag = True
+
+        self.videoPlayback()
 
 
     def isPlaying(self):
+        # return self.playFlag
         return self.playbackTimer.isActive()
 
     def isOpened(self):
         return self.ret is not None
+
+    def closeVideo(self):
+        self.currentFrameNo = -1
+        self.ret = None
+        self.currentFrame = None
+        self.playbackDelta = 1
+        self.maxTickableFrameNo = 0
+        self.playFlag = False
 
     def readFrame(self, frameNo=None):
         if frameNo is -1:
             return (False, None)
         if self.ret is not None:
             if frameNo is None:
-                frameNo = self.currentFrameNo + 1
+                frameNo = self.currentFrameNo + self.playbackDelta
 
             if self.getMaxFramePos() < frameNo:
                 return (False, None)
@@ -234,9 +253,12 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
                 frameNo = self.getFramePos()
 
             if changeSlider and frameNo != self.playbackSlider.value():
-                self.playbackSlider.setValue(frameNo)
-            else:
-                self.setFrame(frame, frameNo)
+                if self.isPlaying():
+                    self.playbackSlider.setValue(frameNo)
+                else:
+                    self.setSliderValueWithoutSignal(frameNo)
+
+            self.setFrame(frame, frameNo)
 
     def getFramePos(self):
         if self.isOpened():
@@ -251,14 +273,14 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
             return -1
 
     def getNextFramePos(self):
-        pos = self.getFramePos()+1
+        pos = self.getFramePos() + self.playbackDelta
         if 0 <= pos and pos <= self.getMaxFramePos():
             return pos
         else:
             return -1
 
     def getPrevFramePos(self):
-        pos = self.getFramePos() - 1
+        pos = self.getFramePos() - self.playbackDelta
         if 0 <= pos:
             return pos
         else:
@@ -269,6 +291,7 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
 
     def setFrame(self, frame, frameNo):
         logger.debug('Frame No: {0}'.format(frameNo))
+        self.timeLabel.setText('{:,d}/{:,d}'.format(frameNo, self.getMaxFramePos()))
         self.currentFrame = frame
         self.frameChanged.emit(frame, frameNo)
 
@@ -289,12 +312,17 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
     @pyqtSlot()
     def moveLastButtonClicked(self):
         self.stop()
-        maxFrameNo = self.getMaxFramePos()
+        maxFrameNo = min(self.getMaxFramePos(), self.maxTickableFrameNo)
+
         self.moveToFrame(maxFrameNo)
 
     @pyqtSlot()
     def moveNextButtonClicked(self):
         self.stop()
+
+        if self.getNextFramePos() > self.maxTickableFrameNo:
+            return
+
         self.moveToFrame()
 
     @pyqtSlot()
@@ -304,12 +332,14 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
         self.moveToFrame(prevFrameNo)
 
     def videoPlayback(self):
-        if self.isOpened():
-            nextFrame = self.getNextFramePos()
-            if nextFrame < 0:
-                self.stop()
-                return
-            self.playbackSlider.setValue(nextFrame)
+        if self.isPlaying():
+            if self.isOpened():
+                nextFrame = self.getNextFramePos()
+                if nextFrame < 0 or self.maxTickableFrameNo<nextFrame:
+                    self.stop()
+                    return
+
+                self.moveToFrame()
 
     @pyqtSlot(int)
     def playbackSliderActionTriggered(self, value):
@@ -319,11 +349,27 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
 
     @pyqtSlot(int)
     def playbackSliderValueChanged(self, value):
-        currentValue = self.playbackSlider.value()
-        logger.debug('Slider val: {0}, {1}'.format(currentValue, value))
+        if self.isPlaying():
+            return
+
+        quotient = int(value/self.playbackDelta)
+        remainder = value%self.playbackDelta
+
+        value = quotient * self.playbackDelta
+        if remainder > self.playbackDelta/2:
+            value += 1
+
+        if value == self.currentFrameNo:
+            return
+
+        logger.debug('Slider val: {0}'.format(value))
+        # print(self.playbackSlider.minimum(), self.playbackSlider.maximum(), value)
 
         if self.isOpened():
-            self.moveToFrame(currentValue, False)
+            if value > self.maxTickableFrameNo:
+                self.playbackSlider.setValue(self.maxTickableFrameNo)
+            else:
+                self.moveToFrame(value, False)
 
     @pyqtSlot()
     def setMinRange(self):
@@ -344,6 +390,22 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
             return 0
         else:
             return int(self.playbackSlider.max * self.getMaxFramePos())
+
+    def setMaxTickableFrameNo(self, n):
+        self.maxTickableFrameNo = n
+
+    def getMaxTickableFrameNo(self):
+        return self.maxTickableFrameNo
+
+    def setPlaybackDelta(self, delta):
+        self.playbackDelta = delta
+        self.playbackSlider.setSingleStep(delta)
+        self.playbackSlider.setPageStep(delta)
+
+    def setSliderValueWithoutSignal(self, n):
+        self.playbackSlider.valueChanged.disconnect()
+        self.playbackSlider.setValue(n)
+        self.playbackSlider.valueChanged.connect(self.playbackSliderValueChanged)
 
     def getVideoInfo(self):
         if self.ret is None:
