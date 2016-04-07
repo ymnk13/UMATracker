@@ -83,8 +83,6 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         self.selectedBlockID = None
         self.fgbg = None
 
-        self.inputPixMapItem.mousePressEvent = self.getPixMapItemClickedPos
-
     def imgInit(self):
         self.cv_img = cv2.imread(os.path.join(sampleDataPath,"color_filter_test.png"))
 
@@ -99,6 +97,7 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
         qimg = misc.cvMatToQImage(self.cv_img)
         self.inputPixMap = QPixmap.fromImage(qimg)
         self.inputPixMapItem = QGraphicsPixmapItem(self.inputPixMap)
+        self.inputPixMapItem.mousePressEvent = self.getPixMapItemClickedPos
         self.inputScene.addItem(self.inputPixMapItem)
 
     def menuInit(self):
