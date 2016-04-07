@@ -39,12 +39,8 @@ import numpy as np
 from lib.python.pycv import filters
 ######################################
 
-if six.PY2:
-    import urllib
-    blocklyURL = "file:" + urllib.pathname2url(os.path.join(currentDirPath,"lib","editor","index.html"))
-elif six.PY3:
-    import urllib.request
-    blocklyURL = "file:" + urllib.request.pathname2url(os.path.join(currentDirPath,"lib","editor","index.html"))
+import urllib.request
+blocklyURL = "file:" + urllib.request.pathname2url(os.path.join(currentDirPath,"lib","editor","index.html"))
 
 # Log file setting.
 # import logging
