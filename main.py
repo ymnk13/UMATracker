@@ -176,7 +176,8 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
             res = bg_dialog.exec()
 
             if res == QDialog.Accepted:
-                self.fgbg = bg_dialog.fgbg.getBackgroundImage()
+                if bg_dialog.fgbg is not None:
+                    self.fgbg = bg_dialog.fgbg.getBackgroundImage()
 
     def openVideoFile(self, activated=False, filePath = None):
         if filePath is None:
