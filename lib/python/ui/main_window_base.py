@@ -106,6 +106,9 @@ class Ui_MainWindowBase(object):
         self.actionResize = QtWidgets.QAction(MainWindowBase)
         self.actionResize.setCheckable(True)
         self.actionResize.setObjectName("actionResize")
+        self.actionSaveVideo = QtWidgets.QAction(MainWindowBase)
+        self.actionSaveVideo.setObjectName("actionSaveVideo")
+        self.menuFiles.addAction(self.actionSaveVideo)
         self.menuFiles.addAction(self.actionOpenVideo)
         self.menuFiles.addAction(self.actionOpenImage)
         self.menuFiles.addSeparator()
@@ -142,6 +145,7 @@ class Ui_MainWindowBase(object):
         self.actionCreateBackground.setText(_translate("MainWindowBase", "Create"))
         self.actionEnable_Disable.setText(_translate("MainWindowBase", "Enable/Disable"))
         self.actionResize.setText(_translate("MainWindowBase", "Resize"))
+        self.actionSaveVideo.setText(_translate("MainWindowBase", "Save Video"))
 
 from PyQt5 import QtWebKitWidgets
 from .video_playback_widget import VideoPlaybackWidget

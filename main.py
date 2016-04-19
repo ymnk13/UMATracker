@@ -18,7 +18,7 @@ sampleDataPath = os.path.join(currentDirPath,"data")
 userDir        = os.path.expanduser('~')
 
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QFileDialog, QMainWindow, QDialog
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QFileDialog, QMainWindow, QDialog, QProgressDialog
 from PyQt5.QtGui import QPixmap, QColor, QBrush, QIcon
 from PyQt5.QtCore import QRectF, QPointF, Qt
 
@@ -85,6 +85,7 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
 
     def imgInit(self):
         self.cv_img = cv2.imread(os.path.join(sampleDataPath,"color_filter_test.png"))
+        self.im_output = None
 
         self.inputScene = QGraphicsScene()
         self.inputGraphicsView.setScene(self.inputScene)
@@ -104,6 +105,7 @@ class Ui_MainWindow(QMainWindow, Ui_MainWindowBase):
     def menuInit(self):
         self.actionOpenVideo.triggered.connect(self.openVideoFile)
         self.actionOpenImage.triggered.connect(self.openImageFile)
+        self.actionSaveVideo.triggered.connect(self.saveVideoFile)
 
         self.actionSaveFilterData.triggered.connect(self.saveFilterFile)
         self.actionOpenFilterData.triggered.connect(self.openFilterFile)
@@ -402,8 +404,8 @@ if self.fgbg is not None:
                 pass
         return None
 
-    def evaluateSelectedBlock(self):
-        im_output = None
+    def evaluateSelectedBlock(self, update=True):
+        self.im_output = None
 
         frame = self.blocklyWebView.page().mainFrame()
 
@@ -430,30 +432,75 @@ if self.fgbg is not None:
                 self.filter.fgbg = self.fgbg
             except Exception as e:
                 logger.debug("Block Evaluation Error: {0}".format(e))
+                return False
 
         try:
-            im_output = self.filter.filterFunc(self.cv_img)
+            self.im_output = self.filter.filterFunc(self.cv_img)
         except Exception as e:
             logger.debug("Filter execution Error: {0}".format(e))
-
-        if im_output is None:
             return False
 
-        self.outputScene.clear()
+        if update:
+            self.outputScene.clear()
 
-        try:
-            qimg = misc.cvMatToQImage(im_output)
-            self.outputPixmap = QPixmap.fromImage(qimg)
-        except:
-            pass
+            try:
+                qimg = misc.cvMatToQImage(self.im_output)
+                self.outputPixmap = QPixmap.fromImage(qimg)
+            except:
+                pass
 
-        rect = QtCore.QRectF(self.outputPixmap.rect())
-        self.outputScene.setSceneRect(rect)
+            rect = QtCore.QRectF(self.outputPixmap.rect())
+            self.outputScene.setSceneRect(rect)
 
-        self.outputScene.addPixmap(self.outputPixmap)
+            self.outputScene.addPixmap(self.outputPixmap)
 
-        self.outputGraphicsView.viewport().update()
-        self.outputGraphicsViewResized()
+            self.outputGraphicsView.viewport().update()
+            self.outputGraphicsViewResized()
+
+        return True
+
+    def saveVideoFile(self, activated=False):
+        self.blocklyEvaluationTimer.stop()
+
+        if self.evaluateSelectedBlock(False):
+            if self.filePath is not None:
+                candidateFilePath = os.path.splitext(self.filePath)[0] + '_processed.avi'
+            else:
+                candidateFilePath = userDir + '_processed.avi'
+            filePath, _ = QFileDialog.getSaveFileName(None, 'Save Video', candidateFilePath, "AVI files (*.avi)")
+
+            if len(filePath) is not 0:
+                logger.debug("Saving Video: {0}".format(filePath))
+
+                self.videoPlaybackWidget.stop()
+
+                fourcc = cv2.VideoWriter_fourcc(*'X264')
+                out = cv2.VideoWriter(filePath, fourcc, self.videoPlaybackWidget.getFPS(), self.im_output.shape[1::-1])
+
+                numFrames = self.videoPlaybackWidget.getMaxFramePos()+1
+                progress = QProgressDialog("Running...", "Abort", 0, numFrames, self)
+                progress.setWindowModality(Qt.WindowModal)
+
+                currentFrameNo = self.videoPlaybackWidget.getFramePos()
+                for i in range(numFrames):
+                    progress.setValue(i)
+                    if progress.wasCanceled():
+                        break
+
+                    ret, input_frame = self.videoPlaybackWidget.readFrame(i)
+                    output_frame = self.filter.filterFunc(input_frame)
+                    if len(output_frame.shape)==2:
+                        output_frame = cv2.cvtColor(output_frame, cv2.COLOR_GRAY2BGR)
+                    out.write(output_frame)
+
+                out.release()
+
+                self.videoPlaybackWidget.moveToFrame(currentFrameNo)
+                progress.setValue(numFrames)
+
+
+        self.blocklyEvaluationTimer.start()
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
