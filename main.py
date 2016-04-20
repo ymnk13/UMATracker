@@ -479,7 +479,7 @@ if self.fgbg is not None:
                 out = cv2.VideoWriter(filePath, fourcc, self.videoPlaybackWidget.getFPS(), self.im_output.shape[1::-1])
 
                 numFrames = self.videoPlaybackWidget.getMaxFramePos()+1
-                progress = QProgressDialog("Running...", "Abort", 0, numFrames, self)
+                progress = QProgressDialog("Running...\nOpenH264 Video Codec provided by Cisco Systems, Inc.", "Abort", 0, numFrames, self)
                 progress.setWindowModality(Qt.WindowModal)
 
                 currentFrameNo = self.videoPlaybackWidget.getFramePos()
