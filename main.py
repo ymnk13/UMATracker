@@ -499,7 +499,6 @@ if self.fgbg is not None:
                 self.videoPlaybackWidget.moveToFrame(currentFrameNo)
                 progress.setValue(numFrames)
 
-
         self.blocklyEvaluationTimer.start()
 
 
