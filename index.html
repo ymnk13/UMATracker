@@ -1,145 +1,312 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <script src="js/jquery-1.10.2.js"></script>
-        <link rel="stylesheet" href="css/bootstrap.min.css"></link>
-        <link rel="stylesheet" type="text/css" href="css/screen.css" media="all" />
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <title>動物／物理現象の解明ツール - UMATracker - </title>
-	<meta name="keywords" content="トラッキングソフト,物体追跡,動画解析">
-	<meta property="og:description" content="UMATrackerは、動画中から物体を追跡するソフトウェア。トラッキングアルゴリズムの拡張機能。画像フィルタ機能。トラッキング補正機能。">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <meta name="description" content="Useful Multiple Animal Tracker">
+        <meta name="author" content="Rito Takeuchi and Osamu Yamanaka">
+        <!-- <link rel="icon" href="../../favicon.ico"> -->
 
-        <style>
-.section{
-    padding-top:150px;
-    padding-bottom:100px;
-    min-height:500px;
-    color:#fff;
-}
+        <title>UMATracker</title>
 
-     a:link:not(.btn) { color: #e6eae3;text-decoration: underline;}
-     a:visited:not(.btn){ color: #fff; }
-     a:hover:not(.btn){ color: #fff;text-decoration: none; }
-     a:active:not(.btn){ color: #fff; }
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.js"></script>
 
-        </style>
-        <script type="text/javascript">
-$(window).load(function(){
-    colorList = ["#1E88E5","#673ab7","#ff9800","#00bcd4","#009688"];
-    $.each($(".section"),function(i,val){
-        color = colorList[i%colorList.length];
-        console.log(color);
-        $(val).css("background-color",color);
-    });
-});
-        </script>
+        <!-- Bootstrap core CSS -->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <link href="assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+        <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+        <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+        <script src="assets/js/ie-emulation-modes-warning.js"></script>
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <!-- Custom styles for this template -->
+        <link href="carousel.css" rel="stylesheet">
     </head>
-    <body>
+    <!-- NAVBAR
+        ================================================== -->
+        <body>
+            <div class="navbar-wrapper">
+                <div class="container">
 
-        <div class="container-fluid section">
-            <div class="container" style="text-align:center;">
-                <h1>UMATracker</h1>
-                <span>
-                    <p class="lead">UMATrackerは、簡単に動物行動や物理現象に特化した動画解析ツールです。</p>
-                    <p class="lead">ビジュアルプログラミングの様に画像にフィルタを掛けることが出来ます</p>
-                    <p class="lead">最新のアルゴリズムを使い物体を追跡できます</p>
-                    <p class="lead">ミスした追跡軌道を修正できます</p>
-                </span>
-            </div>
-        </div>
-        <div class="container-fluid section">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-4">
-                        <h2>SourceCode</h2>
-                        <p class="lead">UMATrackerは、オープンソースのソフトウェアです。トラッキングアルゴリズムは拡張して作ることができます。</p>
-                        <p style="text-align:center;"><a href="https://github.com/ymnk13/UMATracker" role="button"><i class="fa fa-github fa-5"  style="font-size:5em;"></i><span style="font-size:5em;">Github</span></a></p>
-                    </div>
-                    <div class="col-md-4">
-                        <h2>Binary</h2>
-                        <p class="lead">WindowとMacのバイナリを配布しています。Windows版は64bitと32bitバージョン、Mac版はそれぞれのOSのバージョンにあったバイナリをダウンロードして使ってください。</p>
-			<div style="font-size:5em;text-align:center;">
-			  
-			  <p><a href="https://github.com/ymnk13/UMATracker/releases" role="button"><i class="fa fa-windows fa-5"><span style="font-size:45px;"> Windows</span></i></a></p>
-			  <p><a href="https://github.com/ymnk13/UMATracker/releases" role="button"><i class="fa fa-apple fa-5"><span style="font-size:45px;"> Mac</span></i></a></p>
-			</div>
+                    <nav class="navbar navbar-inverse navbar-static-top">
+                        <div class="container">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                                <a class="navbar-brand" href="#">UMATracker</a>
+                            </div>
+                            <div id="navbar" class="navbar-collapse collapse">
+                                <ul class="nav navbar-nav">
+                                    <li class="active"><a href="#">Home</a></li>
+                                    <li><a href="https://github.com/ymnk13/UMATracker/releases">Download</a></li>
+                                    <li><a href="http://ymnk13.github.io/UMATracker/Doc2/index.html">Documents</a></li>
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">GitHub Repos. <span class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="https://github.com/ymnk13/UMATracker">UMATracker-FilterGenerator</a></li>
+                                            <li><a href="https://github.com/Licht-T/UMATracker-Detect-Center">UMATracker-Tracker</a></li>
+                                            <li><a href="https://github.com/Licht-T/UMATracker-TrackingCorrector">UMATracker-TrackingCorrector</a></li>
+                                            <li><a href="https://github.com/Licht-T/UMATracker-Area51">UMATracker-Area51</a></li>
+                                            <li><a href="https://github.com/ymnk13/UMATracker-Commando">UMATracker-Commando</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
 
-                        <!--<p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>-->
-                    </div>
-                    <div class="col-md-4">
-                        <h2>Documents</h2>
-                        <p class="lead">Help Documentは準備中。フィルターブロックのReferenceと、Beginnerチュートリアルを用意しています。</p>
-                        <p style="text-align:center;"><a href="./Doc2/index.html" role="button"><span class="glyphicon glyphicon-book" style="font-size:5em;"></span><span style="font-size:45px;">Documents</span></a></p>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="container-fluid section">
-            <div class="container" style="text-align:center;">
-                <h2>Software</h2>
-                <div class="row">
-                    <div class="col-md-6">
-                        <iframe width="576" height="432" src="https://www.youtube.com/embed/wYsBX9HnmZA" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="col-md-6">
-                        <iframe width="576" height="432" src="https://www.youtube.com/embed/DTQXbZEl6Cs" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="col-md-6">
-                        <iframe width="576" height="432" src="https://www.youtube.com/embed/ZtKnXm_2kIw" frameborder="0" allowfullscreen></iframe>
-                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="container-fluid section">
-            <div class="container" style="text-align:center;">
-                <h2>Tracking Results</h2>
-                <div class="row">
-                    <div class="col-md-6">
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/5WXX4jc6zmY" frameborder="0" allowfullscreen></iframe>
-                        <p>アリの位置座標抽出</p>
+
+            <!-- Carousel
+                ================================================== -->
+                <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators">
+                        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                        <li data-target="#myCarousel" data-slide-to="1"></li>
+                        <li data-target="#myCarousel" data-slide-to="2"></li>
+                        <li data-target="#myCarousel" data-slide-to="3"></li>
+                    </ol>
+                    <div class="carousel-inner" role="listbox">
+                        <div class="item active">
+                            <img class="first-slide" src="img/front-fig1.png" alt="First slide">
+                            <div class="container">
+                                <div class="carousel-caption">
+                                    <h2>Animal tracking for quantitative analysis</h2>
+                                    <p>UMATracker offers you to do the quantitative analysis by the multipul object tracking.</p>
+                                    <!-- <p><a class="btn btn&#45;lg btn&#45;primary" href="#" role="button">Sign up today</a></p> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <img class="second-slide" src="img/front-fig2.png" alt="Second slide">
+                            <div class="container">
+                                <div class="carousel-caption">
+                                    <h2>Visual programming for image processing</h2>
+                                    <p>Preprocess your experiment video with ease.</p>
+                                    <!-- <p><a class="btn btn&#45;lg btn&#45;primary" href="#" role="button">Learn more</a></p> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <img class="third-slide" src="img/front-fig3.png" alt="Third slide">
+                            <div class="container">
+                                <div class="carousel-caption">
+                                    <h2>Interaction analysis</h2>
+                                    <p>Get the interaction graph from the tracking data.</p>
+                                    <!-- <p><a class="btn btn&#45;lg btn&#45;primary" href="#" role="button">Browse gallery</a></p> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <img class="fourth-slide" src="img/front-fig4.png" alt="Fourth slide">
+                            <div class="container">
+                                <div class="carousel-caption">
+                                    <h2>Region of Interests</h2>
+                                    <p>UMATracker can also generate the sequence plot of the region of interests for each individual.</p>
+                                    <!-- <p><a class="btn btn&#45;lg btn&#45;primary" href="#" role="button">Browse gallery</a></p> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div><!-- /.carousel -->
+
+
+                <!-- Marketing messaging and featurettes
+                    ================================================== -->
+                    <!-- Wrap the rest of the page in another container to center all the content. -->
+
+                    <div class="container marketing">
+
+                        <div class="row featurette">
+                                <img src="img/logo-small.png" width="25%" alt="UMATracker logo small" />
+                                <p class="lead">
+                                is the open-source quantitative analysys toolkit for animal experiments.
+                                It provides the easy video preprocessing by the visual programming and
+                                estimates positions and/or orientations of each animals.
+                                In addition, it can also analyze the output-data; the distance from the designated position,
+                                the region-of-interests and the interactions between each animal.</p>
+                        </div>
+
+                        <div class="row featurette">
+                            <h2 class="featurette-heading">Videos</h2>
+
+                            <div class="container-fluid section">
+                                <div class="container" style="text-align:center;">
+                                    <h2>Output Data</h2>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <iframe width="390" height="220" src="https://www.youtube.com/embed/5WXX4jc6zmY" frameborder="0" allowfullscreen></iframe>
+                                            <p>Ant</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <iframe width="390" height="220" src="https://www.youtube.com/embed/Mb4RgqLennU" frameborder="0" allowfullscreen></iframe>
+                                            <p>Camphor boat</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <iframe width="390" height="220" src="https://www.youtube.com/embed/KKe9GlUsL6Q" frameborder="0" allowfullscreen></iframe>
+                                            <p>Medaka fish</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="container-fluid section">
+                                <div class="container" style="text-align:center;">
+                                    <h2>Software</h2>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <iframe width="390" height="220" src="https://www.youtube.com/embed/KfwzPhypa2w" frameborder="0" allowfullscreen></iframe>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <iframe width="390" height="220" src="https://www.youtube.com/embed/_JZN8iFWEq4" frameborder="0" allowfullscreen></iframe>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <iframe width="390" height="220" src="https://www.youtube.com/embed/ZiXqAjW-qi0" frameborder="0" allowfullscreen></iframe>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <iframe width="390" height="220" src="https://www.youtube.com/embed/wYsBX9HnmZA" frameborder="0" allowfullscreen></iframe>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <iframe width="390" height="220" src="https://www.youtube.com/embed/DTQXbZEl6Cs" frameborder="0" allowfullscreen></iframe>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <iframe width="390" height="220" src="https://www.youtube.com/embed/ZtKnXm_2kIw" frameborder="0" allowfullscreen></iframe>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row featurette">
+                            <h2 class="featurette-heading">Presentations</h2>
+
+                            <div class="container-fluid section">
+                                <div class="container" style="text-align:center;">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <iframe width="560" height="315" src="https://www.youtube.com/embed/f03fZw9TQcg" frameborder="0" allowfullscreen></iframe>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <iframe width="560" height="315" src="https://www.youtube.com/embed/Mio7cSpV120" frameborder="0" allowfullscreen></iframe>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row featurette">
+                            <h2 class="featurette-heading">Publications</span></h2>
+                            <p class="lead">UMATracker has been used in the following publications:</p>
+                            <div class="container-fluid section">
+                                <div class="container">
+                                    <ul>
+                                        <li>
+                                            <p  class="lead">
+                                            <a href="http://www.ieice.org/ken/paper/20160518Gbig/eng/">
+                                                M. Ohkita, Y. Takahashi and K. Sawa,
+                                                <q>Do conformity in rock-paper-scissors reduce interpersonal space?,</q>
+                                                Special Interest Group on Communication Enhancement (HI-SIGCE).
+                                            </a>
+                                            </p>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row featurette">
+                            <h2 class="featurette-heading">Acknowledgement</span></h2>
+                            <p class="lead">
+                            This project has been supported by
+                            <a href="http://www.ipa.go.jp/english/humandev/third.html">
+                                <q>The Exploratory IT Human Resources Project (The MITOH Program),</q>
+                            </a>
+                            IPA (
+                            <a href="https://www.ipa.go.jp/jinzai/mitou/2015/gaiyou_g-4.html">
+                                The project summary in Japanese
+                            </a>).
+                            </p>
+                        </div>
+
+                        <div class="row featurette">
+                            <h2 class="featurette-heading">Contact Info.</span></h2>
+                            <ul>
+                                <li>
+                                    <p class="lead">
+                                    <a href="http://watanabe-www.math.dis.titech.ac.jp/~licht-t/">
+                                        Rito Takeuchi
+                                    </a>
+                                    </p>
+                                </li>
+                                <p>
+                                <a href="http://www.dis.titech.ac.jp/en/">
+                                    Department of Computational Intelligence and Systems Science
+                                </a>,
+                                <a href="http://www.titech.ac.jp/english/">
+                                    Tokyo Institute of Technology
+                                </a>
+                                </p>
+
+                                <li>
+                                    <p class="lead">Osamu Yamanaka</p>
+                                </li>
+                                <p>
+                                <a href="http://www.mls.sci.hiroshima-u.ac.jp/index.html">
+                                    Department of Mathematical and Life Sciences
+                                </a>,
+                                <a href="http://www.hiroshima-u.ac.jp/">
+                                    Hiroshima University
+                                </a>
+                                </p>
+
+                            </ul>
+                        </div>
+
+                        <!-- FOOTER -->
+                        <footer>
+                            <p class="pull-right"><a href="#">Back to top</a></p>
+                            <p><a href="http://watanabe-www.math.dis.titech.ac.jp/~licht-t/">Rito Takeuchi</a> and Osamu Yamanaka</p>
+                        </footer>
+
                     </div>
 
-                    <div class="col-md-6">
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/Mb4RgqLennU" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container-fluid section">
-            <div class="container">
-                <h2  style="text-align:center;">発表等</h2>
-                <ul>
-                    <li>これから
-                    </li>
-                    <li>やった
-                        <p class="lead"><a href="http://ethology34.jimdo.com/">動物行動解析のための個体追跡ソフトウェアの開発（動物行動学会）</a></p>
-                        <p class="lead"><a href="http://square.umin.ac.jp/doushin75/">動物行動解析のための個体追跡ソフトウェアの開発（動物心理学会）</a></p>
-                        <p class="lead"><a href="http://www.ipa.go.jp/jinzai/mitou/2015/koubokekka_index.html">集団運動・動物行動の解析ソフトウェアの開発（未踏採択2015年6月）</a></p>
-
-                    </li>
-                </ul>
-
-            </div>
-        </div>
-        <div class="container-fluid section">
-            <div class="container" style="text-align:center;">
-                <h2>Contact</h2>
-                <p class="lead"> <i class="glyphicon glyphicon-envelope fa-5" style="font-size:2em;"></i>zz.to13+UMA _at_ gmail.com</p>
-		<p class="lead">
-		  メールでソフトウェアの使用方法について問い合わせる場合、解析を行いたい動画サンプルを送ってもらえると、素早く対応できます。
-		</p>
-            </div>
-        </div>
-
-
-        <script src="./css/bootstrap.min.js"></script>
-    </body>
+                    <!-- Bootstrap core JavaScript
+                        ================================================== -->
+                        <!-- Placed at the end of the document so the pages load faster -->
+                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+                        <script>window.jQuery || document.write('<script src="assets/js/vendor/jquery.min.js"><\/script>')</script>
+                        <script src="js/bootstrap.min.js"></script>
+                        <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+                        <script src="assets/js/vendor/holder.min.js"></script>
+                        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+                        <script src="assets/js/ie10-viewport-bug-workaround.js"></script>
+        </body>
 </html>
-
