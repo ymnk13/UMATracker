@@ -22,6 +22,131 @@
       <p class="lead"><u>FilterGeneratorでは、位置座標を抽出したい物体の場所が白くなる動画フィルタを作成することが目標です。</u>下の画像のように、"フィルタをかけた後の画像"で白い場所は、"元の動画"でアリのいた場所です。この様な画像になるまで、フィルタを変化させていきます。</p>
       <center><img src="../img/FilterAfter201512101517.png" /></center>
       <hr />
+      <h3>キャンバス(フィルタ群の作りかた)</h3>
+      <p>キャンバスにフィルタ群を作る。フィルタツールチップ内のフィルタブロックをinputとoutputの間にドラッグアンドドロップすることで、フィルタ群が作れる。</p>
+      <div class="row">
+	<div class="col-md-6">
+	  <figure>
+	    <img src="../img/canvas 201512092105.png" width="95%">
+	    <figcaption>起動時のキャンバスの画面</figcaption>
+	  </figure>
+	</div>
+	<div class="col-md-6">
+	  <p>
+	    起動時には、OutputブロックとInputブロックのみが表示される。inputはソフトウェアに読み込ませた動画像のことをさしている。<u>inputブロックはこの動画像を出力するフィルタである。</u>Outputブロックには、フィルタ操作を行ったフィルタ群を入力する。こうすることで、フィルタを付けた変化が"フィルタを掛けた後の画像"に表示される。
+	    起動時の"フィルタを掛けた後の画像"は、キャンバスにInputブロックがOutputブロックに接続されているので、動画ファイルの内容そのもの(無加工)の画像が表示される。
+	  </p>
+	  <p>
+	    キャンバスには、<u>OutputブロックとInputブロックが必須</u>となる。これらのブロックはフィルタツールチップの"I/O"の中に入っている。
+	  </p>
+	</div>
+      </div>
+      <h4>フィルタの作りかた</h4>
+      <p></p>
+      <div class="row">
+	<div class="col-md-6">
+	  <img src="../img/FilterMake201512101447.png"/>
+	</div>
+	<div class="col-md-6">
+	  これは、インプットブロックにBGRToGrayフィルタを繋げた状態である。Inputブロックは、読み込ませた動画像を出力する。Inputブロックに、BGRToGrayフィルタがつながっているので、Inputブロックを入力として受ける。その後、GrayScale画像に変換し、出力している。しかし、出力を受けるブロックがないので、"フィルタを掛けた後の画像"は変化しない。
+	</div>
+      </div>
+      <hr />
+      <div class="row">
+	<div class="col-md-6">
+	  <img src="../img/FilterMake201512101451.png" width="95%"/>
+	</div>
+	<div class="col-md-6">
+	  上のフィルタをOutputブロックに繋げると、"フィルタを掛けた後の画像"に黒白の画像が表示される。これは、BGRToGrayブロックの出力先がOutputブロックになったことで、フィルタがただしくどうさするようになったからである。
+	</div>
+      </div>
+      <hr />
+
+      
+      <h4>フィルタ群例</h4>
+      <div class="row">
+	<div class="col-md-6">
+	  <img src="../img/FilterMake201512101146.png" width="95%"/>
+	</div>
+	<div class="col-md-6">
+	  <ol>
+	    <li>Inputブロックは入力した画像のこと</li>
+	    <p>Inputブロックは入力した画像／動画像のこと。<!-- Inputブロックはこの画像を出力する。--></p>
+	    <li>Inputブロックからは入力した画像が出力される</li>
+	    <p>Inputブロックからは入力した画像が出力される。それを受けたBGRToGrayブロックは、入力画像を黒白にする処理をかけた画像を出力する。</p>
+	    <li>BGRToGrayブロックから出力された画像がOutputブロックに入力される</li>
+	    <p>
+	      GrayScale画像になった結果が出力される。
+	    </p>
+	    <li>Outputブロックに入力された画像が"フィルタを掛けた後の画像"に表示される</li>
+	    <p>
+	      この例では、GrayScale画像になった入力画像が入力される。つまり、"フィルタを掛けた後の画像"は、入力した動画像がGrayScale画像になっている。
+	      Outputブロックがキャンバスに存在しない場合、"フィルタを掛けた後の画像"には正しい結果が表示されない。
+	    </p>
+	  </ol>
+	</div>
+      </div>
+      <hr />
+      <h4>フィルタブロックの削除方法</h4>
+      <div class="row">
+	<div class="col-md-6">
+	  <img src="../img/FilterDelete201512101502.png" width="95%"/>
+	</div>
+	<div class="col-md-6">
+	  <p>不要になったフィルタブロックを削除するには、"フィルタツールチップ"または、"キャンバス"にあるゴミ箱にフィルタブロックをドラッグ&ドロップすれば良い。"Inフィルタ"と繋った状況でも複数のフィルタブロックを削除できる。</p>
+	</div>
+      </div>
+
+      <h4>エラーが起きる場合</h4>
+      <ol>
+	<li class="toggle-li">Outputブロックと他のブロックが離れている場合。</li>
+	<p class="data-toggle"><img src="../img/Error1201512092304.png"/></p>
+	<li class="toggle-li">他のブロックと繋っていないフィルタブロックがある場合</li>
+	<p class="data-toggle"><img src="../img/Error2201512092306.png" /></p>
+      </ol>
+      <hr />
+      <h3>背景生成(Background Create)</h3>
+      <p class="lead">
+	動画から物体抽出を行う際に、背景を元の動画から削除する方法がある。この方法を使えば楽に追跡したい物体を抽出する事ができる場合が存在する。
+      </p>
+      <p class="lead">
+	背景を生成するには、まずMenuの、"Background"から"Create"を選択する。<br />
+	<img src="../img/bt01/FilterGenerate20160121193812.png"><br />
+	その後、まず、SetMinボタンを押す。そして、Generateを押すと背景が生成される。
+	背景生成の為に使用されるフレームはスライドバーに赤く表示される。最初にSetMinボタンを押すと、最後のフレームまで選択される。
+	以上の操作をした後に再生ボタンを押すと、背景除去後の結果が得られる。
+      </p>
+      <p class="lead">
+	Frame:は、何フレーム毎に背景に使用するかを決定する。Frame:１であれば全ての画像データを背景生成に使う。Frame:10であれば、10フレーム毎の画像から背景を生成する。Frame:の数が大きくなればなるほど、生成にかかる時間は減少する。しかし、十分な量の画像から背景生成を行ったほうが良いので、10程度を指定すればよい。極めて動画の時間が巨大な場合は、Frame:の数を大きくすれば背景の生成が早く終わる。
+      </p>
+      <p class="lead">
+	背景生成を行うと、Outputブロックからは、背景除去後の動画データが出力される。
+      </p>
+      <h4>SetMinとSetMaxの意味。</h4>
+      <p class="lead">
+	背景を生成するさいに余分なデータをへらすために、設定を行う。つまり、動画の最初の時刻では人が操作を行っていて、追跡したい物以外が写っている場合がある。このような画像を背景生成に使用してしまうと、背景除去の効果がなくなる場合がある。そのため、余計な物が写ったフレームを排除するため、SetMinFrame,SetMaxを押して、どのフレームを使用するのかを決定する。
+      </p>
+      <hr />
+            <h3>フィルタ例</h3>
+      <div class="container">
+	<p class="lead">
+	  追跡物体に色が無いとは、BGRToGrayブロックでGrayScale変換した場合とカラー画像の状態が殆ど変化しない映像のこと。アリやゼブラフィッシュの動画は色が無いものといえる。
+	</p>
+	<p class="lead">
+	  追跡物体に色が有るとは、実験対象にペイントやカラーシールをはった状態の事。
+	</p>
+	<img src="../img/bt01/FilterExample0020160115181604.png" />
+	<p class="lead">
+	  追跡物体に色が有る場合、範囲指定のブロックを追加した後、<a href="../reference/index.html#ColorFilter">ColorDistanceブロック</a>を使用する。色を選択した後、BGRToGrayブロックでGrayScale画像に変換する。その後、細かなノイズを消すため、ThresholdブロックとErosionブロックを使う。
+	  <a href="FilterExample/ColorFilter.filter">このフィルタをダウンロードする</a>
+	</p>
+	<img src="../img/bt01/FilterExample0120160115181641.png" />
+	<p class="lead">
+	  追跡物体に色が無い場合、<a href="../reference/index.html#ColorFilter">ColorDistanceブロック</a>の無い状態でフィルタを構成すればよい。
+	  <a href="FilterExample/GrayScaleFilter.filter">このフィルタをダウンロードする</a>
+	</p>
+      </div>
+      <hr />
       <h3>FilterGeneratorの画面</h3>
       <p>UMATracker-FilterGeneratorを起動すると下記の画面が現れる。主要な機能について説明する。</p>
       <div class="row">
@@ -119,89 +244,7 @@
       <img src="../img/DragDrop201512092120.png" width="95%"/>
       <p>動画ファイルが読み込まれ、"入力した画像"が変化します。</p>
       <hr />
-      <h3>キャンバス(フィルタ群の作りかた)</h3>
-      <p>キャンバスにフィルタ群を作る。フィルタツールチップ内のフィルタブロックをinputとoutputの間にドラッグアンドドロップすることで、フィルタ群が作れる。</p>
-      <div class="row">
-	<div class="col-md-6">
-	  <figure>
-	    <img src="../img/canvas 201512092105.png" width="95%">
-	    <figcaption>起動時のキャンバスの画面</figcaption>
-	  </figure>
-	</div>
-	<div class="col-md-6">
-	  <p>
-	    起動時には、OutputブロックとInputブロックのみが表示される。inputはソフトウェアに読み込ませた動画像のことをさしている。<u>inputブロックはこの動画像を出力するフィルタである。</u>Outputブロックには、フィルタ操作を行ったフィルタ群を入力する。こうすることで、フィルタを付けた変化が"フィルタを掛けた後の画像"に表示される。
-	    起動時の"フィルタを掛けた後の画像"は、キャンバスにInputブロックがOutputブロックに接続されているので、動画ファイルの内容そのもの(無加工)の画像が表示される。
-	  </p>
-	  <p>
-	    キャンバスには、<u>OutputブロックとInputブロックが必須</u>となる。これらのブロックはフィルタツールチップの"I/O"の中に入っている。
-	  </p>
-	</div>
-      </div>
-      <h4>フィルタの作りかた</h4>
-      <p></p>
-      <div class="row">
-	<div class="col-md-6">
-	  <img src="../img/FilterMake201512101447.png"/>
-	</div>
-	<div class="col-md-6">
-	  これは、インプットブロックにBGRToGrayフィルタを繋げた状態である。Inputブロックは、読み込ませた動画像を出力する。Inputブロックに、BGRToGrayフィルタがつながっているので、Inputブロックを入力として受ける。その後、GrayScale画像に変換し、出力している。しかし、出力を受けるブロックがないので、"フィルタを掛けた後の画像"は変化しない。
-	</div>
-      </div>
-      <hr />
-      <div class="row">
-	<div class="col-md-6">
-	  <img src="../img/FilterMake201512101451.png" width="95%"/>
-	</div>
-	<div class="col-md-6">
-	  上のフィルタをOutputブロックに繋げると、"フィルタを掛けた後の画像"に黒白の画像が表示される。これは、BGRToGrayブロックの出力先がOutputブロックになったことで、フィルタがただしくどうさするようになったからである。
-	</div>
-      </div>
-      <hr />
-
       
-      <h4>フィルタ群例</h4>
-      <div class="row">
-	<div class="col-md-6">
-	  <img src="../img/FilterMake201512101146.png" width="95%"/>
-	</div>
-	<div class="col-md-6">
-	  <ol>
-	    <li>Inputブロックは入力した画像のこと</li>
-	    <p>Inputブロックは入力した画像／動画像のこと。<!-- Inputブロックはこの画像を出力する。--></p>
-	    <li>Inputブロックからは入力した画像が出力される</li>
-	    <p>Inputブロックからは入力した画像が出力される。それを受けたBGRToGrayブロックは、入力画像を黒白にする処理をかけた画像を出力する。</p>
-	    <li>BGRToGrayブロックから出力された画像がOutputブロックに入力される</li>
-	    <p>
-	      GrayScale画像になった結果が出力される。
-	    </p>
-	    <li>Outputブロックに入力された画像が"フィルタを掛けた後の画像"に表示される</li>
-	    <p>
-	      この例では、GrayScale画像になった入力画像が入力される。つまり、"フィルタを掛けた後の画像"は、入力した動画像がGrayScale画像になっている。
-	      Outputブロックがキャンバスに存在しない場合、"フィルタを掛けた後の画像"には正しい結果が表示されない。
-	    </p>
-	  </ol>
-	</div>
-      </div>
-      <hr />
-      <h4>フィルタブロックの削除方法</h4>
-      <div class="row">
-	<div class="col-md-6">
-	  <img src="../img/FilterDelete201512101502.png" width="95%"/>
-	</div>
-	<div class="col-md-6">
-	  <p>不要になったフィルタブロックを削除するには、"フィルタツールチップ"または、"キャンバス"にあるゴミ箱にフィルタブロックをドラッグ&ドロップすれば良い。"Inフィルタ"と繋った状況でも複数のフィルタブロックを削除できる。</p>
-	</div>
-      </div>
-
-      <h4>エラーが起きる場合</h4>
-      <ol>
-	<li class="toggle-li">Outputブロックと他のブロックが離れている場合。</li>
-	<p class="data-toggle"><img src="../img/Error1201512092304.png"/></p>
-	<li class="toggle-li">他のブロックと繋っていないフィルタブロックがある場合</li>
-	<p class="data-toggle"><img src="../img/Error2201512092306.png" /></p>
-      </ol>
-      <hr />
       <h3>FilterGeneratorがあつかう画像の種類</h3>
       <p>FilterGeneratorでは3つの画像を扱うことができる。言い替えれば、フィルタブロックにはそれぞれの種類の画像を出力する。</p>
       <div class="row">
@@ -302,26 +345,7 @@
 	  </p>
 	</div>
       <hr />
-      <h3>フィルタ例</h3>
-      <div class="container">
-	<p class="lead">
-	  追跡物体に色が無いとは、BGRToGrayブロックでGrayScale変換した場合とカラー画像の状態が殆ど変化しない映像のこと。アリやゼブラフィッシュの動画は色が無いものといえる。
-	</p>
-	<p class="lead">
-	  追跡物体に色が有るとは、実験対象にペイントやカラーシールをはった状態の事。
-	</p>
-	<img src="../img/bt01/FilterExample0020160115181604.png" />
-	<p class="lead">
-	  追跡物体に色が有る場合、範囲指定のブロックを追加した後、<a href="../reference/index.html#ColorFilter">ColorDistanceブロック</a>を使用する。色を選択した後、BGRToGrayブロックでGrayScale画像に変換する。その後、細かなノイズを消すため、ThresholdブロックとErosionブロックを使う。
-	  <a href="FilterExample/ColorFilter.filter">このフィルタをダウンロードする</a>
-	</p>
-	<img src="../img/bt01/FilterExample0120160115181641.png" />
-	<p class="lead">
-	  追跡物体に色が無い場合、<a href="../reference/index.html#ColorFilter">ColorDistanceブロック</a>の無い状態でフィルタを構成すればよい。
-	  <a href="FilterExample/GrayScaleFilter.filter">このフィルタをダウンロードする</a>
-	</p>
-      </div>
-      <hr />
+
       <!-- 
       <h3>フィルタ例</h3>
       <h4>アリ（トビイロケアリ）</h4>
