@@ -3,6 +3,7 @@
 /* Padding below the footer and lighter body text */
 
 body {
+    margin-top: 50px;
     padding-bottom: 40px;
     color: #5a5a5a;
 }
@@ -109,7 +110,7 @@ body {
 @media (min-width: 768px) {
     /* Navbar positioning foo */
     .navbar-wrapper {
-        margin-top: 20px;
+        margin-top: 0px;
     }
     .navbar-wrapper .container {
         padding-right: 15px;
