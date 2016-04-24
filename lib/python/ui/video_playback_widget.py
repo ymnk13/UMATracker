@@ -130,6 +130,7 @@ class VideoPlaybackWidget(QtWidgets.QWidget, Ui_VideoPlaybackWidget):
         ret, frame = self.readFrame(0)
         if ret:
             self.currentFrameNo = 0
+            self.setMaxTickableFrameNo(self.getMaxFramePos())
             self.frameChanged.emit(frame, 0)
             return True
         else:
