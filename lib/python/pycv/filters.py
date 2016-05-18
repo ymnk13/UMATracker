@@ -37,6 +37,7 @@ class Filter:
 
 def colorFilter(im_in, rgb, dist):
     try:
+        dir(fastColorFilter)
         im_dst = im_in.copy()
         fastColorFilter.exec(im_dst, np.flipud(rgb).astype(dtype=np.uint8), dist)
     except:
